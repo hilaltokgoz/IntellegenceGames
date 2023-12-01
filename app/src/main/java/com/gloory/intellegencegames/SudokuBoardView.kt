@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 
 // Code with ❤️
@@ -24,8 +25,8 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var cellSizePixels = 0F
 
     //Başlangıçta seçili satır ya da sütun yok o yüzden negatif ayarlandı.
-    private var selectedRow = -1
-    private var selectedCol = -1
+    private var selectedRow = 0
+    private var selectedCol = 0
 
 
     //Kalın çizgiler hücre gruplarını tanımlar
@@ -128,4 +129,24 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             )
         }
     }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean { // dokunma olayını tutar, boolean tutar
+        return when (event.action) {
+            MotionEvent.ACTION_DOWN -> {  //Kişi ekrana dokunursa
+                handleTouchEvent(event.x, event.y)
+                true
+            }
+            else -> false
+        }
+
+
+    }
+
+    private fun handleTouchEvent(x: Float, y: Float) { //seçilenleri satır ve sütuna çevirmeliyiz
+        selectedRow = (y / cellSizePixels).toInt() //satır ve sütun tam sayıdır
+        selectedCol = (x / cellSizePixels).toInt() //satır ve sütun tam sayıdır
+        invalidate()
+    }
+
+
 }
