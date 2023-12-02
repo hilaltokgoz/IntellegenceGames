@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.telephony.TelephonyCallback
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -29,7 +28,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var selectedRow = 0
     private var selectedCol = 0
 
-    private var listener:SudokuBoardView.OnTouchListener?=null
+    private var listener: SudokuBoardView.OnTouchListener? = null
 
     //Kalın çizgiler hücre gruplarını tanımlar
     private val thickLinePaint = Paint().apply {
@@ -144,9 +143,9 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     private fun handleTouchEvent(x: Float, y: Float) { //seçilenleri satır ve sütuna çevirmeliyiz
-        selectedRow = (y / cellSizePixels).toInt() //satır ve sütun tam sayıdır
-        selectedCol = (x / cellSizePixels).toInt() //satır ve sütun tam sayıdır
-        invalidate()
+        val possibleSelectedRow = (y / cellSizePixels).toInt() //satır ve sütun tam sayıdır
+        val possibleSelectedCol = (x / cellSizePixels).toInt() //satır ve sütun tam sayıdır
+        listener?.onCellTouched(possibleSelectedRow, possibleSelectedCol)
     }
 
     fun updateSelectedCellUI(row: Int, col: Int) {
@@ -155,14 +154,14 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         invalidate()// kulllanıcı arayüzündeki her şey yeniden çizilir.
     }
 
-    fun registerListener(listener: SudokuBoardView.OnTouchListener){
-        this.listener=listener
+    fun registerListener(listener: SudokuBoardView.OnTouchListener) {
+        this.listener = listener
     }
 
 
     //verileri kaçmadığından emin olmak için
-    interface OnTouchListener{
-        fun onCellTouched(row:Int,col:Int){
+    interface OnTouchListener {
+        fun onCellTouched(row: Int, col: Int) {
         }
     }
 

@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData
 //│ 2.12.2023                │
 //└──────────────────────────┘
 
+//Tahtanın durumu burada saklanır.
 //LiveData'lar burada tutulacak
 //LiveData'ya view-viewModel arasındaki bağlantıyı sağlar.
 //Güncelleme geldiğinde view bunu görür,kendi alanlarının günceller
