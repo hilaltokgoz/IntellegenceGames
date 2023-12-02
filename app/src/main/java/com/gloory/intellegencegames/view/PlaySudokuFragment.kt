@@ -38,7 +38,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private fun updateSelectedCellUI(cell: Pair<Int, Int>?) = cell?.let {
         binding.sudokuBoardView.updateSelectedCellUI(cell.first, cell.second)
     }
-
+//
     //interface fonk için override edildi
     override fun onCellTouched(row: Int, col: Int) {
         viewModel.sudokuGame.updateSelectedCell(row, col)
