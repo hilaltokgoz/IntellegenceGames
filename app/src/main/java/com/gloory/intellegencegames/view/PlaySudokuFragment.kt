@@ -24,21 +24,28 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     ): View {
         _binding = FragmentPlaySudokuBinding.inflate(inflater)
         return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.sudokuBoardView.registerListener(this)
 
         //fragmentta bi şey yaratıldığında  aktarılır
-     viewModel = ViewModelProviders.of(this)[PlaySudokuViewModel::class.java]
+        viewModel = ViewModelProviders.of(this)[PlaySudokuViewModel::class.java]
         //Observer:Gözlemci,seçilen hücre canlı verilene ne olduğu gözlemlenir.
         viewModel.sudokuGame.selectedCellLiveData.observe(
             viewLifecycleOwner,
             Observer { updateSelectedCellUI(it) })
-    } //.let, cell boş değilse çalışır
 
+        //.let, cell boş değilse çalışır
+
+
+    }
     private fun updateSelectedCellUI(cell: Pair<Int, Int>?) = cell?.let {
         binding.sudokuBoardView.updateSelectedCellUI(cell.first, cell.second)
     }
-//
+
+    //
     //interface fonk için override edildi
     override fun onCellTouched(row: Int, col: Int) {
         viewModel.sudokuGame.updateSelectedCell(row, col)
