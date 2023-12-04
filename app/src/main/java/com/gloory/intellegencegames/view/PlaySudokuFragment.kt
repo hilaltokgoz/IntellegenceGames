@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -17,7 +18,9 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private var _binding: FragmentPlaySudokuBinding? = null
     private val binding get() = _binding!!
 
+
     private lateinit var viewModel: PlaySudokuViewModel//view model görüntülenmek içn çağrılır.
+    private var buttonList: List<Button>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,15 +40,35 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewModel.sudokuGame.selectedCellLiveData.observe(
             viewLifecycleOwner,
             Observer { updateSelectedCellUI(it) })
-        viewModel.sudokuGame.cellsLiveData.observe(viewLifecycleOwner, Observer { updateCells(it) }) //hücre için observer tanımı
+        viewModel.sudokuGame.cellsLiveData.observe(
+            viewLifecycleOwner,
+            Observer { updateCells(it) }) //hücre için observer tanımı
 
+        binding.apply {
+            buttonList = (listOf(
+                oneButton,
+                twoButton,
+                threeButton,
+                fourButton,
+                fiveButton,
+                sixButton,
+                sevenButton,
+                eighthButton,
+                nineButton
+            ))
+            buttonList!!.forEachIndexed { index, button ->
+                button.setOnClickListener {
+                    viewModel.sudokuGame.handleInput(index + 1)
+
+                }
+            }
+        }
     }
+
     //hücre listesine erişip hücreleri günceller
-    private fun updateCells(cells:List<Cell>?)=cells?.let{
-     binding.sudokuBoardView.updateCells(cells)
+    private fun updateCells(cells: List<Cell>?) = cells?.let {
+        binding.sudokuBoardView.updateCells(cells)
     }
-
-
 
     //.let, cell boş değilse çalışır
     private fun updateSelectedCellUI(cell: Pair<Int, Int>?) = cell?.let {
