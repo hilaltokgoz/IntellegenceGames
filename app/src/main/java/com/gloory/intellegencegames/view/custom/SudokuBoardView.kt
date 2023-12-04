@@ -4,9 +4,11 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.gloory.intellegencegames.game.Cell
 
 // Code with ❤️
 //┌──────────────────────────┐
@@ -29,6 +31,8 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var selectedCol = 0
 
     private var listener: SudokuBoardView.OnTouchListener? = null
+
+    private var cells: List<Cell>? = null
 
     //Kalın çizgiler hücre gruplarını tanımlar
     private val thickLinePaint = Paint().apply {
@@ -54,6 +58,13 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         color = Color.parseColor("#efedef")
     }
 
+    //text için boya rengi ayarlanır
+    private val textPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.BLACK
+        textSize = 30F
+    }
+
 
     //Görünüm ne kadar büyük olacak. Kare tahtayı korumak için
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -66,19 +77,21 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         cellSizePixels = (width / size).toFloat() //hücreler bölündü.
         fillCells(canvas)
         drawLine(canvas)
+        drawText(canvas)
     }
 
     private fun fillCells(canvas: Canvas) {//tuval alınıp hücrelerin doldurulacağı alan
         if (selectedRow == -1 || selectedCol == -1) return // hücre seçilmediyse bir şey yapma
-        for (r in 0..size) {
-            for (c in 0..size) {
-                if (r == selectedRow && c == selectedCol) { //Hücre seçiliyse
-                    fillCell(canvas, r, c, selectedCellPaint)
-                } else if (r == selectedRow || c == selectedCol) {
-                    fillCell(canvas, r, c, conflictingCellPaint)
-                } else if (r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize) {
-                    fillCell(canvas, r, c, conflictingCellPaint)
-                }
+
+        cells?.forEach {
+            val r = it.row
+            val c = it.col
+            if (r == selectedRow && c == selectedCol) { //Hücre seçiliyse
+                fillCell(canvas, r, c, selectedCellPaint)
+            } else if (r == selectedRow || c == selectedCol) {
+                fillCell(canvas, r, c, conflictingCellPaint)
+            } else if (r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize) {
+                fillCell(canvas, r, c, conflictingCellPaint)
             }
         }
     }
@@ -131,6 +144,33 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         }
     }
 
+    //Burada gerçek sayılar ekrana çizilecek
+    private fun drawText(canvas: Canvas) {
+        cells?.forEach {
+            val row = it.row
+            val col = it.col
+            val valueString = it.value.toString()
+
+            val textBounds = Rect()
+            textPaint.getTextBounds(
+                valueString,
+                0,
+                valueString.length,
+                textBounds
+            )//text boyamak için sınırları verilir
+            val textWidth = textPaint.measureText(valueString)
+            val textHeight = textBounds.height()
+
+            //metni hücre ortasına ortalamak için
+            canvas.drawText(
+                valueString,
+                (col * cellSizePixels) + cellSizePixels / 2 - textWidth / 2,
+                (row * cellSizePixels) + cellSizePixels / 2 - textHeight / 2,
+                textPaint
+            )
+        }
+    }
+
     override fun onTouchEvent(event: MotionEvent): Boolean { // dokunma olayını tutar, boolean tutar
         return when (event.action) {
             MotionEvent.ACTION_DOWN -> {  //Kişi ekrana dokunursa
@@ -156,6 +196,11 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     fun registerListener(listener: SudokuBoardView.OnTouchListener) {
         this.listener = listener
+    }
+
+    fun updateCells(cells: List<Cell>) {
+        this.cells = cells
+        invalidate() //geçersiz kılkar,hücreler yeniden oluşturulur.
     }
 
 

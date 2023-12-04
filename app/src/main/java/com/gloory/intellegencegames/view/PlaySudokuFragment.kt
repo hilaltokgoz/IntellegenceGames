@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.gloory.intellegencegames.databinding.FragmentPlaySudokuBinding
+import com.gloory.intellegencegames.game.Cell
 import com.gloory.intellegencegames.view.custom.SudokuBoardView
 import com.gloory.intellegencegames.viewmodel.PlaySudokuViewModel
 
@@ -36,11 +37,17 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewModel.sudokuGame.selectedCellLiveData.observe(
             viewLifecycleOwner,
             Observer { updateSelectedCellUI(it) })
-
-        //.let, cell boş değilse çalışır
-
+        viewModel.sudokuGame.cellsLiveData.observe(viewLifecycleOwner, Observer { updateCells(it) }) //hücre için observer tanımı
 
     }
+    //hücre listesine erişip hücreleri günceller
+    private fun updateCells(cells:List<Cell>?)=cells?.let{
+     binding.sudokuBoardView.updateCells(cells)
+    }
+
+
+
+    //.let, cell boş değilse çalışır
     private fun updateSelectedCellUI(cell: Pair<Int, Int>?) = cell?.let {
         binding.sudokuBoardView.updateSelectedCellUI(cell.first, cell.second)
     }
