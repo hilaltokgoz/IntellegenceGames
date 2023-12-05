@@ -1,14 +1,12 @@
 package com.gloory.intellegencegames.view.custom
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import com.gloory.intellegencegames.game.Cell
+import kotlin.math.min
 
 // Code with ❤️
 //┌──────────────────────────┐
@@ -62,14 +60,23 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private val textPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
-        textSize = 30F
+        textSize = 28F
     }
-
+    private val startingCellTextPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.BLACK
+        textSize = 32F
+        typeface = Typeface.DEFAULT_BOLD
+    }
+    private val startingCellPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.parseColor("#acacac")
+    }
 
     //Görünüm ne kadar büyük olacak. Kare tahtayı korumak için
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val sizePixels = Math.min(widthMeasureSpec, heightMeasureSpec)
+        val sizePixels = min(widthMeasureSpec, heightMeasureSpec)
         setMeasuredDimension(sizePixels, sizePixels)//min-max yükseklikler ayarlandı.
     }
 
@@ -86,7 +93,9 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         cells?.forEach {
             val r = it.row
             val c = it.col
-            if (r == selectedRow && c == selectedCol) { //Hücre seçiliyse
+            if (it.isStartingCell) {
+                fillCell(canvas, r, c, startingCellPaint)
+            } else if (r == selectedRow && c == selectedCol) { //Hücre seçiliyse
                 fillCell(canvas, r, c, selectedCellPaint)
             } else if (r == selectedRow || c == selectedCol) {
                 fillCell(canvas, r, c, conflictingCellPaint)
@@ -95,7 +104,6 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             }
         }
     }
-
     //Hücre başlangıcından diğer hücre başlangıcına kadar dikdörtgen çizer.
     private fun fillCell(
         canvas: Canvas,
@@ -111,7 +119,6 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             paint
         )
     }
-
     private fun drawLine(canvas: Canvas) { //Tuval alacak, çizgileri belirlemek için kullanılır
         canvas.drawRect(
             0F,
@@ -143,7 +150,6 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             )
         }
     }
-
     //Burada gerçek sayılar ekrana çizilecek
     private fun drawText(canvas: Canvas) {
         cells?.forEach {
@@ -151,14 +157,15 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             val col = it.col
             val valueString = it.value.toString()
 
+            val paintToUse= if (it.isStartingCell) startingCellTextPaint else textPaint//başlangıç mı değil mi kontrol edildi.
             val textBounds = Rect()
-            textPaint.getTextBounds(
+            paintToUse.getTextBounds(
                 valueString,
                 0,
                 valueString.length,
                 textBounds
             )//text boyamak için sınırları verilir
-            val textWidth = textPaint.measureText(valueString)
+            val textWidth = paintToUse.measureText(valueString)
             val textHeight = textBounds.height()
 
             //metni hücre ortasına ortalamak için
@@ -166,7 +173,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                 valueString,
                 (col * cellSizePixels) + cellSizePixels / 2 - textWidth / 2,
                 (row * cellSizePixels) + cellSizePixels / 2 - textHeight / 2,
-                textPaint
+                paintToUse
             )
         }
     }
