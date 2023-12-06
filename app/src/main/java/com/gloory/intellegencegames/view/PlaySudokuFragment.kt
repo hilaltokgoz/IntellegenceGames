@@ -1,6 +1,5 @@
 package com.gloory.intellegencegames.view
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -77,18 +76,31 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
             }
         }
     }
+
     //let bloğu boş değilse günceller.
     private fun updateNoteTakingUI(isNoteTaking: Boolean?) = isNoteTaking?.let {
-        if(it){
+        if (it) {
             //notgg alınırsa rengi değişecek
-            binding.notesButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teal_200))
-        }else{
+            binding.notesButton.setBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.teal_200
+                )
+            )
+        } else {
             binding.notesButton.setBackgroundColor(Color.LTGRAY)
         }
     }
 
-    private fun updateHighlightedKeys(it: Set<Int>?) {
-
+    private fun updateHighlightedKeys(set: Set<Int>?) = set?.let {
+        buttonList?.forEachIndexed { index, button ->
+            //seçiliyse seçilmiş renklere, değilse gri olsun
+            val color = if (set.contains(index + 1)) ContextCompat.getColor(
+                requireContext(),
+                R.color.teal_200
+            ) else Color.LTGRAY
+            button.setBackgroundColor(color)
+        }
     }
 
     //hücre listesine erişip hücreleri günceller
