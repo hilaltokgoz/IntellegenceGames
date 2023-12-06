@@ -10,11 +10,12 @@ package com.gloory.intellegencegames.game
 //└──────────────────────────┘
 
 //Hücre Class'ı depolamak için kullanılacaktır.
-//
+//mutableSetOf() karma kullanır-> ınt,float..
 
 class Cell(
     val row: Int,
     val col: Int,
     var value: Int,
-    var isStartingCell: Boolean = false
+    var isStartingCell: Boolean = false,
+    var notes: MutableSet<Int> = mutableSetOf()//not için
 )
