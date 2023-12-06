@@ -21,8 +21,12 @@ class SudokuGame {
         MutableLiveData<Pair<Int, Int>>() //seçilen hücre saklanmak için kullanılır
     var cellsLiveData = MutableLiveData<List<Cell>>() //Hücrelerin canlı verisini tutar.
 
+    val isTakingNotesLiveData = MutableLiveData<Boolean>()
+    val highlightedKeysLiveData = MutableLiveData<Set<Int>>() //mevcut hücrenin notlarını tutar.
+
     private var selectedRow = -1
     private var selectedCol = -1
+    private var isTakingNotes = false //not alıp almadığını tutacak
 
     private val board: Board
 
@@ -30,29 +34,38 @@ class SudokuGame {
     init {
         //Hücrelerin listesine ihtiyaç bulunmakta. //9*9 boyutunda bir liste
         val cells = List(9 * 9) { i -> Cell(i / 9, i % 9, i % 9) }
-        cells[11].isStartingCell=true
-        cells[21].isStartingCell=true
-
+        cells[0].notes = mutableSetOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
         board = Board(9, cells)
 
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
         cellsLiveData.postValue(board.cells)
-
+        isTakingNotesLiveData.postValue(isTakingNotes)
     }
 
     //Gelen sayının ne olduğuna karar verir, seçilen hücre alınıp güncellenir
     fun handleInput(number: Int) {
         if (selectedRow == -1 || selectedCol == -1) return
-        if (board.getCell(selectedRow,selectedCol).isStartingCell) return
+        val cell = board.getCell(selectedRow, selectedCol)
+        if (cell.isStartingCell) return
 
-        board.getCell(selectedRow, selectedCol).value = number
+        if (isTakingNotes) {
+            if (cell.notes.contains(number)) {//mevcut hücre sayı içerir.
+                cell.notes.remove(number) //sayıyı kaldır
+            } else {
+                cell.notes.add(number)//sayıyı ekle
+            }
+            highlightedKeysLiveData.postValue(cell.notes)//ui da tekrar güncellenecek
+        } else { //not alınmayan kısımlar
+            cell.value = number
+        }
         cellsLiveData.postValue(board.cells)
     }
 
 
     //Satır ve sütunları güncelleyen fonk.
     fun updateSelectedCell(row: Int, col: Int) {
-        if (!board.getCell(row, col).isStartingCell) {
+        val cell = board.getCell(row, col)
+        if (!cell.isStartingCell) {
             selectedRow = row
             selectedCol = col
             selectedCellLiveData.postValue(
@@ -60,8 +73,23 @@ class SudokuGame {
                     row,
                     col
                 )
-            )
+            ) //satır ve sütun alınıp güncellendi, gri gönderildi.
+            if (isTakingNotes) {
+                highlightedKeysLiveData.postValue(cell.notes)//mevcut hücrenin değeri yayınlanır
+            }
         }
-        //satır ve sütun alınıp güncellendi, gri gönderildi.
+    }
+
+    //Not alma durumunu değiştiren fonk.
+    fun changeNoteTakingState() {
+        isTakingNotes = !isTakingNotes
+        isTakingNotesLiveData.postValue(isTakingNotes)
+
+        val curNotes = if (isTakingNotes) {
+            board.getCell(selectedRow, selectedCol).notes
+        } else {
+            setOf<Int>() //not varsa mevcut notu, yoksa boş not seti alınır.
+        }
+        highlightedKeysLiveData.postValue(curNotes)
     }
 }
