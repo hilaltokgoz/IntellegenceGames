@@ -25,10 +25,11 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private var buttonList: List<Button>? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlaySudokuBinding.inflate(inflater)
+        _binding = FragmentPlaySudokuBinding.inflate(inflater,container,false)
         return binding.root
     }
 
