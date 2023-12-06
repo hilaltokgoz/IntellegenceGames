@@ -23,6 +23,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var size = 9
 
     private var cellSizePixels = 0F
+    private var noteSizePixels = 0F
 
     //Başlangıçta seçili satır ya da sütun yok o yüzden negatif ayarlandı.
     private var selectedRow = 0
@@ -60,17 +61,22 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private val textPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
-        textSize = 28F
+
     }
     private val startingCellTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
-        textSize = 32F
         typeface = Typeface.DEFAULT_BOLD
     }
     private val startingCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.parseColor("#acacac")
+    }
+
+    //textSize ayarlaması
+    private val noteTextPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.BLACK
     }
 
     //Görünüm ne kadar büyük olacak. Kare tahtayı korumak için
@@ -81,10 +87,19 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     override fun onDraw(canvas: Canvas) {
-        cellSizePixels = (width / size).toFloat() //hücreler bölündü.
+        updateMeasurements(width)
         fillCells(canvas)
         drawLine(canvas)
         drawText(canvas)
+    }
+
+    private fun updateMeasurements(width: Int) {
+        cellSizePixels = (width / size).toFloat() //hücreler bölündü.
+        noteSizePixels = cellSizePixels / sqrtSize.toFloat()
+        noteTextPaint.textSize = cellSizePixels / sqrtSize.toFloat()
+        textPaint.textSize = cellSizePixels / 1.5F
+        startingCellTextPaint.textSize = cellSizePixels / 1.5F
+
     }
 
     private fun fillCells(canvas: Canvas) {//tuval alınıp hücrelerin doldurulacağı alan
@@ -104,6 +119,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             }
         }
     }
+
     //Hücre başlangıcından diğer hücre başlangıcına kadar dikdörtgen çizer.
     private fun fillCell(
         canvas: Canvas,
@@ -119,6 +135,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             paint
         )
     }
+
     private fun drawLine(canvas: Canvas) { //Tuval alacak, çizgileri belirlemek için kullanılır
         canvas.drawRect(
             0F,
@@ -150,31 +167,56 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             )
         }
     }
+
     //Burada gerçek sayılar ekrana çizilecek
     private fun drawText(canvas: Canvas) {
-        cells?.forEach {
-            val row = it.row
-            val col = it.col
-            val valueString = it.value.toString()
+        cells?.forEach { cell ->
+            val value = cell.value
 
-            val paintToUse= if (it.isStartingCell) startingCellTextPaint else textPaint//başlangıç mı değil mi kontrol edildi.
             val textBounds = Rect()
-            paintToUse.getTextBounds(
-                valueString,
-                0,
-                valueString.length,
-                textBounds
-            )//text boyamak için sınırları verilir
-            val textWidth = paintToUse.measureText(valueString)
-            val textHeight = textBounds.height()
 
-            //metni hücre ortasına ortalamak için
-            canvas.drawText(
-                valueString,
-                (col * cellSizePixels) + cellSizePixels / 2 - textWidth / 2,
-                (row * cellSizePixels) + cellSizePixels / 2 - textHeight / 2,
-                paintToUse
-            )
+            if (value == 0) {
+                //draw notes
+                cell.notes.forEach { note ->
+                    val rowInCell = (note - 1) / sqrtSize
+                    val colInCell = (note - 1) % sqrtSize
+                    val valueString=note.toString()
+                    noteTextPaint.getTextBounds(valueString, 0, valueString.length, textBounds)
+                    val textWidth = noteTextPaint.measureText(valueString)
+                    val textHeight = textBounds.height()
+
+                    canvas.drawText(
+                        valueString,
+                        (cell.col * cellSizePixels) + (colInCell * noteSizePixels) + noteSizePixels / 2 - textWidth / 2f,
+                        (cell.row * cellSizePixels) + (rowInCell * noteSizePixels) + noteSizePixels / 2 + textHeight / 2f,
+                        noteTextPaint
+                    )
+                }
+            } else {
+                val row = cell.row
+                val col = cell.col
+                val valueString = cell.value.toString()
+
+                val paintToUse =
+                    if (cell.isStartingCell) startingCellTextPaint else textPaint//başlangıç mı değil mi kontrol edildi.
+
+                paintToUse.getTextBounds(
+                    valueString,
+                    0,
+                    valueString.length,
+                    textBounds
+                )//text boyamak için sınırları verilir
+                val textWidth = paintToUse.measureText(valueString)
+                val textHeight = textBounds.height()
+
+                //metni hücre ortasına ortalamak için
+                canvas.drawText(
+                    valueString,
+                    (col * cellSizePixels) + cellSizePixels / 2 - textWidth / 2,
+                    (row * cellSizePixels) + cellSizePixels / 2 + textHeight / 2,
+                    paintToUse
+                )
+            }
         }
     }
 
