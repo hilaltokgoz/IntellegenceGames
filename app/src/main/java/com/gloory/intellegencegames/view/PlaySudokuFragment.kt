@@ -1,6 +1,7 @@
 package com.gloory.intellegencegames.view
 
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +30,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlaySudokuBinding.inflate(inflater,container,false)
+        _binding = FragmentPlaySudokuBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -72,25 +73,22 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
                     viewModel.sudokuGame.handleInput(index + 1)
                 }
             }
-            binding.notesButton.setOnClickListener {
-                viewModel.sudokuGame.changeNoteTakingState()
-            }
+
+        }
+        binding.notesButton.setOnClickListener {
+            viewModel.sudokuGame.changeNoteTakingState()
+        }
+        binding.deleteButton.setOnClickListener {
+            viewModel.sudokuGame.delete()
         }
     }
 
     //let bloğu boş değilse günceller.
     private fun updateNoteTakingUI(isNoteTaking: Boolean?) = isNoteTaking?.let {
-        if (it) {
-            //notgg alınırsa rengi değişecek
-            binding.notesButton.setBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.teal_200
-                )
-            )
-        } else {
-            binding.notesButton.setBackgroundColor(Color.LTGRAY)
-        }
+        val color =
+            if (it) ContextCompat.getColor(requireContext(), R.color.teal_200) else Color.LTGRAY
+        //not alınırsa rengi değişecek
+        binding.notesButton.background.setColorFilter(color, PorterDuff.Mode.MULTIPLY)
     }
 
     private fun updateHighlightedKeys(set: Set<Int>?) = set?.let {
@@ -100,7 +98,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 requireContext(),
                 R.color.teal_200
             ) else Color.LTGRAY
-            button.setBackgroundColor(color)
+            button.background.setColorFilter(color, PorterDuff.Mode.MULTIPLY)
         }
     }
 

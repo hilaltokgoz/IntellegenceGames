@@ -61,7 +61,6 @@ class SudokuGame {
         cellsLiveData.postValue(board.cells)
     }
 
-
     //Satır ve sütunları güncelleyen fonk.
     fun updateSelectedCell(row: Int, col: Int) {
         val cell = board.getCell(row, col)
@@ -91,5 +90,9 @@ class SudokuGame {
             setOf<Int>() //not varsa mevcut notu, yoksa boş not seti alınır.
         }
         highlightedKeysLiveData.postValue(curNotes)
+    }
+
+    fun delete() {
+
     }
 }
