@@ -93,6 +93,13 @@ class SudokuGame {
     }
 
     fun delete() {
-
+        val cell = board.getCell(selectedRow, selectedCol)
+        if (isTakingNotes) {
+            cell.notes.clear()  //not alınıyorsa hepsini sil
+            highlightedKeysLiveData.postValue(setOf())  //tuşlar boş tutulur.
+        } else {
+            cell.value = 0 //hücre değiştiği için değer 0'a eşitlendi.
+        }
+        cellsLiveData.postValue(board.cells)  //yeni hücreler arayüzüne gönderiliyor.
     }
 }

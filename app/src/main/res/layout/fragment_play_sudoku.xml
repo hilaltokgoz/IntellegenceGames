@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.PlaySudokuFragment">
 
     <com.gloory.intellegencegames.view.custom.SudokuBoardView
@@ -101,18 +101,14 @@
             android:layout_height="wrap_content"
             android:layout_row="3"
             android:layout_column="0"
-            app:srcCompat="@drawable/edit_pen_black">
-        </ImageButton>
+            app:srcCompat="@drawable/edit_pen_black" />
+
         <ImageButton
             android:id="@+id/deleteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="3"
             android:layout_column="2"
-            app:srcCompat="@drawable/delete_black">
-
-        </ImageButton>
+            app:srcCompat="@drawable/delete_black" />
     </GridLayout>
-
-
 </RelativeLayout>

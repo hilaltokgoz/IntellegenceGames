@@ -73,13 +73,12 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
                     viewModel.sudokuGame.handleInput(index + 1)
                 }
             }
-
-        }
-        binding.notesButton.setOnClickListener {
-            viewModel.sudokuGame.changeNoteTakingState()
-        }
-        binding.deleteButton.setOnClickListener {
-            viewModel.sudokuGame.delete()
+            notesButton.setOnClickListener {
+                viewModel.sudokuGame.changeNoteTakingState()
+            }
+            deleteButton.setOnClickListener {
+                viewModel.sudokuGame.delete()
+            }
         }
     }
 
