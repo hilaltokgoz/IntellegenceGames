@@ -1,5 +1,6 @@
 package com.gloory.intellegencegames.view
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -37,6 +38,29 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.sudokuBoardView.registerListener(this)
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder
+            .setTitle("Zorluk Derecesini Seçiniz...")
+            .setPositiveButton("Tamam") { dialog, which ->
+                //TODO: İtem seçimine göre bazı kutular random olarak silinecek
+
+
+
+
+
+            }
+            .setSingleChoiceItems(
+                arrayOf("Kolay", "Orta", "Zor"), 0
+            ) { dialog, which ->
+
+            }
+
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+
+
 
         //fragmentta bi şey yaratıldığında  aktarılır
         viewModel = ViewModelProviders.of(this)[PlaySudokuViewModel::class.java]
@@ -116,5 +140,6 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     override fun onCellTouched(row: Int, col: Int) {
         viewModel.sudokuGame.updateSelectedCell(row, col)
     }
+
 
 }
