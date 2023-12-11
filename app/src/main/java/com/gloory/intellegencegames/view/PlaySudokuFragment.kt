@@ -44,10 +44,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
             .setTitle("Zorluk Derecesini Seçiniz...")
             .setPositiveButton("Tamam") { dialog, which ->
                 //TODO: İtem seçimine göre bazı kutular random olarak silinecek
-
-
-
-
+                //Kolay-> 45, Orta-> 50, zor-> 53 kutu silinecek
 
             }
             .setSingleChoiceItems(
@@ -59,7 +56,6 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
         val dialog: AlertDialog = builder.create()
         dialog.show()
-
 
 
         //fragmentta bi şey yaratıldığında  aktarılır
