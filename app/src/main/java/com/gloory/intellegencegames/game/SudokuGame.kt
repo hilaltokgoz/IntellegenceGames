@@ -33,7 +33,12 @@ class SudokuGame {
     //init bloğu, Sudoku oyunu oluşturulduğunda çağrılır.
     init {
         //Hücrelerin listesine ihtiyaç bulunmakta. //9*9 boyutunda bir liste
-        val cells = List(9 * 9) { i -> Cell(i / 9, i % 9, i % 9) }
+        val cells = List(9 * 9) { i ->
+            Cell(
+                i / 9, i % 9, i % 9
+            )
+        }
+
         cells[0].notes = mutableSetOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
         board = Board(9, cells)
 
@@ -41,6 +46,46 @@ class SudokuGame {
         cellsLiveData.postValue(board.cells)
         isTakingNotesLiveData.postValue(isTakingNotes)
     }
+
+    fun randomSortingOnTheBoard(cell: List<Int>) {
+        val table = Array(9) { IntArray(9) }
+
+        for (i in 0 until 9) {
+            val rowNumbers = (1..9).shuffled().toIntArray()
+
+            while (!isValidRow(rowNumbers, table, i)) {
+                rowNumbers.shuffle()
+            }
+            table[i] = rowNumbers
+        }
+        val transposedTable = table.transpose()  // sütunda uniq sayı oluşturmak için
+        for (i in 0 until 9) {
+            for (j in 0 until 9) {
+                print("${transposedTable[i][j]} ")// Tabloya yazdırma
+            }
+            println()
+        }
+    }
+
+    fun isValidRow(row: IntArray, matrix: Array<IntArray>, currentIndex: Int): Boolean {
+        for (i in 0 until currentIndex) {
+            for (j in 0 until row.size) {
+                if (matrix[i][j] == row[j]) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    fun Array<IntArray>.transpose(): Array<IntArray> {
+        return Array(size) { i ->
+            IntArray(this.size) { j ->
+                this[j][i]
+            }
+        }
+    }
+
 
     //Gelen sayının ne olduğuna karar verir, seçilen hücre alınıp güncellenir
     fun handleInput(number: Int) {
@@ -102,4 +147,5 @@ class SudokuGame {
         }
         cellsLiveData.postValue(board.cells)  //yeni hücreler arayüzüne gönderiliyor.
     }
+
 }
