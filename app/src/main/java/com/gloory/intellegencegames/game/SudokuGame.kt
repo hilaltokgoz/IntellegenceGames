@@ -32,10 +32,12 @@ class SudokuGame {
 
     //init bloğu, Sudoku oyunu oluşturulduğunda çağrılır.
     init {
+     val generatedArray= generateSudoku()
+        generatedArray.forEach { row -> println(row.joinToString(" ")) }
         //Hücrelerin listesine ihtiyaç bulunmakta. //9*9 boyutunda bir liste
         val cells = List(9 * 9) { i ->
             Cell(
-                i / 9, i % 9, i % 9
+                i / 9, i % 9, generatedArray[i/9][i%9]
             )
         }
 
@@ -45,45 +47,6 @@ class SudokuGame {
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
         cellsLiveData.postValue(board.cells)
         isTakingNotesLiveData.postValue(isTakingNotes)
-    }
-
-    fun randomSortingOnTheBoard(cell: List<Int>) {
-        val table = Array(9) { IntArray(9) }
-
-        for (i in 0 until 9) {
-            val rowNumbers = (1..9).shuffled().toIntArray()
-
-            while (!isValidRow(rowNumbers, table, i)) {
-                rowNumbers.shuffle()
-            }
-            table[i] = rowNumbers
-        }
-        val transposedTable = table.transpose()  // sütunda uniq sayı oluşturmak için
-        for (i in 0 until 9) {
-            for (j in 0 until 9) {
-                print("${transposedTable[i][j]} ")// Tabloya yazdırma
-            }
-            println()
-        }
-    }
-
-    fun isValidRow(row: IntArray, matrix: Array<IntArray>, currentIndex: Int): Boolean {
-        for (i in 0 until currentIndex) {
-            for (j in 0 until row.size) {
-                if (matrix[i][j] == row[j]) {
-                    return false
-                }
-            }
-        }
-        return true
-    }
-
-    fun Array<IntArray>.transpose(): Array<IntArray> {
-        return Array(size) { i ->
-            IntArray(this.size) { j ->
-                this[j][i]
-            }
-        }
     }
 
 
@@ -146,6 +109,42 @@ class SudokuGame {
             cell.value = 0 //hücre değiştiği için değer 0'a eşitlendi.
         }
         cellsLiveData.postValue(board.cells)  //yeni hücreler arayüzüne gönderiliyor.
+    }
+
+    fun generateSudoku(): Array<Array<Int>> {
+        val sudoku = Array(9) { Array(9) { 0 } }
+        fillSudoku(sudoku)
+        return sudoku
+    }
+
+    fun fillSudoku(sudoku: Array<Array<Int>>, row: Int = 0, col: Int = 0): Boolean {
+        if (row == 9) {
+            return true
+        }
+
+        val nextRow = if (col == 8) row + 1 else row
+        val nextCol = (col + 1) % 9
+
+        val shuffledNumbers = (1..9).shuffled()
+
+        for (num in shuffledNumbers) {
+            if (isValid(sudoku, row, col, num)) {
+                sudoku[row][col] = num
+                if (fillSudoku(sudoku, nextRow, nextCol)) {
+                    return true
+                }
+                sudoku[row][col] = 0
+            }
+        }
+
+        return false
+    }
+
+    fun isValid(sudoku: Array<Array<Int>>, row: Int, col: Int, num: Int): Boolean {
+        return sudoku[row].none { it == num } &&
+                sudoku.none { it[col] == num } &&
+                sudoku.sliceArray((row / 3) * 3 until (row / 3 + 1) * 3)
+                    .all { it.sliceArray((col / 3) * 3 until (col / 3 + 1) * 3).none { it == num } }
     }
 
 }
