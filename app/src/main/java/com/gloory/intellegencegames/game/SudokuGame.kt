@@ -28,28 +28,11 @@ class SudokuGame {
     private var selectedCol = -1
     private var isTakingNotes = false //not alıp almadığını tutacak
 
-    private val board: Board
-
+    private lateinit var board: Board
     //init bloğu, Sudoku oyunu oluşturulduğunda çağrılır.
     init {
-     val generatedArray= generateSudoku()
-        generatedArray.forEach { row -> println(row.joinToString(" ")) }
-        //Hücrelerin listesine ihtiyaç bulunmakta. //9*9 boyutunda bir liste
-        val cells = List(9 * 9) { i ->
-            Cell(
-                i / 9, i % 9, generatedArray[i/9][i%9]
-            )
-        }
-
-        cells[0].notes = mutableSetOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
-        board = Board(9, cells)
-
-        selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
-        cellsLiveData.postValue(board.cells)
-        isTakingNotesLiveData.postValue(isTakingNotes)
+        setDifficulty(SudokuDifficulty.EASY)
     }
-
-
     //Gelen sayının ne olduğuna karar verir, seçilen hücre alınıp güncellenir
     fun handleInput(number: Int) {
         if (selectedRow == -1 || selectedCol == -1) return
@@ -111,6 +94,7 @@ class SudokuGame {
         cellsLiveData.postValue(board.cells)  //yeni hücreler arayüzüne gönderiliyor.
     }
 
+    //sayıları rastgele board>'ta sıralatmak için
     fun generateSudoku(): Array<Array<Int>> {
         val sudoku = Array(9) { Array(9) { 0 } }
         fillSudoku(sudoku)
@@ -128,7 +112,7 @@ class SudokuGame {
         val shuffledNumbers = (1..9).shuffled()
 
         for (num in shuffledNumbers) {
-            if (isValid(sudoku, row, col, num)) {
+            if (isFiilValid(sudoku, row, col, num)) {
                 sudoku[row][col] = num
                 if (fillSudoku(sudoku, nextRow, nextCol)) {
                     return true
@@ -136,15 +120,65 @@ class SudokuGame {
                 sudoku[row][col] = 0
             }
         }
-
         return false
     }
 
-    fun isValid(sudoku: Array<Array<Int>>, row: Int, col: Int, num: Int): Boolean {
+    fun isFiilValid(sudoku: Array<Array<Int>>, row: Int, col: Int, num: Int): Boolean {
         return sudoku[row].none { it == num } &&
                 sudoku.none { it[col] == num } &&
                 sudoku.sliceArray((row / 3) * 3 until (row / 3 + 1) * 3)
                     .all { it.sliceArray((col / 3) * 3 until (col / 3 + 1) * 3).none { it == num } }
     }
 
+    fun setDifficulty(difficulty: SudokuDifficulty) {
+        val cellsToRemove = when (difficulty) {
+            SudokuDifficulty.EASY -> 43
+            SudokuDifficulty.MEDIUM -> 50
+            SudokuDifficulty.HARD -> 53
+        }
+       val generatedArray= emptyRandomCells(cellsToRemove)
+
+        generatedArray.forEach { row -> println(row.joinToString(" ")) }
+
+        //Hücrelerin listesine ihtiyaç bulunmakta. //9*9 boyutunda bir liste
+        val cells = List(9 * 9) { i ->
+            Cell(
+                i / 9, i % 9, generatedArray[i / 9][i % 9]
+            )
+        }
+        cells[0].notes = mutableSetOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
+        board = Board(9, cells)
+
+        selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
+        cellsLiveData.postValue(board.cells)
+        isTakingNotesLiveData.postValue(isTakingNotes)
+    }
+
+    // Belirli sayıda hücreyi rastgele boşaltan fonksiyon
+    private fun emptyRandomCells(cellsToEmpty: Int): Array<Array<Int>> {
+
+        val fullBoard= generateSudoku()
+        val random = java.util.Random()
+
+        repeat(cellsToEmpty) {
+            var row: Int
+            var col: Int
+
+            // Rastgele bir konum seç ve boşalt
+            do {
+                row = random.nextInt(9)
+                col = random.nextInt(9)
+            } while (fullBoard[row][col] == 0) // Eğer hücre zaten boşsa tekrar seç
+
+            fullBoard[row][col] = 0
+        }
+        return fullBoard
+    }
 }
+
+enum class SudokuDifficulty {
+    EASY,
+    MEDIUM,
+    HARD
+}
+

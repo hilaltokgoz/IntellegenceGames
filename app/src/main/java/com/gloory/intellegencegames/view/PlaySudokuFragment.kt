@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentPlaySudokuBinding
 import com.gloory.intellegencegames.game.Cell
+import com.gloory.intellegencegames.game.SudokuDifficulty
+import com.gloory.intellegencegames.game.SudokuGame
 import com.gloory.intellegencegames.view.custom.SudokuBoardView
 import com.gloory.intellegencegames.viewmodel.PlaySudokuViewModel
 
@@ -25,6 +27,8 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     private lateinit var viewModel: PlaySudokuViewModel//view model görüntülenmek içn çağrılır.
     private var buttonList: List<Button>? = null
+
+    var selectedDifficulty = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,24 +43,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         super.onViewCreated(view, savedInstanceState)
         binding.sudokuBoardView.registerListener(this)
 
-        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-        builder
-            .setTitle("Zorluk Derecesini Seçiniz...")
-            .setPositiveButton("Tamam") { dialog, which ->
-                //TODO: İtem seçimine göre bazı kutular random olarak silinecek
-                //Kolay-> 45, Orta-> 50, zor-> 53 kutu silinecek
-
-            }
-            .setSingleChoiceItems(
-                arrayOf("Kolay", "Orta", "Zor"), 0
-            ) { dialog, which ->
-
-            }
-
-
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
-
+        showDifficultyDialog()
 
         //fragmentta bi şey yaratıldığında  aktarılır
         viewModel = ViewModelProviders.of(this)[PlaySudokuViewModel::class.java]
@@ -102,6 +89,36 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }
     }
 
+    //zorluk derecesini belirlemek için alertDialog kullanıldı.
+    private fun showDifficultyDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder
+            .setTitle("Zorluk Seviyesini Seçiniz...")
+            .setSingleChoiceItems(
+                arrayOf("Kolay", "Orta", "Zor"), 0
+            ) { _, which ->
+                selectedDifficulty = which
+            }
+            .setPositiveButton("Tamam") { dialog, which ->
+                val difficulty= when (selectedDifficulty) {
+                    0 -> {
+                        SudokuDifficulty.EASY
+                    }
+                    1 -> {
+                        SudokuDifficulty.MEDIUM
+                    }
+                    2 -> {
+                        SudokuDifficulty.HARD
+                    }
+                    else -> SudokuDifficulty.EASY
+                }
+                viewModel.sudokuGame.setDifficulty(difficulty)
+            }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+
+    }
     //let bloğu boş değilse günceller.
     private fun updateNoteTakingUI(isNoteTaking: Boolean?) = isNoteTaking?.let {
         val color =
