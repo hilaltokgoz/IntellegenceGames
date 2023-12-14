@@ -101,6 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_row="3"
             android:layout_column="0"
+            app:backgroundTint="@color/light_gray"
             app:srcCompat="@drawable/edit_pen_black" />
 
         <ImageButton
@@ -108,7 +109,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="3"
-            android:layout_column="2"
+            app:backgroundTint="@color/light_gray"
+            android:layout_column="1"
             app:srcCompat="@drawable/delete_black" />
+
+        <Button
+            android:id="@+id/checkButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backgroundTint="@color/light_gray"
+            android:textColor="@color/black"
+            android:text="Kontrol Et"
+            android:layout_row="3"
+            android:layout_column="2"
+
+
+
+            />
+
+
     </GridLayout>
 </RelativeLayout>

@@ -1,6 +1,7 @@
 package com.gloory.intellegencegames.view
 
 import android.app.AlertDialog
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -16,7 +17,6 @@ import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentPlaySudokuBinding
 import com.gloory.intellegencegames.game.Cell
 import com.gloory.intellegencegames.game.SudokuDifficulty
-import com.gloory.intellegencegames.game.SudokuGame
 import com.gloory.intellegencegames.view.custom.SudokuBoardView
 import com.gloory.intellegencegames.viewmodel.PlaySudokuViewModel
 
@@ -24,6 +24,8 @@ import com.gloory.intellegencegames.viewmodel.PlaySudokuViewModel
 class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private var _binding: FragmentPlaySudokuBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var sudokuView: SudokuBoardView
 
     private lateinit var viewModel: PlaySudokuViewModel//view model görüntülenmek içn çağrılır.
     private var buttonList: List<Button>? = null
@@ -44,6 +46,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         binding.sudokuBoardView.registerListener(this)
 
         showDifficultyDialog()
+
 
         //fragmentta bi şey yaratıldığında  aktarılır
         viewModel = ViewModelProviders.of(this)[PlaySudokuViewModel::class.java]
@@ -86,6 +89,9 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
             deleteButton.setOnClickListener {
                 viewModel.sudokuGame.delete()
             }
+            checkButton.setOnClickListener {
+                checkConflicts()
+            }
         }
     }
 
@@ -100,7 +106,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 selectedDifficulty = which
             }
             .setPositiveButton("Tamam") { dialog, which ->
-                val difficulty= when (selectedDifficulty) {
+                val difficulty = when (selectedDifficulty) {
                     0 -> {
                         SudokuDifficulty.EASY
                     }
@@ -119,6 +125,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         dialog.show()
 
     }
+
     //let bloğu boş değilse günceller.
     private fun updateNoteTakingUI(isNoteTaking: Boolean?) = isNoteTaking?.let {
         val color =
@@ -154,5 +161,16 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewModel.sudokuGame.updateSelectedCell(row, col)
     }
 
+    fun checkButton() {
+        binding.checkButton.setOnClickListener {
 
+            /***
+            Kontrol et butonuna tıklandığında etrafında bulunan açık gri renkli hücrelerde yer alan
+            sayı tekrarlandıysa o hücreleri kırmızı yap.
+             ***/
+        }
+    }
+    private fun checkConflicts() {
+        sudokuView.checkConflictsAndDraw(Canvas())
+    }
 }

@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import com.gloory.intellegencegames.game.Cell
+import com.gloory.intellegencegames.game.SudokuGame
 import kotlin.math.min
 
 // Code with ❤️
@@ -68,6 +69,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         color = Color.BLACK
         typeface = Typeface.DEFAULT_BOLD
     }
+    //diğer hücrelerle olan bağlantı
     private val startingCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.parseColor("#acacac")
@@ -77,6 +79,10 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private val noteTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
+    }
+    private val conflictCellPaint = Paint().apply {
+        color = Color.RED
+        style = Paint.Style.FILL
     }
 
     //Görünüm ne kadar büyük olacak. Kare tahtayı korumak için
@@ -258,5 +264,44 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         fun onCellTouched(row: Int, col: Int) {
         }
     }
+
+    fun checkConflictsAndDraw(canvas: Canvas) {
+
+        cells?.let { (row, col) ->
+            val selectedNumber = board[row][col]
+
+            // Çelişki kontrolü için seçilen hücrenin satır ve sütununu kontrol et
+            for (i in 0 until 9) {
+                // Aynı satırdaki çelişki kontrolü
+                if (i != selectedCol && selectedNumber ==board [row][i]) {
+                    drawConflictCell(canvas, selectedRow, i)
+                }
+
+                // Aynı sütundaki çelişki kontrolü
+                if (i != selectedRow && selectedNumber == board[i][selectedCol]) {
+                    drawConflictCell(canvas, i, selectedCol)
+                }
+            }
+
+            // 3x3'lük bölge içinde çelişki kontrolü
+            val startRow = selectedRow / 9 * 9
+            val startCol = selectedCol / 9 * 9
+            for (i in startRow until startRow + 9) {
+                for (j in startCol until startCol + 9) {
+                    if (!(i == selectedRow && j == selectedCol) && selectedNumber == board[i][j]) {
+                        drawConflictCell(canvas, i, j)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun drawConflictCell(canvas: Canvas, row: Int, col: Int) {
+        // Çelişki olan hücreyi belirtilen renkte boyar
+        val left = col * cellSizePixels
+        val top = row * cellSizePixels
+        canvas.drawRect(left, top, left + cellSizePixels, top + cellSizePixels, conflictCellPaint)
+    }
+
 
 }
