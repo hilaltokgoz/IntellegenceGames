@@ -15,7 +15,7 @@ import androidx.lifecycle.MutableLiveData
 //LiveData'lar burada tutulacak
 //LiveData'ya view-viewModel arasındaki bağlantıyı sağlar.
 //Güncelleme geldiğinde view bunu görür,kendi alanlarının günceller
-class SudokuGame {
+open class SudokuGame {
     //Seçilen değiştirilebilir LiveData verisi
     var selectedCellLiveData =
         MutableLiveData<Pair<Int, Int>>() //seçilen hücre saklanmak için kullanılır
@@ -95,7 +95,7 @@ class SudokuGame {
     }
 
     //sayıları rastgele board>'ta sıralatmak için
-    fun generateSudoku(): Array<Array<Int>> {
+    open fun generateSudoku(): Array<Array<Int>> {
         val sudoku = Array(9) { Array(9) { 0 } }
         fillSudoku(sudoku)
         return sudoku

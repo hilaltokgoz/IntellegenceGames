@@ -23,6 +23,8 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var sqrtSize = 3
     private var size = 9
 
+    private val sudokuBoard = SudokuGame().generateSudoku()
+
     private var cellSizePixels = 0F
     private var noteSizePixels = 0F
 
@@ -268,17 +270,17 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     fun checkConflictsAndDraw(canvas: Canvas) {
 
         cells?.let { (row, col) ->
-            val selectedNumber = board[row][col]
+            val selectedNumber = sudokuBoard[selectedRow][selectedCol]
 
             // Çelişki kontrolü için seçilen hücrenin satır ve sütununu kontrol et
             for (i in 0 until 9) {
                 // Aynı satırdaki çelişki kontrolü
-                if (i != selectedCol && selectedNumber ==board [row][i]) {
+                if (i != selectedCol && selectedNumber ==sudokuBoard [selectedRow][i]) {
                     drawConflictCell(canvas, selectedRow, i)
                 }
 
                 // Aynı sütundaki çelişki kontrolü
-                if (i != selectedRow && selectedNumber == board[i][selectedCol]) {
+                if (i != selectedRow && selectedNumber == sudokuBoard[i][selectedCol]) {
                     drawConflictCell(canvas, i, selectedCol)
                 }
             }
@@ -288,7 +290,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             val startCol = selectedCol / 9 * 9
             for (i in startRow until startRow + 9) {
                 for (j in startCol until startCol + 9) {
-                    if (!(i == selectedRow && j == selectedCol) && selectedNumber == board[i][j]) {
+                    if (!(i == selectedRow && j == selectedCol) && selectedNumber == sudokuBoard[i][j]) {
                         drawConflictCell(canvas, i, j)
                     }
                 }

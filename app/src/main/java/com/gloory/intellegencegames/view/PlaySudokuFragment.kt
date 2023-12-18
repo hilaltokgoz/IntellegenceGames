@@ -161,15 +161,6 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewModel.sudokuGame.updateSelectedCell(row, col)
     }
 
-    fun checkButton() {
-        binding.checkButton.setOnClickListener {
-
-            /***
-            Kontrol et butonuna tıklandığında etrafında bulunan açık gri renkli hücrelerde yer alan
-            sayı tekrarlandıysa o hücreleri kırmızı yap.
-             ***/
-        }
-    }
     private fun checkConflicts() {
         sudokuView.checkConflictsAndDraw(Canvas())
     }
