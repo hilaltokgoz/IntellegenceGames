@@ -3,10 +3,10 @@ package com.gloory.intellegencegames.view.custom
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.gloory.intellegencegames.game.Cell
-import com.gloory.intellegencegames.game.SudokuGame
 import kotlin.math.min
 
 // Code with ❤️
@@ -23,7 +23,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var sqrtSize = 3
     private var size = 9
 
-    private val sudokuBoard = SudokuGame().generateSudoku()
+    private var conflictedCellList = mutableListOf<Cell>()
 
     private var cellSizePixels = 0F
     private var noteSizePixels = 0F
@@ -71,6 +71,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         color = Color.BLACK
         typeface = Typeface.DEFAULT_BOLD
     }
+
     //diğer hücrelerle olan bağlantı
     private val startingCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
@@ -82,9 +83,9 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
     }
-    private val conflictCellPaint = Paint().apply {
-        color = Color.RED
-        style = Paint.Style.FILL
+    private val redPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.parseColor("#FF3325")
     }
 
     //Görünüm ne kadar büyük olacak. Kare tahtayı korumak için
@@ -126,6 +127,11 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                 fillCell(canvas, r, c, conflictingCellPaint)
             }
         }
+        Log.i("hilal", "checkConflictsAndDraw: conflict " + conflictedCellList.size)
+        conflictedCellList.forEach {
+            fillCell(canvas, it.row, it.col, redPaint)
+        }
+        conflictedCellList.clear()
     }
 
     //Hücre başlangıcından diğer hücre başlangıcına kadar dikdörtgen çizer.
@@ -188,7 +194,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                 cell.notes.forEach { note ->
                     val rowInCell = (note - 1) / sqrtSize
                     val colInCell = (note - 1) % sqrtSize
-                    val valueString=note.toString()
+                    val valueString = note.toString()
                     noteTextPaint.getTextBounds(valueString, 0, valueString.length, textBounds)
                     val textWidth = noteTextPaint.measureText(valueString)
                     val textHeight = textBounds.height()
@@ -248,6 +254,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     fun updateSelectedCellUI(row: Int, col: Int) {
         selectedRow = row
         selectedCol = col
+        checkConflictsAndDraw()
         invalidate()// kulllanıcı arayüzündeki her şey yeniden çizilir.
     }
 
@@ -267,42 +274,27 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         }
     }
 
-    fun checkConflictsAndDraw(canvas: Canvas) {
-
-        cells?.let { (row, col) ->
-            val selectedNumber = sudokuBoard[selectedRow][selectedCol]
-
-            // Çelişki kontrolü için seçilen hücrenin satır ve sütununu kontrol et
-            for (i in 0 until 9) {
-                // Aynı satırdaki çelişki kontrolü
-                if (i != selectedCol && selectedNumber ==sudokuBoard [selectedRow][i]) {
-                    drawConflictCell(canvas, selectedRow, i)
-                }
-
-                // Aynı sütundaki çelişki kontrolü
-                if (i != selectedRow && selectedNumber == sudokuBoard[i][selectedCol]) {
-                    drawConflictCell(canvas, i, selectedCol)
+    fun checkConflictsAndDraw() {
+        conflictedCellList.clear()
+        cells?.forEach { cell ->
+            val selectedRow = cell.row
+            val selectedCol = cell.col
+            var conflicted = false
+            cells?.forEach { cell2 ->
+                val c = cell2.col
+                val r = cell2.row
+                if (r == selectedRow || c == selectedCol) {
+                    conflicted = true
+                    Log.i("hilal", "checkConflictsAndDraw: conflict ")
+                } else if (r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize) {
+                    conflicted = true
+                    Log.i("hilal", "checkConflictsAndDraw: conflict ")
                 }
             }
-
-            // 3x3'lük bölge içinde çelişki kontrolü
-            val startRow = selectedRow / 9 * 9
-            val startCol = selectedCol / 9 * 9
-            for (i in startRow until startRow + 9) {
-                for (j in startCol until startCol + 9) {
-                    if (!(i == selectedRow && j == selectedCol) && selectedNumber == sudokuBoard[i][j]) {
-                        drawConflictCell(canvas, i, j)
-                    }
-                }
+            if (conflicted) {
+              conflictedCellList.add(cell)
             }
         }
-    }
-
-    private fun drawConflictCell(canvas: Canvas, row: Int, col: Int) {
-        // Çelişki olan hücreyi belirtilen renkte boyar
-        val left = col * cellSizePixels
-        val top = row * cellSizePixels
-        canvas.drawRect(left, top, left + cellSizePixels, top + cellSizePixels, conflictCellPaint)
     }
 
 

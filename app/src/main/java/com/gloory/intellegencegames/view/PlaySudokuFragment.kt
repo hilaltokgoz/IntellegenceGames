@@ -25,8 +25,6 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private var _binding: FragmentPlaySudokuBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var sudokuView: SudokuBoardView
-
     private lateinit var viewModel: PlaySudokuViewModel//view model görüntülenmek içn çağrılır.
     private var buttonList: List<Button>? = null
 
@@ -162,6 +160,6 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
     private fun checkConflicts() {
-        sudokuView.checkConflictsAndDraw(Canvas())
+      //  binding.sudokuBoardView.checkConflictsAndDraw()
     }
 }

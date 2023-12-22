@@ -68,6 +68,8 @@ open class SudokuGame {
                 highlightedKeysLiveData.postValue(cell.notes)//mevcut hücrenin değeri yayınlanır
             }
         }
+
+        println(" Hilal Test " + cell.notes.toString())
     }
 
     //Not alma durumunu değiştiren fonk.
@@ -95,7 +97,7 @@ open class SudokuGame {
     }
 
     //sayıları rastgele board>'ta sıralatmak için
-    open fun generateSudoku(): Array<Array<Int>> {
+      fun generateSudoku(): Array<Array<Int>> {
         val sudoku = Array(9) { Array(9) { 0 } }
         fillSudoku(sudoku)
         return sudoku
