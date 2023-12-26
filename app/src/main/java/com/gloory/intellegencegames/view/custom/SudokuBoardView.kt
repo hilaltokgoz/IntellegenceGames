@@ -103,7 +103,6 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         drawLine(canvas)
         drawText(canvas)
         this.canvas = canvas
-
     }
 
     private fun updateMeasurements(width: Int) {
@@ -136,7 +135,6 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             val c = it.col
             fillCell(canvas, r, c, redPaint)
         }
-
     }
 
     //Hücre başlangıcından diğer hücre başlangıcına kadar dikdörtgen çizer.
@@ -191,7 +189,6 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private fun drawText(canvas: Canvas) {
         cells?.forEach { cell ->
             val value = cell.value
-
             val textBounds = Rect()
 
             if (value == 0) {
@@ -247,7 +244,6 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             }
             else -> false
         }
-
     }
 
     private fun handleTouchEvent(x: Float, y: Float) { //seçilenleri satır ve sütuna çevirmeliyiz
@@ -271,7 +267,6 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         this.cells = cells
         invalidate() //geçersiz kılkar,hücreler yeniden oluşturulur.
     }
-
 
     //verileri kaçmadığından emin olmak için
     interface OnTouchListener {
@@ -308,5 +303,4 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         }
         invalidate()
     }
-
 }
