@@ -26,6 +26,10 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var cellSizePixels = 0F
     private var noteSizePixels = 0F
 
+    var canvas: Canvas? = null
+
+    var conflictedList = mutableListOf<Cell>()
+
     //Başlangıçta seçili satır ya da sütun yok o yüzden negatif ayarlandı.
     private var selectedRow = 0
     private var selectedCol = 0
@@ -98,6 +102,8 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         fillCells(canvas)
         drawLine(canvas)
         drawText(canvas)
+        this.canvas = canvas
+
     }
 
     private fun updateMeasurements(width: Int) {
@@ -124,6 +130,11 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             } else if (r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize) {
                 fillCell(canvas, r, c, conflictingCellPaint)
             }
+        }
+        conflictedList.forEach {
+            val r = it.row
+            val c = it.col
+            fillCell(canvas, r, c, redPaint)
         }
 
     }
@@ -269,20 +280,33 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     fun checkConflictsAndDraw() {
-        cells?.forEachIndexed { index1, cell ->
-            val selectedRow = cell.row
-            val selectedCol = cell.col
-            cells?.forEachIndexed { index2, cell2 ->
-                val c = cell2.col
-                val r = cell2.row
-                if(cell.value == cell2.value && cell.value != 0 && index1 != index2){
-                    if (r == selectedRow || c == selectedCol) {
-                        Log.i("hilal","Confilicted cell col:${cell.col} - row:${cell.row} - value:${cell.value} (ROW-COL)")
-                    } else if (r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize) {
-                        Log.i("hilal","Confilicted cell col:${cell.col} - row:${cell.row} - value:${cell.value} (SQRT)")
+        conflictedList.clear()
+        canvas?.let { canvas ->
+            cells?.forEachIndexed { index1, cell ->
+                val selectedRow = cell.row
+                val selectedCol = cell.col
+                cells?.forEachIndexed { index2, cell2 ->
+                    val c = cell2.col
+                    val r = cell2.row
+                    if (cell.value == cell2.value && cell.value != 0 && index1 != index2) {
+                        if (r == selectedRow || c == selectedCol) {
+                            Log.i(
+                                "hilal",
+                                "Confilicted cell col:${cell.col} - row:${cell.row} - value:${cell.value} (ROW-COL)"
+                            )
+                            conflictedList.add(cell)
+                        } else if (r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize) {
+                            Log.i(
+                                "hilal",
+                                "Confilicted cell col:${cell.col} - row:${cell.row} - value:${cell.value} (SQRT)"
+                            )
+                            conflictedList.add(cell)
+                        }
                     }
                 }
             }
         }
+        invalidate()
     }
+
 }
