@@ -23,8 +23,6 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var sqrtSize = 3
     private var size = 9
 
-    private var conflictedCellList = mutableListOf<Cell>()
-
     private var cellSizePixels = 0F
     private var noteSizePixels = 0F
 
@@ -127,11 +125,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                 fillCell(canvas, r, c, conflictingCellPaint)
             }
         }
-        Log.i("hilal", "checkConflictsAndDraw: conflict " + conflictedCellList.size)
-        conflictedCellList.forEach {
-            fillCell(canvas, it.row, it.col, redPaint)
-        }
-        conflictedCellList.clear()
+
     }
 
     //Hücre başlangıcından diğer hücre başlangıcına kadar dikdörtgen çizer.
@@ -275,27 +269,20 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     fun checkConflictsAndDraw() {
-        conflictedCellList.clear()
-        cells?.forEach { cell ->
+        cells?.forEachIndexed { index1, cell ->
             val selectedRow = cell.row
             val selectedCol = cell.col
-            var conflicted = false
-            cells?.forEach { cell2 ->
+            cells?.forEachIndexed { index2, cell2 ->
                 val c = cell2.col
                 val r = cell2.row
-                if (r == selectedRow || c == selectedCol) {
-                    conflicted = true
-                    Log.i("hilal", "checkConflictsAndDraw: conflict ")
-                } else if (r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize) {
-                    conflicted = true
-                    Log.i("hilal", "checkConflictsAndDraw: conflict ")
+                if(cell.value == cell2.value && cell.value != 0 && index1 != index2){
+                    if (r == selectedRow || c == selectedCol) {
+                        Log.i("hilal","Confilicted cell col:${cell.col} - row:${cell.row} - value:${cell.value} (ROW-COL)")
+                    } else if (r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize) {
+                        Log.i("hilal","Confilicted cell col:${cell.col} - row:${cell.row} - value:${cell.value} (SQRT)")
+                    }
                 }
-            }
-            if (conflicted) {
-              conflictedCellList.add(cell)
             }
         }
     }
-
-
 }

@@ -160,6 +160,6 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
     private fun checkConflicts() {
-      //  binding.sudokuBoardView.checkConflictsAndDraw()
+      binding.sudokuBoardView.checkConflictsAndDraw()
     }
 }
