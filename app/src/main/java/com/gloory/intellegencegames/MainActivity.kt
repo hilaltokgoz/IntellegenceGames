@@ -13,13 +13,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import com.gloory.intellegencegames.databinding.ActivityMainBinding
 import com.gloory.intellegencegames.viewmodel.PlaySudokuViewModel
 
 class MainActivity : AppCompatActivity() {
 
-   // private lateinit var appBarConfiguration: AppBarConfiguration
-    //private lateinit var binding: ActivityMainBinding
+    private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {

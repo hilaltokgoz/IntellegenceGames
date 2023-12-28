@@ -3,11 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/playSudokuFragment">
+    app:startDestination="@id/homeFragment">
 
     <fragment
         android:id="@+id/playSudokuFragment"
         android:name="com.gloory.intellegencegames.view.PlaySudokuFragment"
         android:label="fragment_play_sudoku"
         tools:layout="@layout/fragment_play_sudoku" />
+    <fragment
+        android:id="@+id/matchingGameFragment"
+        android:name="com.gloory.intellegencegames.view.MatchingGameFragment"
+        android:label="fragment_matching_game"
+        tools:layout="@layout/fragment_matching_game" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.gloory.intellegencegames.view.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_playSudokuFragment"
+            app:destination="@id/playSudokuFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_matchingGameFragment"
+            app:destination="@id/matchingGameFragment" />
+    </fragment>
+
+
 </navigation>
