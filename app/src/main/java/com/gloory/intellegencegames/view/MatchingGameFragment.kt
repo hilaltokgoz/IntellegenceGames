@@ -1,21 +1,21 @@
 package com.gloory.intellegencegames.view
 
+import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.GridLayout
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentMatchingGameBinding
 
+
 class MatchingGameFragment : Fragment() {
     private var _binding: FragmentMatchingGameBinding? = null
     private val binding get() = _binding!!
+    var selectedDifficulty = 0
 
     val images = mutableListOf(
         R.drawable.bat,
@@ -24,79 +24,73 @@ class MatchingGameFragment : Fragment() {
         R.drawable.panda,
         R.drawable.parrot,
         R.drawable.spider,
+        R.drawable.bear,
+        R.drawable.chicken,
+        R.drawable.coala,
+        R.drawable.deer,
+        R.drawable.panda2,
+        R.drawable.rabbit
     )
-    private lateinit var imageViews: List<ImageButton>
-    private var selectedImages = mutableListOf<Int>()
-    private var matchedPairs = 0 //eşleşen çiftler
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMatchingGameBinding.inflate(inflater, container, false)
+        showAlertDialog()
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.apply {
-            imageViews = listOf(
-                button, button1, button2, button3, button4, button5, button6,
-                button7, button8, button9, button10, button11
-            )
-        }
-        resetGame()
-    }
-
-    //Random resimler seçilecek.
-    private fun resetGame() {
-        val selectedImagesList = mutableListOf<Int>()
-        for (i in 0 until imageViews.size / 2) {
-            val randomImage = images.random()
-            selectedImagesList.add(randomImage)
-            selectedImagesList.add(randomImage)
-        }
-        selectedImages = selectedImagesList.shuffled().toMutableList()
-        // ImageView'ları sıfırla
-        for ((index, imageView) in imageViews.withIndex()) {
-            imageView.setImageResource(R.drawable.gamecontroller)
-            imageView.tag = index
-            imageView.setOnClickListener { onImageClicked(it) }
-        }
-        matchedPairs = 0
-    }
-
-    private fun onImageClicked(view: View) {
-        val imageView = view as ImageView
-        val position = imageView.tag as Int
-        val selectedImage = selectedImages[position]
-
-        imageView.setImageResource(selectedImage)
-        imageView.setOnClickListener(null)
-
-        if (selectedImages.size == 2) {
-            if (selectedImages[0] == selectedImages[1]) {// Eşleşme var
-                matchedPairs++
-                if (matchedPairs == imageViews.size / 2) {
-                    // Oyun tamamlandı
-                    Toast.makeText(requireContext(), "Oyun tamamlandı!", Toast.LENGTH_SHORT).show()
-                    Handler(Looper.getMainLooper()).postDelayed({ resetGame() }, 1000)
-                }
-            } else {// Eşleşme yok, beklet ve geri çevir
-                Handler(Looper.getMainLooper()).postDelayed({
-                    imageViews.forEach {
-                        it.setImageResource(R.drawable.gamecontroller)
-                        it.setOnClickListener { onImageClicked(it) }
-                    }
-                }, 1000)
+    private fun showAlertDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder
+            .setTitle("Zorluk Seviyesini Seçiniz...")
+            .setSingleChoiceItems(
+                arrayOf("Kolay", "Orta", "Zor"), 0
+            ) { _, which ->
+                selectedDifficulty = which
             }
-            selectedImages.clear()
-        } else { // İkinci resmi bekliyoruz
-            selectedImages.add(selectedImage)
-        }
+            .setPositiveButton("Tamam") { dialog, which ->
+                when (selectedDifficulty) {
+                    0 -> {
+                        addImage(3,3)
+                    }
+                    1 -> {
+                        addImage(4,4)
+                    }
+                    2 -> {
+                        addImage(5,5)
+                    }
+                    else -> {
+                        addImage(3,3)
+                    }
+                }
+            }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
+    fun addImage(rowCount: Int,columnCount:Int) {
+        val shuffledImage = images.shuffled()
+
+        for (i in 0..rowCount*columnCount){
+            for (j in 0..shuffledImage.size){
+                val imageView = ImageView(requireContext())
+                imageView.setImageResource(R.drawable.gamecontroller)
+                imageView.layoutParams = ViewGroup.LayoutParams(150, 150)
+
+
+                binding.mainGrid.addView(imageView)
+
+            }
+
+        }
+
+
+
+
+
+    }
 
 }
 
