@@ -53,16 +53,16 @@ class MatchingGameFragment : Fragment() {
             .setPositiveButton("Tamam") { dialog, which ->
                 when (selectedDifficulty) {
                     0 -> {
-                        addImage(3,3)
+                        addImage(3, 3)
                     }
                     1 -> {
-                        addImage(4,4)
+                        addImage(4, 4)
                     }
                     2 -> {
-                        addImage(5,5)
+                        addImage(5, 5)
                     }
                     else -> {
-                        addImage(3,3)
+                        addImage(3, 3)
                     }
                 }
             }
@@ -70,27 +70,26 @@ class MatchingGameFragment : Fragment() {
         dialog.show()
     }
 
-    fun addImage(rowCount: Int,columnCount:Int) {
+    fun addImage(rowCount: Int, columnCount: Int) {
         val shuffledImage = images.shuffled()
 
-        for (i in 0..rowCount*columnCount){
-            for (j in 0..shuffledImage.size){
+        for (i in 0 until rowCount) {
+            for (j in 0 until columnCount){
                 val imageView = ImageView(requireContext())
-                imageView.setImageResource(R.drawable.gamecontroller)
-                imageView.layoutParams = ViewGroup.LayoutParams(150, 150)
+                imageView.setImageResource(R.drawable.delete_black)
 
+                val params = GridLayout.LayoutParams()
+                params.rowSpec = GridLayout.spec(i)
+                params.columnSpec = GridLayout.spec(j)
+                imageView.layoutParams=params
 
+                imageView.scaleType = ImageView.ScaleType.FIT_CENTER
                 binding.mainGrid.addView(imageView)
-
             }
-
         }
-
-
-
-
-
     }
 
 }
+
+
 
