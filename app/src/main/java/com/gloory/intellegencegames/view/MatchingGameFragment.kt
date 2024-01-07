@@ -31,7 +31,15 @@ class MatchingGameFragment : Fragment() {
         R.drawable.tsunami,
         R.drawable.weekend,
         R.drawable.whatshot,
-        R.drawable.wind_power
+        R.drawable.wind_power,
+        R.drawable.cookie,
+        R.drawable.pool,
+        R.drawable.heart_broken,
+        R.drawable.toys,
+        R.drawable.tv,
+        R.drawable.train,
+        R.drawable.two_wheeler,
+        R.drawable.vaccines
     )
 
     override fun onCreateView(
