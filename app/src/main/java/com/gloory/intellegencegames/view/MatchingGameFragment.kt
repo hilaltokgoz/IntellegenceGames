@@ -63,15 +63,27 @@ class MatchingGameFragment : Fragment() {
                         addImage(3, 4)
                     }
                     1 -> {
-                        currentShuffledImages = images.shuffled()
+                        val imageCount= (4*5)/2
+                        val selectedImages= images.shuffled().filterIndexed { index, i ->
+                            index<imageCount
+                        }
+                        currentShuffledImages = (selectedImages+selectedImages).shuffled()
                         addImage(4, 5)
                     }
                     2 -> {
-                        currentShuffledImages = images.shuffled()
+                        val imageCount= (5*6)/2
+                        val selectedImages= images.shuffled().filterIndexed { index, i ->
+                            index<imageCount
+                        }
+                        currentShuffledImages = (selectedImages+selectedImages).shuffled()
                         addImage(5, 6)
                     }
                     else -> {
-                        currentShuffledImages = images.shuffled()
+                        val imageCount= (3*4)/2
+                        val selectedImages= images.shuffled().filterIndexed { index, i ->
+                            index<imageCount
+                        }
+                        currentShuffledImages = (selectedImages+selectedImages).shuffled()
                         addImage(3, 4)
                     }
                 }
