@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentMatchingGameBinding
@@ -17,19 +18,20 @@ class MatchingGameFragment : Fragment() {
     private val binding get() = _binding!!
     var selectedDifficulty = 0
 
-    val images = mutableListOf(
-        R.drawable.bat,
-        R.drawable.butterfly,
-        R.drawable.dove,
-        R.drawable.panda,
-        R.drawable.parrot,
-        R.drawable.spider,
-        R.drawable.bear,
-        R.drawable.chicken,
-        R.drawable.coala,
-        R.drawable.deer,
-        R.drawable.panda2,
-        R.drawable.rabbit
+    private lateinit var currentShuffledImages: List<Int>
+
+    private var flippedPositions = mutableSetOf<Int>()
+    private var matchedPairs = 0
+
+    val images = listOf(
+        R.drawable.sports_handball,
+        R.drawable.sports_tennis,
+        R.drawable.theater_comedy,
+        R.drawable.timer,
+        R.drawable.tsunami,
+        R.drawable.weekend,
+        R.drawable.whatshot,
+        R.drawable.wind_power
     )
 
     override fun onCreateView(
@@ -53,16 +55,24 @@ class MatchingGameFragment : Fragment() {
             .setPositiveButton("Tamam") { dialog, which ->
                 when (selectedDifficulty) {
                     0 -> {
-                        addImage(3, 3)
+                        val imageCount= (3*4)/2
+                        val selectedImages= images.shuffled().filterIndexed { index, i ->
+                            index<imageCount
+                        }
+                        currentShuffledImages = (selectedImages+selectedImages).shuffled()
+                        addImage(3, 4)
                     }
                     1 -> {
-                        addImage(4, 4)
+                        currentShuffledImages = images.shuffled()
+                        addImage(4, 5)
                     }
                     2 -> {
-                        addImage(5, 5)
+                        currentShuffledImages = images.shuffled()
+                        addImage(5, 6)
                     }
                     else -> {
-                        addImage(3, 3)
+                        currentShuffledImages = images.shuffled()
+                        addImage(3, 4)
                     }
                 }
             }
@@ -71,24 +81,80 @@ class MatchingGameFragment : Fragment() {
     }
 
     fun addImage(rowCount: Int, columnCount: Int) {
-        val shuffledImage = images.shuffled()
+
+        val shuffledImages = images.shuffled()
 
         for (i in 0 until rowCount) {
-            for (j in 0 until columnCount){
+            for (j in 0 until columnCount) {
                 val imageView = ImageView(requireContext())
-                imageView.setImageResource(R.drawable.delete_black)
+                imageView.setImageResource(R.drawable.back_image)
 
+                val index = i * columnCount + j
+                imageView.tag = index
+
+                // imageView.setImageResource(selectedImages[random.nextInt(selectedImages.size)])
                 val params = GridLayout.LayoutParams()
                 params.rowSpec = GridLayout.spec(i)
                 params.columnSpec = GridLayout.spec(j)
-                imageView.layoutParams=params
-
+                imageView.layoutParams = params
                 imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+                imageView.layoutParams.width=binding.mainGrid.width /columnCount
+                imageView.layoutParams.height=binding.mainGrid.width /rowCount
+
+                imageView.setOnClickListener { onImageClicked(imageView) }
                 binding.mainGrid.addView(imageView)
             }
         }
     }
 
+    private fun onImageClicked(imageView: ImageView) {
+        val currentPosition = imageView.tag as Int
+
+        if (flippedPositions.size < 2 && currentPosition !in flippedPositions) {
+            flippedPositions.add(currentPosition)
+            imageView.setImageResource(currentShuffledImages[currentPosition])
+
+            if (flippedPositions.size == 2) {
+                checkMatch(binding.mainGrid.columnCount)
+            }
+        }
+    }
+
+    private fun checkMatch(columnCount:Int) {
+        val positions = flippedPositions.toList()
+        val indices = positions.map { it % columnCount + it / columnCount * columnCount }
+        val image1 = currentShuffledImages[indices[0]]
+        val image2 = currentShuffledImages[indices[1]]
+
+        if (image1 == image2) {
+            // Eşleşme durumu
+            flippedPositions.clear()
+            matchedPairs++
+
+            if (matchedPairs == images.size / 2) {
+                showCongratulationsMessage()  // Oyun tamamlandı
+            }
+        } else {
+            // Eşleşmeme durumu
+            // Resimleri ters çevir ve bekle
+            binding.mainGrid.postDelayed({
+                for (position in flippedPositions) {
+                    val imageView = binding.mainGrid.getChildAt(position) as ImageView
+                    imageView.setImageResource(R.drawable.back_image)
+                }
+                flippedPositions.clear()
+            }, 1000)
+        }
+    }
+
+    private fun showCongratulationsMessage() {
+
+        Toast.makeText(requireContext(),"Tebrikler! Oyunu başarıyla tamamladınız.",Toast.LENGTH_SHORT).show()
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
 
 
