@@ -192,15 +192,6 @@ class MatchingGameFragment : Fragment() {
 
     }
 
-    private fun resetGame() {
-        when (selectedDifficulty) {
-            0 -> addImage(3, 4)
-            1 -> addImage(4, 5)
-            2 -> addImage(5, 6)
-            else -> addImage(3, 4)
-        }
-        matchedPairs = 0
-    }
 }
 
 
