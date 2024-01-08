@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentMatchingGameBinding
 
@@ -63,35 +63,35 @@ class MatchingGameFragment : Fragment() {
             .setPositiveButton("Tamam") { dialog, which ->
                 when (selectedDifficulty) {
                     0 -> {
-                        val imageCount= (3*4)/2
-                        val selectedImages= images.shuffled().filterIndexed { index, i ->
-                            index<imageCount
+                        val imageCount = (3 * 4) / 2
+                        val selectedImages = images.shuffled().filterIndexed { index, i ->
+                            index < imageCount
                         }
-                        currentShuffledImages = (selectedImages+selectedImages).shuffled()
+                        currentShuffledImages = (selectedImages + selectedImages).shuffled()
                         addImage(3, 4)
                     }
                     1 -> {
-                        val imageCount= (4*5)/2
-                        val selectedImages= images.shuffled().filterIndexed { index, i ->
-                            index<imageCount
+                        val imageCount = (4 * 5) / 2
+                        val selectedImages = images.shuffled().filterIndexed { index, i ->
+                            index < imageCount
                         }
-                        currentShuffledImages = (selectedImages+selectedImages).shuffled()
+                        currentShuffledImages = (selectedImages + selectedImages).shuffled()
                         addImage(4, 5)
                     }
                     2 -> {
-                        val imageCount= (5*6)/2
-                        val selectedImages= images.shuffled().filterIndexed { index, i ->
-                            index<imageCount
+                        val imageCount = (5 * 6) / 2
+                        val selectedImages = images.shuffled().filterIndexed { index, i ->
+                            index < imageCount
                         }
-                        currentShuffledImages = (selectedImages+selectedImages).shuffled()
+                        currentShuffledImages = (selectedImages + selectedImages).shuffled()
                         addImage(5, 6)
                     }
                     else -> {
-                        val imageCount= (3*4)/2
-                        val selectedImages= images.shuffled().filterIndexed { index, i ->
-                            index<imageCount
+                        val imageCount = (3 * 4) / 2
+                        val selectedImages = images.shuffled().filterIndexed { index, i ->
+                            index < imageCount
                         }
-                        currentShuffledImages = (selectedImages+selectedImages).shuffled()
+                        currentShuffledImages = (selectedImages + selectedImages).shuffled()
                         addImage(3, 4)
                     }
                 }
@@ -101,9 +101,6 @@ class MatchingGameFragment : Fragment() {
     }
 
     fun addImage(rowCount: Int, columnCount: Int) {
-
-        val shuffledImages = images.shuffled()
-
         for (i in 0 until rowCount) {
             for (j in 0 until columnCount) {
                 val imageView = ImageView(requireContext())
@@ -112,14 +109,13 @@ class MatchingGameFragment : Fragment() {
                 val index = i * columnCount + j
                 imageView.tag = index
 
-                // imageView.setImageResource(selectedImages[random.nextInt(selectedImages.size)])
                 val params = GridLayout.LayoutParams()
                 params.rowSpec = GridLayout.spec(i)
                 params.columnSpec = GridLayout.spec(j)
                 imageView.layoutParams = params
                 imageView.scaleType = ImageView.ScaleType.FIT_CENTER
-                imageView.layoutParams.width=binding.mainGrid.width /columnCount
-                imageView.layoutParams.height=binding.mainGrid.width /rowCount
+                imageView.layoutParams.width = binding.mainGrid.width / columnCount
+                imageView.layoutParams.height = binding.mainGrid.width / rowCount
 
                 imageView.setOnClickListener { onImageClicked(imageView) }
                 binding.mainGrid.addView(imageView)
@@ -133,14 +129,13 @@ class MatchingGameFragment : Fragment() {
         if (flippedPositions.size < 2 && currentPosition !in flippedPositions) {
             flippedPositions.add(currentPosition)
             imageView.setImageResource(currentShuffledImages[currentPosition])
-
             if (flippedPositions.size == 2) {
-                checkMatch(binding.mainGrid.columnCount)
+                checkMatch(binding.mainGrid.columnCount, binding.mainGrid.rowCount)
             }
         }
     }
 
-    private fun checkMatch(columnCount:Int) {
+    private fun checkMatch(columnCount: Int, rowCount:Int) {
         val positions = flippedPositions.toList()
         val indices = positions.map { it % columnCount + it / columnCount * columnCount }
         val image1 = currentShuffledImages[indices[0]]
@@ -151,13 +146,18 @@ class MatchingGameFragment : Fragment() {
             flippedPositions.clear()
             matchedPairs++
 
-            if (matchedPairs == images.size / 2) {
-                showCongratulationsMessage()  // Oyun tamamlandı
+            println("matchedPairs: $matchedPairs")
+            println("Expected pairs: ${columnCount*rowCount/2 }") //8
+
+            if (matchedPairs == (columnCount*rowCount)/2 ) {
+                // Oyun tamamlandı
+                flippedPositions.clear()
+                    resultScreenDialog()
+
             }
         } else {
             // Eşleşmeme durumu
-            // Resimleri ters çevir ve bekle
-            binding.mainGrid.postDelayed({
+            binding.mainGrid.postDelayed({     // Resimleri ters çevir ve bekle
                 for (position in flippedPositions) {
                     val imageView = binding.mainGrid.getChildAt(position) as ImageView
                     imageView.setImageResource(R.drawable.back_image)
@@ -167,15 +167,42 @@ class MatchingGameFragment : Fragment() {
         }
     }
 
-    private fun showCongratulationsMessage() {
-
-        Toast.makeText(requireContext(),"Tebrikler! Oyunu başarıyla tamamladınız.",Toast.LENGTH_SHORT).show()
-    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun resultScreenDialog() {
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(context)
+        alertDialog
+            .setTitle("TEBRİKLER OYUNU TAMAMLADINIZ")
+            .setNegativeButton("Çıkış") { dialog, which ->
+                // HomeFragment'a dön
+                matchedPairs=0
+                flippedPositions.clear()
+                findNavController().navigate(R.id.action_matchingGameFragment_to_homeFragment)
+            }
+            .setPositiveButton("Yeniden Oyna") { dialog, which ->
+                matchedPairs=0
+                flippedPositions.clear()
+                showAlertDialog()    //Zorluk seçme dialoğu göster
+            }
+        val dialog: AlertDialog = alertDialog.create()
+        dialog.show()
+
+    }
+
+    private fun resetGame() {
+        when (selectedDifficulty) {
+            0 -> addImage(3, 4)
+            1 -> addImage(4, 5)
+            2 -> addImage(5, 6)
+            else -> addImage(3, 4)
+        }
+        matchedPairs = 0
+    }
 }
+
 
 
 
