@@ -135,7 +135,7 @@ class MatchingGameFragment : Fragment() {
         }
     }
 
-    private fun checkMatch(columnCount: Int, rowCount:Int) {
+    private fun checkMatch(columnCount: Int, rowCount: Int) {
         val positions = flippedPositions.toList()
         val indices = positions.map { it % columnCount + it / columnCount * columnCount }
         val image1 = currentShuffledImages[indices[0]]
@@ -145,15 +145,11 @@ class MatchingGameFragment : Fragment() {
             // Eşleşme durumu
             flippedPositions.clear()
             matchedPairs++
-
             println("matchedPairs: $matchedPairs")
-            println("Expected pairs: ${columnCount*rowCount/2 }") //8
-
-            if (matchedPairs == (columnCount*rowCount)/2 ) {
+            println("Expected pairs: ${columnCount * rowCount / 2}") //8
+            if (matchedPairs == (columnCount * rowCount) / 2) {
                 // Oyun tamamlandı
-                flippedPositions.clear()
-                    resultScreenDialog()
-
+                resultScreenDialog()
             }
         } else {
             // Eşleşmeme durumu
@@ -183,8 +179,9 @@ class MatchingGameFragment : Fragment() {
                 findNavController().navigate(R.id.action_matchingGameFragment_to_homeFragment)
             }
             .setPositiveButton("Yeniden Oyna") { dialog, which ->
-                matchedPairs=0
+                binding.mainGrid.removeAllViews() //image'ler kaldırıldı.
                 flippedPositions.clear()
+                matchedPairs=0
                 showAlertDialog()    //Zorluk seçme dialoğu göster
             }
         val dialog: AlertDialog = alertDialog.create()
