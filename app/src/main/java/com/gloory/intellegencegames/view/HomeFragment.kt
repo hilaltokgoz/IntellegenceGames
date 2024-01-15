@@ -26,7 +26,10 @@ class HomeFragment : Fragment() {
             matchingImage.setOnClickListener {
                 findNavController().navigate(R.id.action_homeFragment_to_matchingGameFragment)
             }
+            tictactoeImage.setOnClickListener {
+                findNavController().navigate(R.id.action_homeFragment_to_ticTacToeFragment)
+            }
         }
-       return binding.root
+        return binding.root
     }
 }
