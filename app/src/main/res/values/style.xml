@@ -13,4 +13,13 @@
         <item name="android:layout_height">@dimen/buttons_height_and_width</item>
         <item name="android:background">@drawable/gamecontroller</item>
     </style>
+
+    <style name="ThemeOverlay.App.BottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/ShoppingList.BottomSheetDialog</item>
+    </style>
+
+    <style name="ShoppingList.BottomSheetDialog" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="backgroundTint">@android:color/transparent</item>
+    </style>
+
 </resources>
