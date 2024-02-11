@@ -104,7 +104,7 @@ class MatchingGameFragment : Fragment() {
         for (i in 0 until rowCount) {
             for (j in 0 until columnCount) {
                 val imageView = ImageView(requireContext())
-                imageView.setImageResource(R.drawable.back_image)
+                imageView.setImageResource(R.drawable.question_mark)
 
                 val index = i * columnCount + j
                 imageView.tag = index
@@ -156,7 +156,7 @@ class MatchingGameFragment : Fragment() {
             binding.mainGrid.postDelayed({     // Resimleri ters çevir ve bekle
                 for (position in flippedPositions) {
                     val imageView = binding.mainGrid.getChildAt(position) as ImageView
-                    imageView.setImageResource(R.drawable.back_image)
+                    imageView.setImageResource(R.drawable.question_mark)
                 }
                 flippedPositions.clear()
             }, 1000)
