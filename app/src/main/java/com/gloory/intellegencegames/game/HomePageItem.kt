@@ -1,5 +1,7 @@
 package com.gloory.intellegencegames.game
 
+import com.gloory.intellegencegames.R
+
 // Code with ❤️
 //┌──────────────────────────┐
 //│ Created by Hilal TOKGOZ  │
@@ -8,6 +10,22 @@ package com.gloory.intellegencegames.game
 //│ ──────────────────────── │
 //│ 11.02.2024               │
 //└──────────────────────────┘
-
-data class HomePage_ItemViewModel (val image:Int, val text:String){
+enum class HomePageItem(val imageId: Int, val text: String) {
+    SUDOKU(
+        R.drawable.sudoku_icon,
+        "Sudoku"
+    ),
+    ESLESTIRME(
+        R.drawable.memorygame_icon,
+        "Eşleştirme"
+    ),
+    TICTACTOE(
+        R.drawable.tictactoe_icon,
+        "TicTacToe"
+    );
+    companion object{
+        fun getAllList(): List<HomePageItem> {
+            return listOf(SUDOKU,ESLESTIRME,TICTACTOE)
+        }
+    }
 }

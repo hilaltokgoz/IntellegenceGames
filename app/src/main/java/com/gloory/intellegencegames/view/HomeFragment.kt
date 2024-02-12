@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentHomeBinding
 import com.gloory.intellegencegames.game.HomePageCustomAdapter
-import com.gloory.intellegencegames.game.HomePage_Database
+import com.gloory.intellegencegames.game.HomePageItem
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -24,21 +24,16 @@ class HomeFragment : Fragment() {
 
         val recyclerview = binding.recyclerview
         recyclerview.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = HomePageCustomAdapter(HomePage_Database.getList())
-
-        adapter.setOnItemClickListener { position ->
-            when (position) {
-                0 -> {
+        val adapter = HomePageCustomAdapter(HomePageItem.getAllList()) {
+            when (it) {
+                HomePageItem.SUDOKU-> {
                     findNavController().navigate(R.id.action_homeFragment_to_playSudokuFragment)
                 }
-                1 -> {
+                HomePageItem.ESLESTIRME -> {
                     findNavController().navigate(R.id.action_homeFragment_to_matchingGameFragment)
                 }
-                2 -> {
+                HomePageItem.TICTACTOE -> {
                     findNavController().navigate(R.id.action_homeFragment_to_ticTacToeFragment)
-                }
-                else -> {
-                    findNavController().navigate(R.id.action_homeFragment_to_playSudokuFragment)
                 }
             }
         }

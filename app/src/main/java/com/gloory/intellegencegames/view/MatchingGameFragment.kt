@@ -55,6 +55,7 @@ class MatchingGameFragment : Fragment() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
         builder
             .setTitle("Zorluk Seviyesini Seçiniz...")
+            .setCancelable(false)
             .setSingleChoiceItems(
                 arrayOf("Kolay", "Orta", "Zor"), 0
             ) { _, which ->
@@ -188,7 +189,6 @@ class MatchingGameFragment : Fragment() {
         dialog.show()
 
     }
-
 }
 
 
