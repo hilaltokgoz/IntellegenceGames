@@ -70,6 +70,7 @@ class TicTacToeFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
+        dialog.setCancelable(false)
         dialog.show()
     }
 
@@ -78,7 +79,7 @@ class TicTacToeFragment : Fragment() {
         val gridLayout = GridLayout(requireContext())
         gridLayout.layoutParams = GridLayout.LayoutParams().apply {
             width = GridLayout.LayoutParams.MATCH_PARENT
-            height = GridLayout.LayoutParams.WRAP_CONTENT
+            height = GridLayout.LayoutParams.MATCH_PARENT
         }
         gridLayout.columnCount = size
         gridLayout.rowCount = size
@@ -87,7 +88,7 @@ class TicTacToeFragment : Fragment() {
                 val button = Button(requireContext())
                 button.layoutParams = GridLayout.LayoutParams().apply {
                     width = 0
-                    height = GridLayout.LayoutParams.WRAP_CONTENT
+                    height = GridLayout.LayoutParams.MATCH_PARENT
                     columnSpec = GridLayout.spec(j, 1f)
                     rowSpec = GridLayout.spec(i, 1f)
                     setMargins(8, 8, 8, 8)
@@ -123,7 +124,7 @@ class TicTacToeFragment : Fragment() {
             button.text = if (currentPlayer == 1) "X" else "O"
             checkWin(row, col)
             currentPlayer = if (currentPlayer == 1) 2 else 1
-           disableAllButtons()
+            disableAllButtons()
             handler.postDelayed({
                 if (currentPlayer == 2) {
                     Log.d("TicTacToeFragment", " Sıra PC de.")
