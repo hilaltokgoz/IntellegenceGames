@@ -13,12 +13,13 @@
     <color name="colorAccent">#00909e</color>
 
     <color name="mainColor">#841FFD</color>
-    <color name="background_color">#B1B1B1</color>
+    <color name="background_color">#F3F3F5</color>
     <color name="primary_color">#000000</color>
     <color name="secondary_color">#FFFFFF</color>
     <color name="black_opac">#4D000000</color>
     <color name="light_puple">#7B61FF</color>
     <color name="gray">#B0B0B2</color>
+    <color name="blue">#3C4EBC</color>
 
 
 
