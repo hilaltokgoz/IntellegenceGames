@@ -35,6 +35,9 @@ class HomeFragment : Fragment() {
                 HomePageItem.TICTACTOE -> {
                     findNavController().navigate(R.id.action_homeFragment_to_ticTacToeFragment)
                 }
+                HomePageItem.GUESSTHENUMBER-> {
+                    findNavController().navigate(R.id.action_homeFragment_to_guessTheNumberGameFragment)
+                }
             }
         }
         recyclerview.adapter = adapter

@@ -33,12 +33,20 @@
         <action
             android:id="@+id/action_homeFragment_to_ticTacToeFragment"
             app:destination="@id/ticTacToeFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_guessTheNumberGameFragment"
+            app:destination="@id/guessTheNumberGameFragment" />
     </fragment>
     <fragment
         android:id="@+id/ticTacToeFragment"
         android:name="com.gloory.intellegencegames.view.TicTacToeFragment"
         android:label="fragment_tic_tac_toe"
         tools:layout="@layout/fragment_tic_tac_toe" />
+    <fragment
+        android:id="@+id/guessTheNumberGameFragment"
+        android:name="com.gloory.intellegencegames.view.custom.GuessTheNumberGameFragment"
+        android:label="fragment_guess_the_number_game"
+        tools:layout="@layout/fragment_guess_the_number_game" />
 
 
 </navigation>

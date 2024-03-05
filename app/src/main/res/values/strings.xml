@@ -12,6 +12,10 @@
     <string name="title_activity_play_sudoku">PlaySudokuActivity</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="win_message">KAZANDINIZ</string>
+    <string name="wrong_message">YANLIŞ TAHMİN</string>
+    <string name="lose_message">KAYBETTİNİZ</string>
+    <string name="invalid_input_message">GEÇERSİZ SAYI</string>
 
     <string name="top_label">Eşleştirme Oyunu</string>
     <string name="instructions">Flip Cards to Match, if they dob\'t match flip back the card and try others, when they match continue with the others</string>

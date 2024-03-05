@@ -22,10 +22,14 @@ enum class HomePageItem(val imageId: Int, val text: String) {
     TICTACTOE(
         R.drawable.tictactoe_icon,
         "TicTacToe"
+    ),
+    GUESSTHENUMBER(
+     R.drawable.charade,
+        "Sayı Tahmin"
     );
     companion object{
         fun getAllList(): List<HomePageItem> {
-            return listOf(SUDOKU,ESLESTIRME,TICTACTOE)
+            return listOf(SUDOKU,ESLESTIRME,TICTACTOE,GUESSTHENUMBER)
         }
     }
 }
