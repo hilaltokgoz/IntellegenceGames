@@ -15,10 +15,9 @@ import android.widget.Button
 import android.widget.GridLayout
 import androidx.fragment.app.Fragment
 import com.gloory.intellegencegames.R
+import com.gloory.intellegencegames.databinding.DifficultyScreenDialogBinding
 import com.gloory.intellegencegames.databinding.FragmentTicTacToeBinding
-import com.gloory.intellegencegames.databinding.TictactoDifficultyScreenBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
-
 
 class TicTacToeFragment : Fragment() {
     private var _binding: FragmentTicTacToeBinding? = null
@@ -46,7 +45,7 @@ class TicTacToeFragment : Fragment() {
     private fun showDialog() {
         val dialog = BottomSheetDialog(requireContext(), R.style.ThemeOverlay_App_BottomSheetDialog)
         val bindingDialog =
-            TictactoDifficultyScreenBinding.inflate(LayoutInflater.from(requireContext()))
+            DifficultyScreenDialogBinding.inflate(LayoutInflater.from(requireContext()))
         bindingDialog.apply {
             easyImage.setOnClickListener {
                 gridSize = 3

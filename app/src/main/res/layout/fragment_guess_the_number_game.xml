@@ -1,14 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.custom.GuessTheNumberGameFragment">
+    tools:context=".view.GuessTheNumberGameFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <EditText
+        android:id="@+id/guessNumberText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:ems ="10"
+        android:hint ="Tahmin Giriniz"
+        android:inputType="number"
+        android:layout_marginStart="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:text="EKLE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.539"
+        app:layout_constraintStart_toEndOf="@+id/guessNumberText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_margin="40dp"
+        android:background="@color/light_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guessNumberText"
+        tools:ignore="MissingConstraints">
 
-</FrameLayout>
+        <TableRow android:background="@color/green">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:padding="10sp"
+                android:text="@string/col1"
+                android:textColor="@color/white"
+                android:textSize="14sp"></TextView>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:padding="10sp"
+                android:text="@string/col2"
+                android:textColor="@color/white"
+                android:textSize="14sp"></TextView>
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/guess1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:padding="10sp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="@string/guess1"></TextView>
+
+            <TextView
+                android:id="@+id/hint1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:padding="10sp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="@string/hint1"></TextView>
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/guess2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:padding="10sp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="502"></TextView>
+
+            <TextView
+                android:id="@+id/hint2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:padding="10sp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="+"></TextView>
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/guess3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:padding="10sp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="684"></TextView>
+
+            <TextView
+                android:id="@+id/hint3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:padding="10sp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="-"></TextView>
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/guess4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:padding="10sp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="346"></TextView>
+
+            <TextView
+                android:id="@+id/hint4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center_horizontal"
+                android:padding="10sp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="++"></TextView>
+        </TableRow>
+    </TableLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

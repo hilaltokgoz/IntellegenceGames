@@ -44,7 +44,7 @@
         tools:layout="@layout/fragment_tic_tac_toe" />
     <fragment
         android:id="@+id/guessTheNumberGameFragment"
-        android:name="com.gloory.intellegencegames.view.custom.GuessTheNumberGameFragment"
+        android:name="com.gloory.intellegencegames.view.GuessTheNumberGameFragment"
         android:label="fragment_guess_the_number_game"
         tools:layout="@layout/fragment_guess_the_number_game" />
 
