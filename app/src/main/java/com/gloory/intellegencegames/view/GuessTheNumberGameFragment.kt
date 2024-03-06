@@ -18,12 +18,13 @@ class GuessTheNumberGameFragment : Fragment() {
     private var _binding: FragmentGuessTheNumberGameBinding? = null
     private val binding get() = _binding!!
 
-    var realNumberList: List<String> = listOf()
-    var guessNumberList: List<String> = listOf()
+    var realNumberList: List<Char> = listOf()
+    var guessNumberList: List<Char> = listOf()
 
-    val randomNumber3Digits = Random.nextInt(100, 1000)
-    val randomNumber4Digits = Random.nextInt(1000, 10000)
-    val randomNumber5Digits = Random.nextInt(10000, 100000)
+    val randomNumber3Digits = randomNumber(3)
+    val randomNumber4Digits = randomNumber(4)
+    val randomNumber5Digits = randomNumber(5)
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +38,7 @@ class GuessTheNumberGameFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showDialog()
     }
+
     private fun showDialog() {
         val dialog = BottomSheetDialog(requireContext(), R.style.ThemeOverlay_App_BottomSheetDialog)
         val bindingDialog =
@@ -46,7 +48,7 @@ class GuessTheNumberGameFragment : Fragment() {
                 dialog.dismiss()
                 binding.guessNumberText.filters =
                     arrayOf(InputFilter.LengthFilter(3)) // 3 basamaklı sayı girildi.
-
+                digit3Process()
             }
             mediumImage.setOnClickListener {
                 dialog.dismiss()
@@ -71,38 +73,53 @@ class GuessTheNumberGameFragment : Fragment() {
 
     private fun digit3Process() {
         //gerçek sayı parçalandı listeye kondu
-        val digitHundredReal = randomNumber3Digits.toString().substring(0, 1)
-        val digitTensReal = randomNumber3Digits.toString().substring(1, 2)
-        val digitOnesReal = randomNumber3Digits.toString().substring(2, 3)
-        realNumberList = listOf(digitHundredReal, digitTensReal, digitOnesReal)
+        realNumberList = randomNumber3Digits.toString().toCharArray().toList()
+
+        println(" randomDigit  $randomNumber3Digits")
 
         binding.apply {
             addButton.setOnClickListener {
-                val guessNumber = binding.guessNumberText
+                val guessNumber = binding.guessNumberText.text.toString()
+                if (guessNumber.length == 3) {
+                    binding.guessNumberText.setText("")
+                    guess1.text = "${guess1.text}$guessNumber\n"
+                    //guess1 al ve parçala
+                    guessNumberList = guessNumber.toCharArray().toList()
+                    var hint = ""
 
-                guess1.text = guessNumber.toString()
-                //guess1 al ve parçala
-                val digitHundredGuess = guessNumber.text.toString().substring(0, 1)
-                val digitTensGuess = guessNumber.text.toString().substring(1, 2)
-                val digitOnesGuess = guessNumber.text.toString().substring(2, 3)
-                guessNumberList = listOf(digitHundredGuess, digitTensGuess, digitOnesGuess)
-            }
-        }
-        var plusCount = 0
-        var minusCount = 0
+                    for ((index, value) in realNumberList.withIndex()) {
+                        if (guessNumberList.contains(value)) {  // tahmin edilen rakam gerçek listede var
+                            if (guessNumberList[index] == value) {    //hem indeks hem rakam var
 
-        for ((index, value) in realNumberList.withIndex()) {
-            if (guessNumberList.contains(value)) {  // tahmin edilen rakam gerçek listede var
-                if (guessNumberList[index] == value) {    //hem indeks hem rakam var
-                    plusCount++
-                } else {
-                    minusCount++
+                                hint += "+"
+                            } else {
+                                hint += "-"
+                            }
+                        }
+                    }
+                    //Sonuçlar basılacak
+                    hint1.text = "${hint1.text}$hint\n"
                 }
+
             }
         }
-        //Sonuçlar basılacak
-          binding.hint1.text = "$minusCount $plusCount"
+
     }
+
+    fun randomNumber( digitCount:Int): Int {
+        var uniqueNumber: Int
+        do {
+            uniqueNumber = when(digitCount){
+                3 ->  (100..1000).random()
+                4 ->  (1000..10000).random()
+                5 ->  (10000..100000).random()
+                else -> return -1
+            }
+        } while (uniqueNumber.toString().toSet().size != digitCount)
+
+        return uniqueNumber
+    }
+
 
 }
 
