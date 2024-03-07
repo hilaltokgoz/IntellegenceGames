@@ -8,38 +8,105 @@
     android:layout_height="match_parent"
     tools:context=".view.GuessTheNumberGameFragment">
 
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="32dp"
+        android:fontFamily="@font/poppins_medium"
+        android:text="Sayı Tahmin Oyunu"
+        android:textAlignment="center"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/top_label_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/gameSettingCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:backgroundTint="@android:color/transparent"
+        app:cardBackgroundColor="@color/soft_gray"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="3dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_text">
+
+        <TextView
+            android:id="@+id/gameSettingTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_margin="16dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Oyun Bilgilendirme !"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/gameSettingText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="48dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="@string/game_setting"
+            android:textColor="@color/light_black_color"
+            android:textSize="14sp" />
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/rightCounterTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="48dp"
+        android:fontFamily="@font/poppins_medium"
+        android:text="HAK: "
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gameSettingCardView" />
+
     <EditText
         android:id="@+id/guessNumberText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:ems ="10"
-        android:hint ="Tahmin Giriniz"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="84dp"
+        android:ems="10"
+        android:hint="Tahmin Giriniz"
         android:inputType="number"
-        android:layout_marginStart="40dp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/gameSettingCardView" />
 
     <Button
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="84dp"
         android:text="EKLE"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.539"
+        android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/guessNumberText"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/gameSettingCardView" />
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
+        android:layout_marginTop="64dp"
         android:background="@color/light_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guessNumberText"
+        app:layout_constraintTop_toBottomOf="@+id/guessNumberText"
         tools:ignore="MissingConstraints">
 
         <TableRow android:background="@color/green">
@@ -52,7 +119,7 @@
                 android:padding="10sp"
                 android:text="@string/col1"
                 android:textColor="@color/white"
-                android:textSize="14sp"></TextView>
+                android:textSize="18sp"></TextView>
 
             <TextView
                 android:layout_width="0dp"
@@ -62,7 +129,7 @@
                 android:padding="10sp"
                 android:text="@string/col2"
                 android:textColor="@color/white"
-                android:textSize="14sp"></TextView>
+                android:textSize="18sp"></TextView>
 
         </TableRow>
 
@@ -76,7 +143,7 @@
                 android:gravity="center_horizontal"
                 android:padding="10sp"
                 android:textColor="@color/white"
-                android:textSize="12sp"
+                android:textSize="18sp"
                 tools:text="@string/guess1"></TextView>
 
             <TextView
@@ -87,7 +154,7 @@
                 android:gravity="center_horizontal"
                 android:padding="10sp"
                 android:textColor="@color/white"
-                android:textSize="12sp"
+                android:textSize="25sp"
                 tools:text="@string/hint1"></TextView>
         </TableRow>
 

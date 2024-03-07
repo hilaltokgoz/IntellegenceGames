@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="light_gray">#BCBCBC</color>
+    <color name="soft_gray">#EAE5E5</color>
     <color name="colorPrimary">#465881</color>
     <color name="colorPrimaryDark">#1b2a49</color>
     <color name="colorAccent">#00909e</color>
@@ -15,6 +16,7 @@
     <color name="mainColor">#841FFD</color>
     <color name="background_color">#F3F3F5</color>
     <color name="primary_color">#000000</color>
+    <color name="light_black_color">#242323</color>
     <color name="secondary_color">#FFFFFF</color>
     <color name="black_opac">#4D000000</color>
     <color name="light_puple">#7B61FF</color>
