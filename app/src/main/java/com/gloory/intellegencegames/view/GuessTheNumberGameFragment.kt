@@ -1,11 +1,14 @@
 package com.gloory.intellegencegames.view
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.DifficultyScreenDialogBinding
@@ -16,10 +19,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 class GuessTheNumberGameFragment : Fragment() {
     private var _binding: FragmentGuessTheNumberGameBinding? = null
     private val binding get() = _binding!!
-    var right=4
+    var right = 4
 
     var realNumberList: List<Char> = listOf()
     var guessNumberList: List<Char> = listOf()
+
+    var hintList: MutableList<String> = mutableListOf()
 
     val randomNumber3Digits = randomNumber(3)
     val randomNumber4Digits = randomNumber(4)
@@ -39,7 +44,7 @@ class GuessTheNumberGameFragment : Fragment() {
         showDialog()
     }
 
-    private fun showDialog() {
+  fun showDialog() {
         val dialog = BottomSheetDialog(requireContext(), R.style.ThemeOverlay_App_BottomSheetDialog)
         val bindingDialog =
             DifficultyScreenDialogBinding.inflate(LayoutInflater.from(requireContext()))
@@ -70,7 +75,6 @@ class GuessTheNumberGameFragment : Fragment() {
         dialog.show()
     }
 
-
     private fun digit3Process() {
         //gerçek sayı parçalandı listeye kondu
         realNumberList = randomNumber3Digits.toString().toCharArray().toList()
@@ -82,7 +86,10 @@ class GuessTheNumberGameFragment : Fragment() {
                 val guessNumber = binding.guessNumberText.text.toString()
                 if (guessNumber.length == 3) {
                     binding.guessNumberText.setText("")
+
                     right--
+                    rightCounterTextView.text = right.toString()
+
                     guess1.text = "${guess1.text}$guessNumber\n"
                     //guess1 al ve parçala
                     guessNumberList = guessNumber.toCharArray().toList()
@@ -91,25 +98,25 @@ class GuessTheNumberGameFragment : Fragment() {
                     for ((index, value) in realNumberList.withIndex()) {
                         if (guessNumberList.contains(value)) {  // tahmin edilen rakam gerçek listede var
                             if (guessNumberList[index] == value) {    //hem indeks hem rakam var
-
                                 hint += "+"
                             } else {
                                 hint += "-"
                             }
                         }
+
                     }
                     //Sonuçlar basılacak
+                    hintList.add(hint)
                     hint1.text = "${hint1.text}$hint\n"
-                }
 
+                    if (right == 0 || hintList.last() == "+++") {
+                        showMessageBox()
+                    }
+
+                }
             }
         }
-       if (right==0 && binding.hint1.text != "+++"){
-          // TODO("Dialog oluştur Kaybettiniz Random= 512 yazdır)
-       }else if(binding.hint1.text == "+++" ){
 
-           // TODO("Dialog oluştur Kazandınız Random= 512 yazdır)
-        }
     }
 
     private fun digit4Process() {
@@ -146,6 +153,7 @@ class GuessTheNumberGameFragment : Fragment() {
         }
 
     }
+
     private fun digit5Process() {
         //gerçek sayı parçalandı listeye kondu
         realNumberList = randomNumber5Digits.toString().toCharArray().toList()
@@ -192,6 +200,31 @@ class GuessTheNumberGameFragment : Fragment() {
         } while (uniqueNumber.toString().toSet().size != digitCount)
 
         return uniqueNumber
+    }
+
+    fun showMessageBox(){
+        val builder = AlertDialog.Builder(requireContext(),R.style.CustomAlertDialog)
+            .create()
+        val view = layoutInflater.inflate(R.layout.dialog_result_guessnumber,null)
+        val resultTitleText = view.findViewById<TextView>(R.id.resultTitleText)
+        val resultText = view.findViewById<TextView>(R.id.resultText)
+        val  button = view.findViewById<Button>(R.id.dialogDismiss_button)
+
+        if (hintList.last() == "+++") {
+            resultTitleText.text = "Kazandınız!"
+            resultText.text = "Sayı= ${randomNumber3Digits}" //sadece  3 basamaklı için geçerli
+
+        } else {
+            resultTitleText.text = "Kaybettiniz!"
+            resultText.text = "Sayı= ${randomNumber3Digits}"
+        }
+
+        builder.setView(view)
+        button.setOnClickListener {
+            builder.dismiss()
+        }
+        builder.setCanceledOnTouchOutside(false)
+        builder.show()
     }
 
 
