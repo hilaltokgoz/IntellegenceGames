@@ -26,9 +26,9 @@ class GuessTheNumberGameFragment : Fragment() {
 
     var hintList: MutableList<String> = mutableListOf()
 
-    val randomNumber3Digits = randomNumber(3)
-    val randomNumber4Digits = randomNumber(4)
-    val randomNumber5Digits = randomNumber(5)
+    var randomNumber3Digits = randomNumber(3)
+    var randomNumber4Digits = randomNumber(4)
+    var randomNumber5Digits = randomNumber(5)
 
     var selectDigit: Int = 0
 
@@ -258,15 +258,32 @@ class GuessTheNumberGameFragment : Fragment() {
         builder.setView(view)
         againPlayButton.setOnClickListener {
             builder.dismiss()
-
-            TODO("Verileri sıfırla ")
-
-
+            newGame()
         }
         builder.setCanceledOnTouchOutside(false)
         builder.show()
     }
+    fun newGame(){
+
+        right = 4 //eski right sildirmek gerek
+        binding.rightCounterTextView.text = 4.toString()
+        //random sayı yenilenecek
+        when (selectDigit) {
+            3 -> randomNumber3Digits = randomNumber(3)
+            4 -> randomNumber4Digits = randomNumber(4)
+            5 -> randomNumber5Digits = randomNumber(5)
+        }
+        realNumberList = emptyList()
+        guessNumberList = emptyList()
+        hintList.clear()
+
+        println(" randomDigit  $randomNumber3Digits")
+        binding.hint1.text = ""
+        binding.guess1.text = ""
+
+        //yeni oyunda hint doğru çalışmıyor +/-
 
 
+    }
 }
 
