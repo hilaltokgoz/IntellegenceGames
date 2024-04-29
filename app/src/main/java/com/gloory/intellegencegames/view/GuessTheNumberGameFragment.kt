@@ -42,6 +42,7 @@ class GuessTheNumberGameFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         showDialog()
     }
 
@@ -107,7 +108,6 @@ class GuessTheNumberGameFragment : Fragment() {
                                 hint += "-"
                             }
                         }
-
                     }
                     //Sonuçlar basılacak
                     hintList.add(hint)
@@ -263,27 +263,39 @@ class GuessTheNumberGameFragment : Fragment() {
         builder.setCanceledOnTouchOutside(false)
         builder.show()
     }
-    fun newGame(){
+
+    fun newGame() {
 
         right = 4 //eski right sildirmek gerek
-        binding.rightCounterTextView.text = 4.toString()
-        //random sayı yenilenecek
-        when (selectDigit) {
-            3 -> randomNumber3Digits = randomNumber(3)
-            4 -> randomNumber4Digits = randomNumber(4)
-            5 -> randomNumber5Digits = randomNumber(5)
-        }
-        realNumberList = emptyList()
-        guessNumberList = emptyList()
-        hintList.clear()
+        binding.rightCounterTextView.text = right.toString()
 
-        println(" randomDigit  $randomNumber3Digits")
+        //clearList
+        hintList.clear()
         binding.hint1.text = ""
         binding.guess1.text = ""
+        guessNumberList = emptyList()
 
-        //yeni oyunda hint doğru çalışmıyor +/-
+        //random sayı yenilenecek
+        when (selectDigit) {
+            3 -> {
+                randomNumber3Digits = randomNumber(3)
+                digit3Process()
+                println(" randomDigit  $randomNumber3Digits")
+            }
+            4 -> {
+                randomNumber4Digits = randomNumber(4)
+                digit4Process()
+                println(" randomDigit  $randomNumber4Digits")
+            }
 
+            5 -> {
+                randomNumber5Digits = randomNumber(5)
+                digit5Process()
+                println(" randomDigit  $randomNumber5Digits")
+            }
+        }
 
     }
+
 }
 
