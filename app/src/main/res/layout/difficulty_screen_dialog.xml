@@ -3,7 +3,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <androidx.cardview.widget.CardView
@@ -11,7 +10,7 @@
         android:layout_height="match_parent"
         app:cardCornerRadius="30dp"
         app:cardElevation="3dp"
-        app:cardBackgroundColor="@color/light_gray"
+        app:cardBackgroundColor="@color/light_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:backgroundTint= "@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,9 +21,11 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:fontFamily="@font/poppins_medium"
+            android:layout_marginTop="25dp"
+            android:layout_marginStart="100dp"
             android:gravity="center"
+            android:textColor="@color/laci"
             android:text="ZORLUK SEÇİMİ"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -32,36 +33,93 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="30dp"
             android:gravity="center_horizontal"
+            android:padding="10dp"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/easyImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/grid_3x3"
-                android:layout_weight="1"
-                 />
+            <!-- Easy -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/mediumImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="25dp"
-                android:layout_weight="1"
-                android:src="@drawable/grid_4x4"
-                android:layout_marginBottom="25dp" />
+                <ImageView
+                    android:id="@+id/easyImage"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="5dp"
+                    android:src="@drawable/simple" />
 
-            <ImageView
-                android:id="@+id/hardImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:src="@drawable/looks_5_24"
-                />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kolay"
+                    android:textStyle="bold"
+                    android:textColor="@color/laci"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+            <!-- Medium -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/mediumImage"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="5dp"
+                    android:src="@drawable/normal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Normal"
+                    android:textStyle="bold"
+                    android:textColor="@color/laci"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+            <!-- Hard -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/hardImage"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="5dp"
+                    android:src="@drawable/difficult" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Zor"
+                    android:textStyle="bold"
+                    android:textColor="@color/laci"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
         </LinearLayout>
-
 
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

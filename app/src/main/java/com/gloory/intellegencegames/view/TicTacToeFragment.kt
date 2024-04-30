@@ -1,18 +1,22 @@
 package com.gloory.intellegencegames.view
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
 import android.widget.GridLayout
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.DifficultyScreenDialogBinding
@@ -85,17 +89,20 @@ class TicTacToeFragment : Fragment() {
         for (i in 0 until size) {
             for (j in 0 until size) {
                 val button = Button(requireContext())
-                button.layoutParams = GridLayout.LayoutParams().apply {
-                    width = 0
-                    height = GridLayout.LayoutParams.MATCH_PARENT
-                    columnSpec = GridLayout.spec(j, 1f)
-                    rowSpec = GridLayout.spec(i, 1f)
-                    setMargins(8, 8, 8, 8)
-                }
+                val layoutParams = GridLayout.LayoutParams(
+                    GridLayout.spec(i, 1f),
+                    GridLayout.spec(j, 1f)
+                )
+                layoutParams.width = 0
+                layoutParams.height =
+                    GridLayout.LayoutParams.WRAP_CONTENT // veya MATCH_PARENT olarak ayarlayabilirsin
+                layoutParams.setMargins(8, 8, 8, 8)
+                button.layoutParams = layoutParams
                 button.setOnClickListener {
                     onCellClicked(i, j, button)
                 }
                 button.text = ""
+                button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
                 gridLayout.addView(button)
                 buttons["$i$j"] = button
             }
@@ -251,10 +258,18 @@ class TicTacToeFragment : Fragment() {
         }
     }
 
+
     //beraberlik
     private fun announceDraw() {
         val drawText = "Oyun berabere kaldı"
 
+        val textColor = ContextCompat.getColor(requireContext(), R.color.light_blue)
+        val textColor2 = ContextCompat.getColor(requireContext(), R.color.light_blue)
+        val buttonBackgroundColor2 = ContextCompat.getColor(requireContext(), R.color.result_red)
+        val titleTextColor = ContextCompat.getColor(requireContext(), R.color.blue)
+        val buttonBackgroundColor = ContextCompat.getColor(requireContext(), R.color.pickled_bluewood)
+
+        val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.alertdiaolog_background)
         val alertDialog = AlertDialog.Builder(requireContext())
             .setMessage(drawText)
             .setPositiveButton("Tamam") { dialog, _ ->
@@ -266,8 +281,29 @@ class TicTacToeFragment : Fragment() {
                 resetGame()
             }
             .create()
-
+        alertDialog.window?.setBackgroundDrawable(backgroundDrawable)
         alertDialog.show()
+        val messageView = alertDialog.findViewById<TextView>(android.R.id.message)
+        messageView?.apply {
+            setTextColor(titleTextColor)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+        }
+        val positiveButton = alertDialog.getButton(Dialog.BUTTON_POSITIVE)
+        val negativeButton = alertDialog.getButton(Dialog.BUTTON_NEGATIVE)
+
+        val params = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        params.setMargins(0, 0, 5.dpToPx(), 0) // Sağ kenarda 5dp margin ekliyoruz
+        positiveButton.layoutParams = params
+        negativeButton.layoutParams = params
+
+        positiveButton.setTextColor(textColor)
+        positiveButton.setBackgroundColor(buttonBackgroundColor)
+        negativeButton.setTextColor(textColor2)
+        negativeButton.setBackgroundColor(buttonBackgroundColor2)
+
     }
 
     private fun resetGame() {
@@ -275,9 +311,17 @@ class TicTacToeFragment : Fragment() {
     }
 
     //kazanan
-    private fun announceWinner(player: Int) {
-        val winner = if (player == 1) "X" else "O"
-        val winnerText = "Kazanan: $winner"
+    fun announceWinner(player: Int) {
+        val winner = if (player == 1) "Sen" else "PC"
+        val winnerText = "Kazanan:  $winner"
+
+        val textColor = ContextCompat.getColor(requireContext(), R.color.light_blue)
+        val textColor2 = ContextCompat.getColor(requireContext(), R.color.light_blue)
+        val buttonBackgroundColor2 = ContextCompat.getColor(requireContext(), R.color.result_red)
+        val titleTextColor = ContextCompat.getColor(requireContext(), R.color.blue)
+        val buttonBackgroundColor = ContextCompat.getColor(requireContext(), R.color.pickled_bluewood)
+
+        val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.alertdiaolog_background)
 
         val alertDialog = AlertDialog.Builder(requireContext())
             .setMessage(winnerText)
@@ -290,8 +334,34 @@ class TicTacToeFragment : Fragment() {
                 resetGame()
             }
             .create()
-
+        alertDialog.window?.setBackgroundDrawable(backgroundDrawable)
         alertDialog.show()
+
+        val messageView = alertDialog.findViewById<TextView>(android.R.id.message)
+        messageView?.apply {
+            setTextColor(titleTextColor)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+        }
+        val positiveButton = alertDialog.getButton(Dialog.BUTTON_POSITIVE)
+        val negativeButton = alertDialog.getButton(Dialog.BUTTON_NEGATIVE)
+
+        val params = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        params.setMargins(0, 0, 5.dpToPx(), 0) // Sağ kenarda 5dp margin ekliyoruz
+        positiveButton.layoutParams = params
+        negativeButton.layoutParams = params
+
+        positiveButton.setTextColor(textColor)
+        positiveButton.setBackgroundColor(buttonBackgroundColor)
+        negativeButton.setTextColor(textColor2)
+        negativeButton.setBackgroundColor(buttonBackgroundColor2)
+
+    }
+    private fun Int.dpToPx(): Int {
+        val scale = resources.displayMetrics.density
+        return (this * scale + 0.5f).toInt()
     }
 
     override fun onDestroyView() {

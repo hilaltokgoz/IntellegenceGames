@@ -8,7 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.DifficultyScreenDialogBinding
@@ -226,25 +229,32 @@ class GuessTheNumberGameFragment : Fragment() {
             .create()
         val view = layoutInflater.inflate(R.layout.dialog_result_guessnumber, null)
         val resultTitleText = view.findViewById<TextView>(R.id.resultTitleText)
+        val resultbackground = view.findViewById<RelativeLayout>(R.id.resultRelativeLayout)
         val resultText = view.findViewById<TextView>(R.id.resultText)
         val againPlayButton = view.findViewById<Button>(R.id.againPlayButton)
 
+        val colorGreen = ContextCompat.getColor(requireContext(), R.color.result_green)
+        val colorRed = ContextCompat.getColor(requireContext(), R.color.result_red)
 
         val randomNum = when (hintList.last()) {
             "+++" -> {
                 resultTitleText.text = "Kazandınız!"
+                resultbackground.setBackgroundColor(colorGreen)
                 randomNumber3Digits
             }
             "++++" -> {
                 resultTitleText.text = "Kazandınız!"
+                resultbackground.setBackgroundColor(colorGreen)
                 randomNumber4Digits
             }
             "+++++" -> {
                 resultTitleText.text = "Kazandınız!"
+                resultbackground.setBackgroundColor(colorGreen)
                 randomNumber5Digits
             }
             else -> {
                 resultTitleText.text = "Kaybettiniz!"
+                resultbackground.setBackgroundColor(colorRed)
                 when (selectDigit) {
                     3 -> randomNumber3Digits
                     4 -> randomNumber4Digits
