@@ -26,10 +26,14 @@ enum class HomePageItem(val imageId: Int, val text: String) {
     GUESSTHENUMBER(
      R.drawable.charade,
         "Sayı Tahmin"
+    ),
+    ANAGRAM(
+    R.drawable.crossword,
+    "Anagram"
     );
     companion object{
         fun getAllList(): List<HomePageItem> {
-            return listOf(SUDOKU,ESLESTIRME,TICTACTOE,GUESSTHENUMBER)
+            return listOf(SUDOKU,ESLESTIRME,TICTACTOE,GUESSTHENUMBER,ANAGRAM)
         }
     }
 }

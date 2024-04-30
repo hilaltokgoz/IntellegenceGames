@@ -36,6 +36,9 @@
         <action
             android:id="@+id/action_homeFragment_to_guessTheNumberGameFragment"
             app:destination="@id/guessTheNumberGameFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_anagramGameFragment"
+            app:destination="@id/anagramGameFragment" />
     </fragment>
     <fragment
         android:id="@+id/ticTacToeFragment"
@@ -47,6 +50,11 @@
         android:name="com.gloory.intellegencegames.view.GuessTheNumberGameFragment"
         android:label="fragment_guess_the_number_game"
         tools:layout="@layout/fragment_guess_the_number_game" />
+    <fragment
+        android:id="@+id/anagramGameFragment"
+        android:name="com.gloory.intellegencegames.view.AnagramGameFragment"
+        android:label="fragment_anagram_game"
+        tools:layout="@layout/fragment_anagram_game" />
 
 
 </navigation>

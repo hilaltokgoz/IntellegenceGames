@@ -38,6 +38,9 @@ class HomeFragment : Fragment() {
                 HomePageItem.GUESSTHENUMBER-> {
                     findNavController().navigate(R.id.action_homeFragment_to_guessTheNumberGameFragment)
                 }
+                HomePageItem.ANAGRAM-> {
+                    findNavController().navigate(R.id.action_homeFragment_to_anagramGameFragment)
+                }
             }
         }
         recyclerview.adapter = adapter
