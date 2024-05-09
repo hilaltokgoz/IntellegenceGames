@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_homeFragment_to_anagramGameFragment"
             app:destination="@id/anagramGameFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_kelimeAviFragment"
+            app:destination="@id/kelimeAviFragment" />
     </fragment>
     <fragment
         android:id="@+id/ticTacToeFragment"
@@ -55,6 +58,11 @@
         android:name="com.gloory.intellegencegames.view.AnagramGameFragment"
         android:label="fragment_anagram_game"
         tools:layout="@layout/fragment_anagram_game" />
+    <fragment
+        android:id="@+id/kelimeAviFragment"
+        android:name="com.gloory.intellegencegames.view.KelimeAviFragment"
+        android:label="fragment_kelime_avi"
+        tools:layout="@layout/fragment_kelime_avi" />
 
 
 </navigation>
