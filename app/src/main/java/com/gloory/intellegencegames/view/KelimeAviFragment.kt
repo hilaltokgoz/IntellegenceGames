@@ -62,6 +62,7 @@ class KelimeAviFragment : Fragment() {
         }
         return randomWords
     }
+
     private fun addTextViewsToLinearLayout(randomWords: List<String>) {
         // LinearLayout referansını al
         val linearLayout = binding.linearLayout
@@ -82,7 +83,6 @@ class KelimeAviFragment : Fragment() {
             linearLayout.addView(textView)
         }
     }
-
 
 
     private fun createGridLayout(gridSize: Int) {
