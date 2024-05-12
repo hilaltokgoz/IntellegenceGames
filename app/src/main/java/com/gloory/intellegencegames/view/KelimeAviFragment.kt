@@ -1,7 +1,9 @@
 package com.gloory.intellegencegames.view
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +16,6 @@ import com.gloory.intellegencegames.databinding.FragmentKelimeAviBinding
 class KelimeAviFragment : Fragment() {
     private var _binding: FragmentKelimeAviBinding? = null
     private val binding get() = _binding!!
-
-    val shortWordList = listOf("a", "c", "d", "e", "f")
-    val normalWordList = listOf( "aa", "bb", "cc", "dd", "ee" ,"ff")
-    val  longWordList = listOf("aaa", "bbb",  "ccc", "ddd", "eee", "fff")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +35,7 @@ class KelimeAviFragment : Fragment() {
 
         return view
     }
+
     private fun selectRandomList(): ListType {
         return when ((0 until 3).random()) {
             0 -> ShortWordList
@@ -49,6 +48,8 @@ class KelimeAviFragment : Fragment() {
         binding.gridLayout.rowCount = gridSize
         binding.gridLayout.columnCount = gridSize
 
+        val margin = 2.dpToPx(requireContext())
+
         for (i in 0 until gridSize) {
             for (j in 0 until gridSize) {
                 val textView = TextView(requireContext()).apply {
@@ -58,41 +59,22 @@ class KelimeAviFragment : Fragment() {
                     layoutParams = GridLayout.LayoutParams().apply {
                         width = 0
                         height = GridLayout.LayoutParams.WRAP_CONTENT
-                        columnSpec = GridLayout.spec(j,1f)
-                        rowSpec = GridLayout.spec(i,1f)
+                        columnSpec = GridLayout.spec(j, 1, GridLayout.FILL, 1f)
+                        rowSpec = GridLayout.spec(i, 1, GridLayout.FILL, 1f)
+                        setMargins(margin, margin, margin, margin)
                     }
                 }
+
                 binding.gridLayout.addView(textView)
 
-                if (j < gridSize ) {
-                    val lineView = View(requireContext()).apply {
-                        setBackgroundColor(resources.getColor(android.R.color.black))
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            2
-                        )
-                    }
-                    binding.gridLayout.addView(lineView)
-
-                }
-             /**if (i < gridSize ) {
-                    val verticalLineView = View(requireContext()).apply {
-                        setBackgroundColor(resources.getColor(android.R.color.black))
-                        layoutParams = ViewGroup.LayoutParams(
-                            2,
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                        )
-                    }
-                    binding.gridLayout.addView(verticalLineView)
-                }
-             **/
-
             }
+
         }
 
     }
+
     private fun getRandomLetter(): String {
-        val alphabet = ('a'..'z')
+        val alphabet = ('A'..'Z')
         return alphabet.random().toString()
     }
 
@@ -100,9 +82,47 @@ class KelimeAviFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }
 
-sealed class ListType
-object ShortWordList : ListType()
-object NormalWordList : ListType()
-object LongWordList : ListType()
+private fun Int.dpToPx(requireContext: Context): Int {
+    return TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        this.toFloat(),
+        requireContext.resources.displayMetrics
+    ).toInt()
+
+}
+
+
+sealed class ListType {
+    abstract val words: List<String>
+}
+
+//3-4-5-6 harf
+object ShortWordList : ListType() {
+    override val words = listOf(
+        "ana", "ara", "ata", "baba", "ceza", "dava", "efe",
+        "adana", "balık", "cuma", "duru", "elma",
+        "afrika", "bakır", "ceylan", "deniz", "fethiye", "bursa", "dünya", "elazığ",
+        "fındık", "balta", "cephe", "dolap", "eşref", "elma", "armut", "kiraz", "kalem",
+        "şeker", "tuz", "un", "pirinç", "bulgur", "makarna", "yerel", "global",
+        "toplum", "yakın", "uzak",
+    )
+}
+
+object NormalWordList : ListType() {
+    override val words = listOf(
+        "akdeniz", "beykoz", "dalga", "ekvator", "ankara", "berlin", "cetvel", "doktor", "felemenk",
+        "bisküvi", "canavar", "darbe", "eşyalar", "ıspanak", "fasulye", "mercimek", "barbunya",
+        "gelecek", "brokoli", "pırasa", "sarımsak", "bezelye", "patlıcan", "salatalık",
+        "mühendislik", "yönetim", "danışman"
+    )
+}
+
+object LongWordList : ListType() {
+    override val words = listOf(
+        "muhtesemlik", "fantastik", "harikulade", "mucizevi", "olaganustu",
+        "umutsuzluk", "yaklasimlar", "karamsarlik"
+    )
+}
