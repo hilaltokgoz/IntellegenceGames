@@ -9,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentKelimeAviBinding
 
 class KelimeAviFragment : Fragment() {
@@ -33,6 +35,11 @@ class KelimeAviFragment : Fragment() {
         createGridLayout(gridSize)
         println("Seçilen liste: ${selectedList.javaClass.simpleName}")
 
+        val randomWords = selectRandomWords(selectedList)
+        println("Seçilen kelimeler: $randomWords")
+
+        addTextViewsToLinearLayout(randomWords)
+
         return view
     }
 
@@ -43,6 +50,40 @@ class KelimeAviFragment : Fragment() {
             else -> LongWordList
         }
     }
+
+    //seçilen listeden random beş kelime seçer.
+    private fun selectRandomWords(selectedList: ListType): List<String> {
+        val words = selectedList.words.toMutableList()
+        val randomWords = mutableListOf<String>()
+        repeat(5) {
+            val randomIndex = (0 until words.size).random()
+            val selectedWord = words.removeAt(randomIndex) // Seçilen kelimeyi listeden kaldır
+            randomWords.add(selectedWord)
+        }
+        return randomWords
+    }
+    private fun addTextViewsToLinearLayout(randomWords: List<String>) {
+        // LinearLayout referansını al
+        val linearLayout = binding.linearLayout
+
+        // Her bir random kelime için bir TextView oluştur ve LinearLayout'a ekle
+        for (word in randomWords) {
+            val textView = TextView(requireContext()).apply {
+                text = word
+                gravity = Gravity.CENTER
+                setTextColor(Color.WHITE)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    topMargin = resources.getDimensionPixelSize(R.dimen.textview_margin)
+                }
+            }
+            linearLayout.addView(textView)
+        }
+    }
+
+
 
     private fun createGridLayout(gridSize: Int) {
         binding.gridLayout.rowCount = gridSize
