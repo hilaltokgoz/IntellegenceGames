@@ -14,6 +14,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentKelimeAviBinding
+import kotlin.random.Random
+
 
 class KelimeAviFragment : Fragment() {
     private var _binding: FragmentKelimeAviBinding? = null
@@ -32,13 +34,14 @@ class KelimeAviFragment : Fragment() {
             is NormalWordList -> 12
             is LongWordList -> 15
         }
-        createGridLayout(gridSize)
+
         println("Seçilen liste: ${selectedList.javaClass.simpleName}")
 
         val randomWords = selectRandomWords(selectedList)
         println("Seçilen kelimeler: $randomWords")
 
         addTextViewsToLinearLayout(randomWords)
+        createGridLayout(gridSize,randomWords)
 
         return view
     }
@@ -64,10 +67,8 @@ class KelimeAviFragment : Fragment() {
     }
 
     private fun addTextViewsToLinearLayout(randomWords: List<String>) {
-        // LinearLayout referansını al
         val linearLayout = binding.linearLayout
 
-        // Her bir random kelime için bir TextView oluştur ve LinearLayout'a ekle
         for (word in randomWords) {
             val textView = TextView(requireContext()).apply {
                 text = word
@@ -84,17 +85,25 @@ class KelimeAviFragment : Fragment() {
         }
     }
 
-
-    private fun createGridLayout(gridSize: Int) {
-        binding.gridLayout.rowCount = gridSize
-        binding.gridLayout.columnCount = gridSize
+    private fun createGridLayout(gridSize: Int,words: List<String>) {
+        val gridLayout = binding.gridLayout
+        gridLayout.rowCount = gridSize
+        gridLayout.columnCount = gridSize
 
         val margin = 2.dpToPx(requireContext())
+        val grid = Array(gridSize) { Array(gridSize) { "" } }
+
+        for (word in words) {
+            placeWordInGrid(grid, word)
+        }
 
         for (i in 0 until gridSize) {
             for (j in 0 until gridSize) {
+                if (grid[i][j].isEmpty()) {
+                    grid[i][j] = getRandomLetter()
+                }
                 val textView = TextView(requireContext()).apply {
-                    text = getRandomLetter()
+                    text = grid[i][j]
                     gravity = Gravity.CENTER
                     setTextColor(Color.BLACK)
                     layoutParams = GridLayout.LayoutParams().apply {
@@ -105,13 +114,52 @@ class KelimeAviFragment : Fragment() {
                         setMargins(margin, margin, margin, margin)
                     }
                 }
-
-                binding.gridLayout.addView(textView)
+                gridLayout.addView(textView)
 
             }
-
         }
 
+    }
+    private fun placeWordInGrid(grid: Array<Array<String>>, word: String) {
+        val gridSize = grid.size
+        val directions = listOf(
+            Direction.LEFT_TO_RIGHT,
+            Direction.RIGHT_TO_LEFT,
+            Direction.TOP_TO_BOTTOM,
+            Direction.BOTTOM_TO_TOP
+        )
+
+        var placed = false
+
+        while (!placed) {
+            val direction = directions.random()
+            val startRow = Random.nextInt(gridSize)
+            val startCol = Random.nextInt(gridSize)
+
+            if (canPlaceWord(grid, word, startRow, startCol, direction)) {
+                placeWord(grid, word, startRow, startCol, direction)
+                placed = true
+            }
+        }
+    }
+    private fun canPlaceWord(grid: Array<Array<String>>, word: String, row: Int, col: Int, direction: Direction): Boolean {
+        val gridSize = grid.size
+
+        return when (direction) {
+            Direction.LEFT_TO_RIGHT -> col + word.length <= gridSize && (word.indices).all { grid[row][col + it].isEmpty() }
+            Direction.RIGHT_TO_LEFT -> col - word.length >= -1 && (word.indices).all { grid[row][col - it].isEmpty() }
+            Direction.TOP_TO_BOTTOM -> row + word.length <= gridSize && (word.indices).all { grid[row + it][col].isEmpty() }
+            Direction.BOTTOM_TO_TOP -> row - word.length >= -1 && (word.indices).all { grid[row - it][col].isEmpty() }
+        }
+    }
+
+    private fun placeWord(grid: Array<Array<String>>, word: String, row: Int, col: Int, direction: Direction) {
+        when (direction) {
+            Direction.LEFT_TO_RIGHT -> word.forEachIndexed { index, c -> grid[row][col + index] = c.toString() }
+            Direction.RIGHT_TO_LEFT -> word.forEachIndexed { index, c -> grid[row][col - index] = c.toString() }
+            Direction.TOP_TO_BOTTOM -> word.forEachIndexed { index, c -> grid[row + index][col] = c.toString() }
+            Direction.BOTTOM_TO_TOP -> word.forEachIndexed { index, c -> grid[row - index][col] = c.toString() }
+        }
     }
 
     private fun getRandomLetter(): String {
@@ -135,6 +183,12 @@ private fun Int.dpToPx(requireContext: Context): Int {
 
 }
 
+enum class Direction {
+    LEFT_TO_RIGHT,
+    RIGHT_TO_LEFT,
+    TOP_TO_BOTTOM,
+    BOTTOM_TO_TOP
+}
 
 sealed class ListType {
     abstract val words: List<String>
