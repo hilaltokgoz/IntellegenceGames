@@ -1,25 +1,33 @@
 package com.gloory.intellegencegames.view
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.TypedValue
+import android.os.CountDownTimer
 import android.view.*
+import android.widget.Button
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentKelimeAviBinding
 import kotlin.random.Random
 
-
 class KelimeAviFragment : Fragment() {
     private var _binding: FragmentKelimeAviBinding? = null
     private val binding get() = _binding!!
+    private lateinit var alertDialog: AlertDialog
+    private lateinit var selectedWords: List<String>
+    private lateinit var timerTextView: TextView
+    private lateinit var countDownTimer: CountDownTimer
+    private var elapsedTime = 0L
+    private var gameFinished = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +42,7 @@ class KelimeAviFragment : Fragment() {
             is NormalWordList -> 12
             is LongWordList -> 15
         }
+        timerTextView = view.findViewById(R.id.timerTextView)
 
         println("Seçilen liste: ${selectedList.javaClass.simpleName}")
 
@@ -44,7 +53,29 @@ class KelimeAviFragment : Fragment() {
         createGridLayout(gridSize, randomWords)
         addTouchListenerToGridLayout()
 
+        startTimer()
+
         return view
+    }
+
+    private fun startTimer() {
+        countDownTimer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                elapsedTime += 1000
+                val minutes = (elapsedTime / 1000) / 60
+                val seconds = (elapsedTime / 1000) % 60
+                timerTextView.text = String.format("%02d:%02d", minutes, seconds)
+            }
+
+            override fun onFinish() {
+                // Timer finished
+            }
+        }
+        countDownTimer.start()
+    }
+
+    private fun stopTimer() {
+        countDownTimer.cancel()
     }
 
     private fun selectRandomList(): ListType {
@@ -69,6 +100,7 @@ class KelimeAviFragment : Fragment() {
 
     private fun addTextViewsToLinearLayout(randomWords: List<String>) {
         val linearLayout = binding.linearLayout
+        linearLayout.removeAllViews()
 
         for (word in randomWords) {
             val textView = TextView(requireContext()).apply {
@@ -88,10 +120,10 @@ class KelimeAviFragment : Fragment() {
 
     private fun createGridLayout(gridSize: Int, words: List<String>) {
         val gridLayout = binding.gridLayout
+        gridLayout.removeAllViews()
         gridLayout.rowCount = gridSize
         gridLayout.columnCount = gridSize
 
-        val margin = 2.dpToPx(requireContext())
         val grid = Array(gridSize) { Array(gridSize) { "" } }
 
         for (word in words) {
@@ -112,7 +144,6 @@ class KelimeAviFragment : Fragment() {
                         height = GridLayout.LayoutParams.WRAP_CONTENT
                         columnSpec = GridLayout.spec(j, 1, GridLayout.FILL, 1f)
                         rowSpec = GridLayout.spec(i, 1, GridLayout.FILL, 1f)
-                        setMargins(margin, margin, margin, margin)
                     }
                 }
                 gridLayout.addView(textView)
@@ -192,6 +223,11 @@ class KelimeAviFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        stopTimer()
+        // Check if the fragment is attached to activity before showing the dialog
+        if (isAdded) {
+            showGameFinishedDialog(timerTextView)
+        }
         _binding = null
     }
     //gridLayout dokunabilirlik
@@ -202,8 +238,7 @@ class KelimeAviFragment : Fragment() {
         val selectedCells = mutableListOf<TextView>()
         var originalBackgroundColor: Drawable? = null
 
-        for (i in 0 until gridLayout.childCount) {
-            val textView = gridLayout.getChildAt(i) as TextView
+        gridLayout.forEach { textView ->
             textView.setOnTouchListener { v, event ->
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
@@ -211,17 +246,19 @@ class KelimeAviFragment : Fragment() {
                         if (!selectedCells.contains(v)) {
                             originalBackgroundColor = v.background
                             selectedCells.add(v as TextView)
-                            // Set background color to semi-transparent blue
-                            v.setBackgroundColor(Color.parseColor("#800000FF")) // 80 is the alpha value (50% transparency)
+                            v.setBackgroundColor(Color.parseColor("#800000FF"))
                         }
                         true
                     }
                     MotionEvent.ACTION_MOVE -> {
-                        val childView = getViewAtPosition(gridLayout, event.rawX.toInt(), event.rawY.toInt())
-                        if (childView != null && childView is TextView && !selectedCells.contains(childView)) {
+                        val childView =
+                            getViewAtPosition(gridLayout, event.rawX.toInt(), event.rawY.toInt())
+                        if (childView != null && childView is TextView && !selectedCells.contains(
+                                childView
+                            )
+                        ) {
                             selectedCells.add(childView)
-                            // Set background color to semi-transparent blue
-                            childView.setBackgroundColor(Color.parseColor("#800000FF")) // 80 is the alpha value (50% transparency)
+                            childView.setBackgroundColor(Color.parseColor("#800000FF"))
                         }
                         true
                     }
@@ -230,6 +267,7 @@ class KelimeAviFragment : Fragment() {
                         if (checkWord(selectedWord)) {
                             selectedCells.forEach { it.setBackgroundColor(Color.parseColor("#8000FF00")) } // 80 is the alpha value (50% transparency)
                             strikeThroughWordInLinearLayout(selectedWord)
+                            checkGameFinished()
                         } else {
                             selectedCells.forEach { it.background = originalBackgroundColor }
                         }
@@ -239,10 +277,8 @@ class KelimeAviFragment : Fragment() {
                     else -> false
                 }
             }
-
-            // Override performClick
             textView.setOnClickListener {
-                // Handle the click action if necessary
+
             }
         }
     }
@@ -275,16 +311,67 @@ class KelimeAviFragment : Fragment() {
         }
     }
 
+    private fun checkGameFinished() {
+        val linearLayout = binding.linearLayout
+        var allWordsFound = true
 
-}
+        for (i in 0 until linearLayout.childCount) {
+            val textView = linearLayout.getChildAt(i) as TextView
+            if (textView.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG == 0) {
+                allWordsFound = false
+                break
+            }
+        }
 
-private fun Int.dpToPx(requireContext: Context): Int {
-    return TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        this.toFloat(),
-        requireContext.resources.displayMetrics
-    ).toInt()
+        if (allWordsFound && !gameFinished) {
+            gameFinished = true
+            stopTimer()
+            showGameFinishedDialog(timerTextView)
+        }
+    }
 
+    private fun showGameFinishedDialog(timerTextView: TextView) {
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = requireActivity().layoutInflater
+        val dialogView = inflater.inflate(R.layout.custom_dialog_kelimeavi, null)
+        val textViewTimer = dialogView.findViewById<TextView>(R.id.textViewTimer)
+        val positiveButton = dialogView.findViewById<Button>(R.id.positiveButton)
+        val negativeButton = dialogView.findViewById<Button>(R.id.negativeButton)
+
+        builder.setView(dialogView)
+        val dialog = builder.create()
+        textViewTimer.text = "Süre: ${timerTextView.text}"
+
+        positiveButton.setOnClickListener {
+            resetGame()
+            dialog.dismiss()
+        }
+
+        negativeButton.setOnClickListener {
+            findNavController().navigate(R.id.action_kelimeAviFragment_to_homeFragment)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun resetGame() {
+        gameFinished = false
+        elapsedTime = 0L
+        val selectedList = selectRandomList()
+        val gridSize = when (selectedList) {
+            is ShortWordList -> 10
+            is NormalWordList -> 12
+            is LongWordList -> 15
+        }
+        val randomWords = selectRandomWords(selectedList)
+
+        addTextViewsToLinearLayout(randomWords)
+        createGridLayout(gridSize, randomWords)
+        addTouchListenerToGridLayout()
+        startTimer()
+
+    }
 }
 
 enum class Direction {
