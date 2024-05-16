@@ -1,13 +1,13 @@
 package com.gloory.intellegencegames.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -41,7 +41,8 @@ class KelimeAviFragment : Fragment() {
         println("Seçilen kelimeler: $randomWords")
 
         addTextViewsToLinearLayout(randomWords)
-        createGridLayout(gridSize,randomWords)
+        createGridLayout(gridSize, randomWords)
+        addTouchListenerToGridLayout()
 
         return view
     }
@@ -85,7 +86,7 @@ class KelimeAviFragment : Fragment() {
         }
     }
 
-    private fun createGridLayout(gridSize: Int,words: List<String>) {
+    private fun createGridLayout(gridSize: Int, words: List<String>) {
         val gridLayout = binding.gridLayout
         gridLayout.rowCount = gridSize
         gridLayout.columnCount = gridSize
@@ -120,6 +121,7 @@ class KelimeAviFragment : Fragment() {
         }
 
     }
+
     private fun placeWordInGrid(grid: Array<Array<String>>, word: String) {
         val gridSize = grid.size
         val directions = listOf(
@@ -142,7 +144,14 @@ class KelimeAviFragment : Fragment() {
             }
         }
     }
-    private fun canPlaceWord(grid: Array<Array<String>>, word: String, row: Int, col: Int, direction: Direction): Boolean {
+
+    private fun canPlaceWord(
+        grid: Array<Array<String>>,
+        word: String,
+        row: Int,
+        col: Int,
+        direction: Direction
+    ): Boolean {
         val gridSize = grid.size
 
         return when (direction) {
@@ -153,12 +162,26 @@ class KelimeAviFragment : Fragment() {
         }
     }
 
-    private fun placeWord(grid: Array<Array<String>>, word: String, row: Int, col: Int, direction: Direction) {
+    private fun placeWord(
+        grid: Array<Array<String>>,
+        word: String,
+        row: Int,
+        col: Int,
+        direction: Direction
+    ) {
         when (direction) {
-            Direction.LEFT_TO_RIGHT -> word.forEachIndexed { index, c -> grid[row][col + index] = c.toString() }
-            Direction.RIGHT_TO_LEFT -> word.forEachIndexed { index, c -> grid[row][col - index] = c.toString() }
-            Direction.TOP_TO_BOTTOM -> word.forEachIndexed { index, c -> grid[row + index][col] = c.toString() }
-            Direction.BOTTOM_TO_TOP -> word.forEachIndexed { index, c -> grid[row - index][col] = c.toString() }
+            Direction.LEFT_TO_RIGHT -> word.forEachIndexed { index, c ->
+                grid[row][col + index] = c.toString()
+            }
+            Direction.RIGHT_TO_LEFT -> word.forEachIndexed { index, c ->
+                grid[row][col - index] = c.toString()
+            }
+            Direction.TOP_TO_BOTTOM -> word.forEachIndexed { index, c ->
+                grid[row + index][col] = c.toString()
+            }
+            Direction.BOTTOM_TO_TOP -> word.forEachIndexed { index, c ->
+                grid[row - index][col] = c.toString()
+            }
         }
     }
 
@@ -171,6 +194,87 @@ class KelimeAviFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+    //gridLayout dokunabilirlik
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun addTouchListenerToGridLayout() {
+        val gridLayout = binding.gridLayout
+        val selectedCells = mutableListOf<TextView>()
+        var originalBackgroundColor: Drawable? = null
+
+        for (i in 0 until gridLayout.childCount) {
+            val textView = gridLayout.getChildAt(i) as TextView
+            textView.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        v.performClick()
+                        if (!selectedCells.contains(v)) {
+                            originalBackgroundColor = v.background
+                            selectedCells.add(v as TextView)
+                            // Set background color to semi-transparent blue
+                            v.setBackgroundColor(Color.parseColor("#800000FF")) // 80 is the alpha value (50% transparency)
+                        }
+                        true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        val childView = getViewAtPosition(gridLayout, event.rawX.toInt(), event.rawY.toInt())
+                        if (childView != null && childView is TextView && !selectedCells.contains(childView)) {
+                            selectedCells.add(childView)
+                            // Set background color to semi-transparent blue
+                            childView.setBackgroundColor(Color.parseColor("#800000FF")) // 80 is the alpha value (50% transparency)
+                        }
+                        true
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        val selectedWord = selectedCells.joinToString("") { it.text.toString() }
+                        if (checkWord(selectedWord)) {
+                            selectedCells.forEach { it.setBackgroundColor(Color.parseColor("#8000FF00")) } // 80 is the alpha value (50% transparency)
+                            strikeThroughWordInLinearLayout(selectedWord)
+                        } else {
+                            selectedCells.forEach { it.background = originalBackgroundColor }
+                        }
+                        selectedCells.clear()
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            // Override performClick
+            textView.setOnClickListener {
+                // Handle the click action if necessary
+            }
+        }
+    }
+
+    private fun getViewAtPosition(parent: ViewGroup, x: Int, y: Int): View? {
+        for (i in 0 until parent.childCount) {
+            val child = parent.getChildAt(i)
+            val location = IntArray(2)
+            child.getLocationOnScreen(location)
+            if (x >= location[0] && x <= location[0] + child.width && y >= location[1] && y <= location[1] + child.height) {
+                return child
+            }
+        }
+        return null
+    }
+
+    private fun checkWord(word: String): Boolean {
+        val words = ShortWordList.words + NormalWordList.words + LongWordList.words
+        return words.contains(word)
+    }
+
+    private fun strikeThroughWordInLinearLayout(word: String) {
+        val linearLayout = binding.linearLayout
+
+        for (i in 0 until linearLayout.childCount) {
+            val textView = linearLayout.getChildAt(i) as TextView
+            if (textView.text == word) {
+                textView.paintFlags = textView.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            }
+        }
+    }
+
 
 }
 
@@ -194,7 +298,6 @@ sealed class ListType {
     abstract val words: List<String>
 }
 
-//3-4-5-6 harf
 object ShortWordList : ListType() {
     override val words = listOf(
         "ANNE", "ARA", "ATA", "BABA", "CEZA", "DAVA", "EFE",
