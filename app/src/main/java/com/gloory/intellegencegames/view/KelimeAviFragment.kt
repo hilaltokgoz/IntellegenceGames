@@ -197,27 +197,27 @@ sealed class ListType {
 //3-4-5-6 harf
 object ShortWordList : ListType() {
     override val words = listOf(
-        "ana", "ara", "ata", "baba", "ceza", "dava", "efe",
-        "adana", "balık", "cuma", "duru", "elma",
-        "afrika", "bakır", "ceylan", "deniz", "fethiye", "bursa", "dünya", "elazığ",
-        "fındık", "balta", "cephe", "dolap", "eşref", "elma", "armut", "kiraz", "kalem",
-        "şeker", "tuz", "un", "pirinç", "bulgur", "makarna", "yerel", "global",
-        "toplum", "yakın", "uzak",
+        "ANNE", "ARA", "ATA", "BABA", "CEZA", "DAVA", "EFE",
+        "ADANA", "BALIK", "CUMA", "DURU", "ELMA",
+        "AFRİKA", "BAKIR", "CEYLAN", "DENİZ", "FETHİYE", "BURSA", "DÜNYA", "ELAZIĞ",
+        "FINDIK", "BALTA", "CEPHE", "DOLAP", "EŞREF", "ELMA", "ARMUT", "KİRAZ", "KALEM",
+        "ŞEKER", "TUZ", "UN", "PİRİNÇ", "BULGUR", "MAKARNA", "YEREL", "GLOBAL",
+        "TOPLUM", "YAKIN", "UZAK",
     )
 }
 
 object NormalWordList : ListType() {
     override val words = listOf(
-        "akdeniz", "beykoz", "dalga", "ekvator", "ankara", "berlin", "cetvel", "doktor", "felemenk",
-        "bisküvi", "canavar", "darbe", "eşyalar", "ıspanak", "fasulye", "mercimek", "barbunya",
-        "gelecek", "brokoli", "pırasa", "sarımsak", "bezelye", "patlıcan", "salatalık",
-        "mühendislik", "yönetim", "danışman"
+        "AKDENİZ", "BEYKOZ", "DALGA", "EKVATOR", "ANKARA", "BERLİN", "CETVEL", "DOKTOR", "FELEMENK",
+        "BİSKÜVİ", "CANAVAR", "DARBE", "EŞYA", "ISPANAK", "FASULYE", "MERCİMEK", "BARBUNYA",
+        "GELECEK", "BROKOLİ", "PIRASA", "SARIMSAK", "BEZELYE", "PATLICAN", "SALATALIK",
+        "MÜHENDİSLİK", "YÖNETİM", "DANIŞMAN"
     )
 }
 
 object LongWordList : ListType() {
     override val words = listOf(
-        "muhtesemlik", "fantastik", "harikulade", "mucizevi", "olaganustu",
-        "umutsuzluk", "yaklasimlar", "karamsarlik"
+        "MUHTEŞEM", "FANTASTİK", "HARİKULADE", "MUCİZEVİ", "OLAĞANÜSTÜ",
+        "UMUTSUZLUK", "YAKLAŞIM", "KARAMSARLIK"
     )
 }
