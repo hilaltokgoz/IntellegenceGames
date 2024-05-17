@@ -42,6 +42,9 @@
         <action
             android:id="@+id/action_homeFragment_to_kelimeAviFragment"
             app:destination="@id/kelimeAviFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_puzzleFragment"
+            app:destination="@id/puzzleFragment" />
     </fragment>
     <fragment
         android:id="@+id/ticTacToeFragment"
@@ -67,6 +70,11 @@
             android:id="@+id/action_kelimeAviFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/puzzleFragment"
+        android:name="com.gloory.intellegencegames.view.PuzzleFragment"
+        android:label="fragment_puzzle"
+        tools:layout="@layout/fragment_puzzle" />
 
 
 </navigation>

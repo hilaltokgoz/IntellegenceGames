@@ -44,6 +44,10 @@ class HomeFragment : Fragment() {
                 HomePageItem.ANAGRAM-> {
                     findNavController().navigate(R.id.action_homeFragment_to_anagramGameFragment)
                 }
+                HomePageItem.PUZZLE->{
+                    findNavController().navigate(R.id.action_homeFragment_to_puzzleFragment)
+                }
+
             }
         }
         recyclerview.adapter = adapter
