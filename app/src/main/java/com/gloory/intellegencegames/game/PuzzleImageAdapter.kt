@@ -12,6 +12,11 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import com.gloory.intellegencegames.R
+import com.gloory.intellegencegames.view.PuzzleFragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import kotlin.math.min
 
@@ -24,10 +29,18 @@ import kotlin.math.min
 //│ 21.05.2024               │
 //└──────────────────────────┘
 
-class PuzzleImageAdapter (private val mContext: Context) : BaseAdapter() {
-
+class PuzzleImageAdapter(private val mContext: Context) : BaseAdapter() {
     val am: AssetManager
     private var files: Array<String>? = null
+
+    init {
+        am = mContext.assets
+        try {
+            files = am.list("img")
+        } catch (e:IOException){
+            e.printStackTrace()
+        }
+    }
 
     override fun getCount(): Int = files!!.size
 
@@ -37,14 +50,14 @@ class PuzzleImageAdapter (private val mContext: Context) : BaseAdapter() {
 
     override fun getItemId(position: Int): Long = 0
 
-    override fun getView(position: Int, view: View?, viewGrroup: ViewGroup?): View {
-        val v = LayoutInflater.from(mContext).inflate(R.layout.grid_element, null)
+    override fun getView(position: Int, view: View?, viewGroup: ViewGroup?): View {
+        val v =  LayoutInflater.from(mContext).inflate(R.layout.grid_element, null)
         val imageView = v.findViewById<ImageView>(R.id.gridImageView)
         imageView.post {
-            object : AsyncTask<Any?, Any?, Any>() {
-                private var bitmap: Bitmap? = null
+            object : AsyncTask<Any?,Any?,Any?>(){
+                private var bitmap :Bitmap? = null
                 override fun doInBackground(vararg poition: Any?): Any? {
-                    bitmap = getPicFromAsset(imageView, files!![position])
+                  bitmap = getPicFromAsset(imageView,files!![position])
                     return null
                 }
 
@@ -59,44 +72,39 @@ class PuzzleImageAdapter (private val mContext: Context) : BaseAdapter() {
 
     private fun getPicFromAsset(imageView: ImageView?, assetName: String): Bitmap? {
         val targetW = imageView!!.width
-        val targetH = imageView.height
+        val targetH = imageView!!.height
 
         return if (targetW == 0 || targetH == 0) {
             null
-        } else try {
+        } else
+            try {
             val  `is` = am.open("img/$assetName")
-            val bmOptions = BitmapFactory.Options()
-            bmOptions.inJustDecodeBounds = true
+            val bmOptions = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
             BitmapFactory.decodeStream(
                 `is`,
-                Rect(-1, -1, -1, -1), bmOptions
+                Rect(-1, -1, -1, -1), bmOptions //rect= null
             )
             val photoW = bmOptions.outWidth
             val photoH = bmOptions.outHeight
 
             //peternine imageView'in ölçeği ne kadar küçültülecek
-            val scaleFactor = min(photoW/targetW,photoH/targetH)
-            bmOptions.inJustDecodeBounds = false
-            bmOptions.inSampleSize =scaleFactor
-            bmOptions.inPurgeable = true
+            val scaleFactor = Math.min(photoW/targetW/photoH,targetH)
+
+                bmOptions.apply {
+                    inJustDecodeBounds = false
+                    inSampleSize = scaleFactor
+                    inPurgeable = true
+                }
             BitmapFactory.decodeStream(
                 `is`,
-                Rect(-1, -1, -1, -1), bmOptions
+                Rect(-1, -1, -1, -1), bmOptions //rect = null
             )
         } catch (e: IOException){
             e.printStackTrace()
             null
         }
     }
-    init {
-        am = mContext.assets
-       try {
-           files = am.list("img")
-       } catch (e:IOException){
-         e.printStackTrace()
-       }
-    }
-
-
 
 }

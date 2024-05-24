@@ -1,8 +1,7 @@
 package com.gloory.intellegencegames.view
 
-import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.app.Activity.RESULT_OK
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -16,6 +15,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentPuzzleBinding
 import com.gloory.intellegencegames.game.PuzzleImageAdapter
 import java.io.File
@@ -40,8 +40,7 @@ class PuzzleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recources = requireContext().resources
-        val am = resources.assets
+        val am = requireContext().assets
         try {
             val files = am.list("img")
             val grid = binding.grid
@@ -49,9 +48,21 @@ class PuzzleFragment : Fragment() {
             grid.adapter = PuzzleImageAdapter(requireContext())
             grid.onItemClickListener =
                 AdapterView.OnItemClickListener { adapterView, view, i, l ->
-                    val intent = Intent(requireContext(), PuzzleDetailFragment::class.java)
-                    intent.putExtra("assetName", files!![i % files.size])
-                    startActivity(intent)
+
+                    val bundle = Bundle()
+                    bundle.putString("assetName", files!![i % files.size])
+
+                    val fragment = PuzzleDetailFragment()
+                    fragment.arguments = bundle
+
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                   /* val intent = Intent(requireContext().applicationContext, PuzzleDetailFragment::class.java)
+                    intent.putExtra("assetName",files!![i % files.size])
+                    startActivity(intent)*/
+
                 }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -60,9 +71,6 @@ class PuzzleFragment : Fragment() {
 
         binding.cameraButton.setOnClickListener { onImageCameraClicked(it) }
         binding.gallerButton.setOnClickListener { onImageGallerClicked(it) }
-
-
-
 
 
 
@@ -94,12 +102,12 @@ class PuzzleFragment : Fragment() {
    @Throws(IOException::class)
     private fun createImageFile(): File? {
         if (ContextCompat.checkSelfPermission(
-                requireContext(),WRITE_EXTERNAL_STORAGE
+                requireContext(),android.Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             requestPermissions(
                 arrayOf(
-                   WRITE_EXTERNAL_STORAGE
+                   android.Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ), REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE
             )
         } else {
@@ -133,16 +141,17 @@ class PuzzleFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == REQUEST_IMAGE_GAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_GAPTURE && resultCode == Activity.RESULT_OK) {
             val intent = Intent(
                 requireContext(), PuzzleDetailFragment::class.java
             )
             intent.putExtra("mCurrentPhotoPath", mCurrentPhotoPath)
             startActivity(intent)
-        } else if (resultCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK) {
+        }
+        if (resultCode == REQUEST_IMAGE_GALLERY && resultCode ==  Activity.RESULT_OK) {
             val uri = data?.data ?: return
             val intent = Intent(requireContext(), PuzzleDetailFragment::class.java)
-            intent.putExtra("mCurrentPhotoUri", uri)
+            intent.putExtra("mCurrentPhotoUri", uri.toString())
             startActivity(intent)
         }
     }

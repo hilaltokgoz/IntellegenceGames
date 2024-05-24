@@ -19,12 +19,14 @@ import com.gloory.intellegencegames.game.PuzzlePiece
 import com.gloory.intellegencegames.game.TouchListener
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 
 class PuzzleDetailFragment : Fragment() {
 
     var pieces: ArrayList<PuzzlePiece>? = null
+
     var mCurrentPhotoPath: String? = null
     var mCurrentPhotoUri: String? = null
 
@@ -36,6 +38,11 @@ class PuzzleDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentPuzzleDetailBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val layout = binding.layout
         val imageView = binding.imageView
@@ -55,37 +62,35 @@ class PuzzleDetailFragment : Fragment() {
                 imageView.setImageURI(Uri.parse(mCurrentPhotoUri))
             }
             pieces = splitImage()
-            val touchListener = TouchListener(this@PuzzleDetailFragment)
-            // puzzle parçalarını karıştır
-            Collections.shuffle(pieces)
-            for (piece in pieces!!) {
-                piece.setOnTouchListener(touchListener)
-                layout.addView(piece)
+                val touchListener = TouchListener(this@PuzzleDetailFragment)
+                // puzzle parçalarını karıştır
+                Collections.shuffle(pieces)
+                for (piece in pieces!!) {
+                    piece.setOnTouchListener(touchListener)
+                    layout.addView(piece)
 
-                //pozisyonları karıştır
-                val lParams = piece.layoutParams as RelativeLayout.LayoutParams
-                lParams.leftMargin = Random.nextInt(
-                    layout.width - piece.pieceWidth
-                )
-                lParams.topMargin = layout.height - piece.pieceHeight
-                piece.layoutParams = lParams
-
+                    //pozisyonları karıştır
+                    val lParams = piece.layoutParams as RelativeLayout.LayoutParams
+                    lParams.leftMargin = Random.nextInt(
+                        layout.width - piece.pieceWidth
+                    )
+                    lParams.topMargin = layout.height - piece.pieceHeight
+                    piece.layoutParams = lParams
             }
         }
-        return binding.root
     }
 
     private fun setPicFromAsset(assetName: String, imageView: ImageView?) {
         val targetW = imageView!!.width
         val targetH = imageView.height
+
         val am = requireContext().assets
 
         try {
             val `is` = am.open("img/$assetName")
             val bmOption = BitmapFactory.Options()
-            BitmapFactory.decodeStream(
-                `is`, Rect(-1, -1, -1, -1), bmOption
-            )
+            BitmapFactory.decodeStream(`is`, Rect(-1, -1, -1, -1), bmOption)
+
             val photoW = bmOption.outWidth
             val photoH = bmOption.outHeight
 
@@ -95,6 +100,7 @@ class PuzzleDetailFragment : Fragment() {
             bmOption.inJustDecodeBounds = false
             bmOption.inSampleSize = scalFctor
             bmOption.inPurgeable = true
+
             val bitmap = BitmapFactory.decodeStream(
                 `is`, Rect(-1, -1, -1, -1), bmOption
             )
@@ -118,6 +124,7 @@ class PuzzleDetailFragment : Fragment() {
         // bitmap in kaynak resmi
         val drawable = imageView.drawable as BitmapDrawable
         val bitmap = drawable.bitmap
+
         val dimensions = getBitmapPositionInsideImageView(imageView)
 
         val scaledBitmapLeft = dimensions[0]
@@ -131,6 +138,7 @@ class PuzzleDetailFragment : Fragment() {
         val scaledBitmap = Bitmap.createScaledBitmap(
             bitmap, scaledBitmapWidth, scaledBitmapHeight, true
         )
+
         val croppedBitmap = Bitmap.createBitmap(
             scaledBitmap,
             Math.abs(scaledBitmapLeft),
@@ -153,8 +161,9 @@ class PuzzleDetailFragment : Fragment() {
                     offsetX = pieceWidth / 3
                 }
                 if (row > 0) {
-                    offsetY = pieceHeight / 4
+                    offsetY = pieceHeight / 3
                 }
+
                 val pieceBitmap = Bitmap.createBitmap(
                     croppedBitmap, xCoord - offsetX, yCoord - offsetY,
                     pieceWidth + offsetX, pieceHeight + offsetY
@@ -260,7 +269,7 @@ class PuzzleDetailFragment : Fragment() {
                         (offsetX - bumpSize).toFloat(),
                         (offsetY + (pieceBitmap.height - offsetY) / 6).toFloat(),
                         offsetX.toFloat(),
-                        (offsetY + (pieceBitmap.height - offsetY).toFloat())
+                        (offsetY + (pieceBitmap.height - offsetY) /3 ).toFloat()
                     )
                     path.close()
                 }
@@ -297,20 +306,18 @@ class PuzzleDetailFragment : Fragment() {
         return pieces
     }
 
-    fun checkGameOver(){
-        if (isGameOver){
+    fun checkGameOver() {
+        if (isGameOver) {
             AlertDialog.Builder(requireContext())
                 .setTitle("KAZANDIN.. !!")
                 .setIcon(R.drawable.ic_celebration)
                 .setMessage("Başarılı.... Yeniden Oynamak İster Misin?")
-                .setPositiveButton("Yeniden Oyna"){
-                    dialog, _->
-                    activity?.finish()
+                .setPositiveButton("Yeniden Oyna") { dialog, _ ->
+                    requireActivity().finish()
                     dialog.dismiss()
                 }
-                .setNegativeButton("Çıkış"){
-                        dialog, _->
-                    activity?.finish()
+                .setNegativeButton("Çıkış") { dialog, _ ->
+                    requireActivity().finish()
                     dialog.dismiss()
                 }
                 .create()
@@ -319,8 +326,6 @@ class PuzzleDetailFragment : Fragment() {
         }
 
     }
-
-
 
     private val isGameOver: Boolean
         private get() {
@@ -332,9 +337,9 @@ class PuzzleDetailFragment : Fragment() {
             return true
         }
 
-    private fun getBitmapPositionInsideImageView(imageView: ImageView): IntArray {
+    private fun getBitmapPositionInsideImageView(imageView: ImageView?): IntArray {
         val ret = IntArray(4)
-        if (imageView.drawable == null) {
+        if (imageView == null || imageView.drawable == null) {
             return ret
         }
         // resin dimens lerini al ve matrix lere değer ata, listewnin içine yerleştir
@@ -366,11 +371,11 @@ class PuzzleDetailFragment : Fragment() {
         return ret
     }
 
-    private fun setPicFromPhotoPath(mCurrentPhotoPath: String, imageView: ImageView) {
+    private fun setPicFromPhotoPath(mCurrentPhotoPath: String, imageView: ImageView?) {
 
         //viewlerin dimenslereini al
-        val targetW = imageView.width
-        val targetH = imageView.height
+        val targetW = imageView!!.width
+        val targetH = imageView!!.height
 
         // bitmap dimens lerini al
         val bmOptions = BitmapFactory.Options()
@@ -414,10 +419,7 @@ class PuzzleDetailFragment : Fragment() {
             e.printStackTrace()
             Toast.makeText(requireContext(), e.localizedMessage, Toast.LENGTH_SHORT).show()
         }
-
         imageView.setImageBitmap(rotatedBitmap)
-
-
     }
 
     companion object {
