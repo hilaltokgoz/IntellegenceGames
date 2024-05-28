@@ -22,7 +22,9 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-
+//Resim seçmek için kullanıcı etkileşimini yönetiyor.
+//Galeriden görüntü seçmek  / kamera kullanarak görüntü yakalamak gibi..
+//gridview i img dosyasındaki resimlerle doldurmk için adapter i kullanır
 class PuzzleFragment : Fragment() {
     private var _binding: FragmentPuzzleBinding? = null
     private val binding get() = _binding!!

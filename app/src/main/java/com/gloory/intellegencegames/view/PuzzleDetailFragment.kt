@@ -19,9 +19,13 @@ import com.gloory.intellegencegames.game.PuzzlePiece
 import com.gloory.intellegencegames.game.TouchListener
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.random.Random
 
+//setPicFromPhotoPath görüntünün cihazdan yüklenmesini sağlar.
+//setPicFromAsset, görüntüyü assets den yükler.Gerekirse EXIF verilerine göre görüntüyü döndürür.
+// splitImage'ı kullanarak görüntüyü bulmaca için daha küçük parçalara böler.
+// Her görüntü parçası için PuzzlePiece nesneleri oluşturur ve bunları RelativeLayout'a ekler.
+// Yapboz parçaları için touchListener uygulanır.
 
 class PuzzleDetailFragment : Fragment() {
 
@@ -62,10 +66,11 @@ class PuzzleDetailFragment : Fragment() {
                 imageView.setImageURI(Uri.parse(mCurrentPhotoUri))
             }
             pieces = splitImage()
+            pieces?.let { pieceList ->
                 val touchListener = TouchListener(this@PuzzleDetailFragment)
                 // puzzle parçalarını karıştır
-                Collections.shuffle(pieces)
-                for (piece in pieces!!) {
+                Collections.shuffle(pieceList)
+                for (piece in pieceList) {
                     piece.setOnTouchListener(touchListener)
                     layout.addView(piece)
 
@@ -76,6 +81,7 @@ class PuzzleDetailFragment : Fragment() {
                     )
                     lParams.topMargin = layout.height - piece.pieceHeight
                     piece.layoutParams = lParams
+                }
             }
         }
     }
@@ -269,7 +275,7 @@ class PuzzleDetailFragment : Fragment() {
                         (offsetX - bumpSize).toFloat(),
                         (offsetY + (pieceBitmap.height - offsetY) / 6).toFloat(),
                         offsetX.toFloat(),
-                        (offsetY + (pieceBitmap.height - offsetY) /3 ).toFloat()
+                        (offsetY + (pieceBitmap.height - offsetY) / 3).toFloat()
                     )
                     path.close()
                 }
@@ -375,7 +381,7 @@ class PuzzleDetailFragment : Fragment() {
 
         //viewlerin dimenslereini al
         val targetW = imageView!!.width
-        val targetH = imageView!!.height
+        val targetH = imageView.height
 
         // bitmap dimens lerini al
         val bmOptions = BitmapFactory.Options()

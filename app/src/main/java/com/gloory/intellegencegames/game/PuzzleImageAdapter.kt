@@ -28,7 +28,8 @@ import kotlin.math.min
 //│ ──────────────────────── │
 //│ 21.05.2024               │
 //└──────────────────────────┘
-
+//img deki görüntüleri yükler
+//görüntüyü asenkron yüklemek ve imageview ayarlamak için AsyncTask kullanır.
 class PuzzleImageAdapter(private val mContext: Context) : BaseAdapter() {
     val am: AssetManager
     private var files: Array<String>? = null

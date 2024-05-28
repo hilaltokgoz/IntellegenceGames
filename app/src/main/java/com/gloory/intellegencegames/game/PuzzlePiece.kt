@@ -11,7 +11,7 @@ import androidx.appcompat.widget.AppCompatImageView
 //│ ──────────────────────── │
 //│ 21.05.2024               │
 //└──────────────────────────┘
-
+//bulmaca parçasının özelliklerini depolar
 class PuzzlePiece (context:Context?) : AppCompatImageView(context!!) {
     var xCoord = 0
     var yCoord = 0
