@@ -1,7 +1,6 @@
 package com.gloory.intellegencegames.view
 
 import android.app.AlertDialog
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -11,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentPlaySudokuBinding
 import com.gloory.intellegencegames.game.Cell
@@ -25,7 +24,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     private var _binding: FragmentPlaySudokuBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: PlaySudokuViewModel//view model görüntülenmek içn çağrılır.
+    private val viewModel: PlaySudokuViewModel by viewModels()
     private var buttonList: List<Button>? = null
 
     var selectedDifficulty = 0
@@ -42,12 +41,10 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.sudokuBoardView.registerListener(this)
-
         showDifficultyDialog()
 
 
         //fragmentta bi şey yaratıldığında  aktarılır
-        viewModel = ViewModelProviders.of(this)[PlaySudokuViewModel::class.java]
         //Observer:Gözlemci,seçilen hücre canlı verilene ne olduğu gözlemlenir.
         viewModel.sudokuGame.selectedCellLiveData.observe(
             viewLifecycleOwner,

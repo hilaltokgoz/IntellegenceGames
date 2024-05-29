@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentPuzzleBinding
 import com.gloory.intellegencegames.game.PuzzleImageAdapter
+import com.gloory.intellegencegames.navigate
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -32,13 +33,13 @@ class PuzzleFragment : Fragment() {
     var mCurrentPhotoPath: String? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentPuzzleBinding.inflate(inflater, container, false)
         return binding.root
 
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -48,24 +49,10 @@ class PuzzleFragment : Fragment() {
             val grid = binding.grid
 
             grid.adapter = PuzzleImageAdapter(requireContext())
-            grid.onItemClickListener =
-                AdapterView.OnItemClickListener { adapterView, view, i, l ->
-
-                    val bundle = Bundle()
-                    bundle.putString("assetName", files!![i % files.size])
-
-                    val fragment = PuzzleDetailFragment()
-                    fragment.arguments = bundle
-
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, fragment)
-                        .addToBackStack(null)
-                        .commit()
-                   /* val intent = Intent(requireContext().applicationContext, PuzzleDetailFragment::class.java)
-                    intent.putExtra("assetName",files!![i % files.size])
-                    startActivity(intent)*/
-
-                }
+            grid.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
+                val asset = files!![i % files.size]
+                navigate(PuzzleFragmentDirections.toPuzzleDetail(asset))
+            }
         } catch (e: IOException) {
             e.printStackTrace()
             Toast.makeText(requireContext(), e.localizedMessage, Toast.LENGTH_SHORT).show()
@@ -98,15 +85,15 @@ class PuzzleFragment : Fragment() {
         }
     }
 
-   @Throws(IOException::class)
+    @Throws(IOException::class)
     private fun createImageFile(): File? {
         if (ContextCompat.checkSelfPermission(
-                requireContext(),android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                requireContext(), WRITE_EXTERNAL_STORAGE
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             requestPermissions(
                 arrayOf(
-                   android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    WRITE_EXTERNAL_STORAGE
                 ), REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE
             )
         } else {
@@ -123,9 +110,7 @@ class PuzzleFragment : Fragment() {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
@@ -147,7 +132,7 @@ class PuzzleFragment : Fragment() {
             intent.putExtra("mCurrentPhotoPath", mCurrentPhotoPath)
             startActivity(intent)
         }
-        if (resultCode == REQUEST_IMAGE_GALLERY && resultCode ==  Activity.RESULT_OK) {
+        if (resultCode == REQUEST_IMAGE_GALLERY && resultCode == Activity.RESULT_OK) {
             val uri = data?.data ?: return
             val intent = Intent(requireContext(), PuzzleDetailFragment::class.java)
             intent.putExtra("mCurrentPhotoUri", uri.toString())
@@ -165,7 +150,7 @@ class PuzzleFragment : Fragment() {
                     android.Manifest.permission.READ_EXTERNAL_STORAGE
                 ), REQUEST_PERMISSION_READ_EXTERNAL_STORAGE
             )
-        }else{
+        } else {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "image/*"
             startActivityForResult(intent, REQUEST_IMAGE_GALLERY)

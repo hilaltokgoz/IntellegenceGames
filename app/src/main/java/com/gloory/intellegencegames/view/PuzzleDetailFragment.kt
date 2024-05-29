@@ -13,10 +13,12 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentPuzzleDetailBinding
 import com.gloory.intellegencegames.game.PuzzlePiece
 import com.gloory.intellegencegames.game.TouchListener
+import com.gloory.intellegencegames.loadImage
 import java.io.IOException
 import java.util.*
 import kotlin.random.Random
@@ -29,6 +31,8 @@ import kotlin.random.Random
 
 
 class PuzzleDetailFragment : Fragment() {
+    private val navArgs by navArgs<PuzzleDetailFragmentArgs>()
+
     private lateinit var imageView: ImageView
     var pieces: ArrayList<PuzzlePiece>? = null
 
@@ -53,16 +57,16 @@ class PuzzleDetailFragment : Fragment() {
         imageView = binding.imageView
 
         val intent = requireActivity().intent
-        val assetName = intent.getStringExtra("assetName")
+        val assetName = navArgs.puzzlePath
         mCurrentPhotoPath = intent.getStringExtra("mCurrentPhotoPath")
         mCurrentPhotoUri = intent.getStringExtra("mCurrentPhotoUri")
 
 
         imageView.post {
             if (assetName != null) {
-                setPicFromAsset(assetName, imageView)
+                imageView.loadImage(assetName)
             } else if (mCurrentPhotoPath != null) {
-                setPicFromPhotoPath(mCurrentPhotoPath!!, imageView)
+                imageView.loadImage(mCurrentPhotoPath!!)
             } else if (mCurrentPhotoUri != null) {
                 imageView.setImageURI(Uri.parse(mCurrentPhotoUri))
             }
@@ -87,39 +91,7 @@ class PuzzleDetailFragment : Fragment() {
         }
     }
 
-    private fun setPicFromAsset(assetName: String, imageView: ImageView?) {
-        val targetW = imageView!!.width
-        val targetH = imageView.height
-
-        val am = requireContext().assets
-
-        try {
-            val `is` = am.open("img/$assetName")
-            val bmOption = BitmapFactory.Options()
-            BitmapFactory.decodeStream(`is`, Rect(-1, -1, -1, -1), bmOption)
-
-            val photoW = bmOption.outWidth
-            val photoH = bmOption.outHeight
-
-            val scalFctor = Math.min(
-                photoW / targetW, photoH / targetH
-            )
-            bmOption.inJustDecodeBounds = false
-            bmOption.inSampleSize = scalFctor
-            bmOption.inPurgeable = true
-
-            val bitmap = BitmapFactory.decodeStream(
-                `is`, Rect(-1, -1, -1, -1), bmOption
-            )
-            imageView.setImageBitmap(bitmap)
-
-        } catch (e: IOException) {
-            e.printStackTrace()
-            Toast.makeText(requireContext(), e.localizedMessage, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun splitImage(): ArrayList<PuzzlePiece> {
+    private fun splitImage2(): ArrayList<PuzzlePiece> {
         val piecesNumber = 12
         val rows = 4
         val cols = 3
@@ -302,7 +274,199 @@ class PuzzleDetailFragment : Fragment() {
                 canvas.drawPath(path, border)
 
                 //parça bitmapleri çözümle
-                piece.setImageBitmap(puzzlePiece)
+                //piece.setImageBitmap(puzzlePiece)
+                pieces.add(piece)
+                xCoord += pieceWidth
+            }
+            yCoord += pieceHeight
+        }
+        return pieces
+    }
+
+    private fun splitImage(): ArrayList<PuzzlePiece> {
+        val piecesNumber = 12
+        val rows = 4
+        val cols = 3
+        val imageView = binding.imageView
+        val pieces = ArrayList<PuzzlePiece>(piecesNumber)
+
+        // bitmap in kaynak resmi
+        val drawable = imageView.drawable as BitmapDrawable
+        val bitmap = drawable.bitmap
+
+        val dimensions = getBitmapPositionInsideImageView(imageView)
+
+        val scaledBitmapLeft = dimensions[0]
+        val scaledBitmapTop = dimensions[1]
+        val scaledBitmapWidth = dimensions[2]
+        val scaledBitmapHeight = dimensions[3]
+
+        val croppedImageWidth = scaledBitmapWidth - 2 * Math.abs(scaledBitmapLeft)
+        val croppedImageHeight = scaledBitmapHeight - 2 * Math.abs(scaledBitmapTop)
+
+        val scaledBitmap = Bitmap.createScaledBitmap(
+            bitmap, scaledBitmapWidth, scaledBitmapHeight, true
+        )
+
+        val croppedBitmap = Bitmap.createBitmap(
+            scaledBitmap,
+            Math.abs(scaledBitmapLeft),
+            Math.abs(scaledBitmapTop),
+            croppedImageWidth,
+            croppedImageHeight
+        )
+        // parçaların yükseklik ve genişliğini hesaplama
+
+        val pieceWidth = croppedImageWidth / cols
+        val pieceHeight = croppedImageHeight / rows
+
+        var yCoord = 0
+        for (row in 0 until rows) {
+            var xCoord = 0
+            for (col in 0 until cols) {
+                var offsetX = 0
+                var offsetY = 0
+                if (col > 0) {
+                    offsetX = pieceWidth / 3
+                }
+                if (row > 0) {
+                    offsetY = pieceHeight / 3
+                }
+
+                val pieceBitmap = Bitmap.createBitmap(
+                    croppedBitmap, xCoord, yCoord,
+                    pieceWidth, pieceHeight
+                )
+                val piece = PuzzlePiece(requireContext().applicationContext)
+                piece.setImageBitmap(pieceBitmap)
+                piece.xCoord = xCoord + imageView.left
+                piece.yCoord = yCoord + imageView.top
+
+                piece.pieceWidth = pieceWidth
+                piece.pieceHeight = pieceHeight
+
+                // puzzle parçaları sonunda naıl tutulacak
+                val puzzlePiece = Bitmap.createBitmap(
+                    pieceWidth,
+                    pieceHeight,
+                    Bitmap.Config.ARGB_8888
+                )
+                //path leri çizdir
+                val bumpSize = pieceHeight / 4
+                val canvas = Canvas(puzzlePiece)
+                val path = Path()
+                path.moveTo(offsetX.toFloat(), offsetY.toFloat())
+
+                if (row == 0) {
+                    path.lineTo(
+                        pieceBitmap.width.toFloat(),
+                        offsetY.toFloat()
+                    )
+                } else {
+                    path.lineTo(
+                        (offsetX + (pieceBitmap.width - offsetX) / 3).toFloat(),
+                        offsetY.toFloat()
+                    )
+                    path.cubicTo(
+                        ((offsetX + (pieceBitmap.width - offsetX)).toFloat()),
+                        (offsetY - bumpSize).toFloat(),
+                        (offsetX + (pieceBitmap.width - offsetX) / 6 * 5).toFloat(),
+                        (offsetY - bumpSize).toFloat(),
+                        (offsetX + (pieceBitmap.width - offsetX) / 3 * 2).toFloat(),
+                        offsetY.toFloat()
+                    )
+                    path.lineTo(pieceBitmap.width.toFloat(), offsetY.toFloat())
+                }
+                if (col == cols - 1) {
+                    //sağ kenr parçası
+                    path.lineTo(
+                        pieceBitmap.width.toFloat(),
+                        pieceBitmap.height.toFloat()
+                    )
+                } else {
+                    path.lineTo(
+                        pieceBitmap.width.toFloat(),
+                        (offsetY + (pieceBitmap.height - offsetY) / 3).toFloat()
+                    )
+                    path.cubicTo(
+                        (pieceBitmap.width - bumpSize).toFloat(),
+                        (offsetY + (pieceBitmap.height - offsetY) / 6).toFloat(),
+                        (pieceBitmap.width - bumpSize).toFloat(),
+                        (offsetY + (pieceBitmap.height - offsetY) / 6 * 5).toFloat(),
+                        pieceBitmap.width.toFloat(),
+                        (offsetY + (pieceBitmap.height - offsetY) / 3 * 2).toFloat()
+                    )
+                    path.lineTo(
+                        pieceBitmap.width.toFloat(),
+                        pieceBitmap.height.toFloat()
+                    )
+                }
+                if (row == rows - 1) {
+                    //bottom kenar
+                    path.lineTo(
+                        offsetX.toFloat(), pieceBitmap.height.toFloat()
+                    )
+                } else {
+                    path.lineTo(
+                        (offsetX + (pieceBitmap.width) / 3 * 2).toFloat(),
+                        pieceBitmap.height.toFloat()
+                    )
+                    path.cubicTo(
+                        (offsetX + (pieceBitmap.width - offsetX) / 6 * 5).toFloat(),
+                        (pieceBitmap.height - bumpSize).toFloat(),
+                        (offsetX + (pieceBitmap.width - offsetX) / 6).toFloat(),
+                        (pieceBitmap.height - bumpSize).toFloat(),
+                        (offsetX + (pieceBitmap.width - offsetX) / 3).toFloat(),
+                        pieceBitmap.height.toFloat()
+                    )
+                    path.lineTo(
+                        offsetX.toFloat(),
+                        pieceBitmap.height.toFloat()
+                    )
+                }
+                if (col == 0) {
+                    //sol kenar parçaları
+                    path.close()
+                } else {
+                    path.lineTo(
+                        offsetX.toFloat(),
+                        (offsetY + (pieceBitmap.height - offsetY) / 3 * 2).toFloat()
+                    )
+                    path.cubicTo(
+                        (offsetX - bumpSize).toFloat(),
+                        (offsetY + (pieceBitmap.height) / 6 * 5).toFloat(),
+                        (offsetX - bumpSize).toFloat(),
+                        (offsetY + (pieceBitmap.height - offsetY) / 6).toFloat(),
+                        offsetX.toFloat(),
+                        (offsetY + (pieceBitmap.height - offsetY) / 3).toFloat()
+                    )
+                    path.close()
+                }
+
+                // parçaları maskele
+                val paint = Paint()
+                paint.color = 0x10000000
+                paint.style = Paint.Style.FILL
+                canvas.drawPath(path, paint)
+                paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+                canvas.drawBitmap(pieceBitmap, 0f, 0f, paint)
+
+                // border beyaz yap.
+                var border = Paint()
+                border.color = -0x7f000001
+                border.style = Paint.Style.STROKE
+                border.strokeWidth = 8.0f
+                canvas.drawPath(path, border)
+
+                // siyah border
+                border = Paint()
+                border.color = -0x80000000
+                border.style = Paint.Style.STROKE
+                border.strokeWidth = 3.0f
+                canvas.drawPath(path, border)
+
+                //parça bitmapleri çözümle
+                //piece.setImageBitmap(puzzlePiece)
                 pieces.add(piece)
                 xCoord += pieceWidth
             }
@@ -370,61 +534,10 @@ class PuzzleDetailFragment : Fragment() {
 
         val top = (imageViewH - actH) / 2
         val left = (imageViewW - actW) / 2
-        ret[0] = top
-        ret[1] = left
+        ret[0] = left
+        ret[1] = top
 
         return ret
-    }
-
-    private fun setPicFromPhotoPath(mCurrentPhotoPath: String, imageView: ImageView?) {
-
-        //viewlerin dimenslereini al
-        val targetW = imageView!!.width
-        val targetH = imageView.height
-
-        // bitmap dimens lerini al
-        val bmOptions = BitmapFactory.Options()
-
-        bmOptions.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
-
-        val photoW = bmOptions.outWidth
-        val photoH = bmOptions.outHeight
-
-        val scaleFactor = Math.min(
-            photoW / targetW,
-            photoH / targetH
-        )
-
-        bmOptions.inJustDecodeBounds = false
-        bmOptions.inSampleSize = scaleFactor
-        bmOptions.inPurgeable = true
-        val bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
-        var rotatedBitmap = bitmap
-
-        try {
-            val ei = ExifInterface(mCurrentPhotoPath)
-            val orientation = ei.getAttributeInt(
-                ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_UNDEFINED
-            )
-            when (orientation) {
-                ExifInterface.ORIENTATION_ROTATE_90 -> {
-                    rotatedBitmap = rotateImage(bitmap, 90f)
-                }
-                ExifInterface.ORIENTATION_ROTATE_180 -> {
-                    rotatedBitmap = rotateImage(bitmap, 180f)
-                }
-                ExifInterface.ORIENTATION_ROTATE_270 -> {
-                    rotatedBitmap = rotateImage(bitmap, 270f)
-                }
-            }
-
-        } catch (e: IOException) {
-            e.printStackTrace()
-            Toast.makeText(requireContext(), e.localizedMessage, Toast.LENGTH_SHORT).show()
-        }
-        imageView.setImageBitmap(rotatedBitmap)
     }
 
     companion object {

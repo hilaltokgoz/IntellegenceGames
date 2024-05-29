@@ -1,21 +1,11 @@
 package com.gloory.intellegencegames
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI
 import com.gloory.intellegencegames.databinding.ActivityMainBinding
-import com.gloory.intellegencegames.viewmodel.PlaySudokuViewModel
 
 class MainActivity : AppCompatActivity() {
 

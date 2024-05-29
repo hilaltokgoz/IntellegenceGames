@@ -74,7 +74,20 @@
         android:id="@+id/puzzleFragment"
         android:name="com.gloory.intellegencegames.view.PuzzleFragment"
         android:label="fragment_puzzle"
-        tools:layout="@layout/fragment_puzzle" />
+        tools:layout="@layout/fragment_puzzle" >
+        <action
+            android:id="@+id/toPuzzleDetail"
+            app:destination="@id/puzzleDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/puzzleDetailFragment"
+        android:name="com.gloory.intellegencegames.view.PuzzleDetailFragment"
+        android:label="fragment_puzzle_detail"
+        tools:layout="@layout/fragment_puzzle_detail" >
+        <argument
+            android:name="puzzlePath"
+            app:argType="string" />
+    </fragment>
 
 
 </navigation>
