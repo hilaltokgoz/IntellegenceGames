@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/frame_"
         />
-
+<!--    app:srcCompat="@drawable/family"-->
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="0dp"

@@ -27,8 +27,9 @@ import kotlin.random.Random
 // Her görüntü parçası için PuzzlePiece nesneleri oluşturur ve bunları RelativeLayout'a ekler.
 // Yapboz parçaları için touchListener uygulanır.
 
-class PuzzleDetailFragment : Fragment() {
 
+class PuzzleDetailFragment : Fragment() {
+    private lateinit var imageView: ImageView
     var pieces: ArrayList<PuzzlePiece>? = null
 
     var mCurrentPhotoPath: String? = null
@@ -49,7 +50,7 @@ class PuzzleDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val layout = binding.layout
-        val imageView = binding.imageView
+        imageView = binding.imageView
 
         val intent = requireActivity().intent
         val assetName = intent.getStringExtra("assetName")
@@ -116,8 +117,6 @@ class PuzzleDetailFragment : Fragment() {
             e.printStackTrace()
             Toast.makeText(requireContext(), e.localizedMessage, Toast.LENGTH_SHORT).show()
         }
-
-
     }
 
     private fun splitImage(): ArrayList<PuzzlePiece> {

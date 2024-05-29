@@ -39,6 +39,7 @@ android {
             }
         }
     }
+    namespace 'com.gloory.intellegencegames'
 }
 
 dependencies {

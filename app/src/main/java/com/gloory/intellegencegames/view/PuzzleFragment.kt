@@ -74,10 +74,7 @@ class PuzzleFragment : Fragment() {
         binding.cameraButton.setOnClickListener { onImageCameraClicked(it) }
         binding.gallerButton.setOnClickListener { onImageGallerClicked(it) }
 
-
-
     }
-
 
     fun onImageCameraClicked(view: View) {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -96,7 +93,7 @@ class PuzzleFragment : Fragment() {
                     photoFile
                 )
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                startActivityForResult(intent, REQUEST_IMAGE_GAPTURE)
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
             }
         }
     }
@@ -143,7 +140,7 @@ class PuzzleFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == REQUEST_IMAGE_GAPTURE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             val intent = Intent(
                 requireContext(), PuzzleDetailFragment::class.java
             )
@@ -177,7 +174,7 @@ class PuzzleFragment : Fragment() {
 
     companion object {
         private const val REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 2
-        private const val REQUEST_IMAGE_GAPTURE = 1
+        private const val REQUEST_IMAGE_CAPTURE = 1
         const val REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 3
         const val REQUEST_IMAGE_GALLERY = 4
     }

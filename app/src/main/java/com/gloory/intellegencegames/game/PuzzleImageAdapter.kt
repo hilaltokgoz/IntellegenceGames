@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import android.widget.Toast
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.view.PuzzleFragment
 import kotlinx.coroutines.CoroutineScope
@@ -54,21 +55,40 @@ class PuzzleImageAdapter(private val mContext: Context) : BaseAdapter() {
     override fun getView(position: Int, view: View?, viewGroup: ViewGroup?): View {
         val v =  LayoutInflater.from(mContext).inflate(R.layout.grid_element, null)
         val imageView = v.findViewById<ImageView>(R.id.gridImageView)
-        imageView.post {
-            object : AsyncTask<Any?,Any?,Any?>(){
-                private var bitmap :Bitmap? = null
-                override fun doInBackground(vararg poition: Any?): Any? {
-                  bitmap = getPicFromAsset(imageView,files!![position])
-                    return null
-                }
+        setPicFromAsset(files!![position],imageView,mContext)
 
-                override fun onPostExecute(result: Any?) {
-                    super.onPostExecute(result)
-                    imageView.setImageBitmap(bitmap)
-                }
-            }.execute()
-        }
         return v
+    }
+    private fun setPicFromAsset(assetName: String, imageView: ImageView?, context: Context) {
+        val targetW = imageView!!.width
+        val targetH = imageView.height
+
+        val am = context.assets
+
+        try {
+            val `is` = am.open("img/$assetName")
+            val bmOption = BitmapFactory.Options()
+            BitmapFactory.decodeStream(`is`, Rect(-1, -1, -1, -1), bmOption)
+
+            val photoW = bmOption.outWidth
+            val photoH = bmOption.outHeight
+
+            val scalFctor = Math.min(
+                photoW / targetW, photoH / targetH
+            )
+            bmOption.inJustDecodeBounds = false
+            bmOption.inSampleSize = scalFctor
+            bmOption.inPurgeable = true
+
+            val bitmap = BitmapFactory.decodeStream(
+                `is`, Rect(-1, -1, -1, -1), bmOption
+            )
+            imageView.setImageBitmap(bitmap)
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun getPicFromAsset(imageView: ImageView?, assetName: String): Bitmap? {
