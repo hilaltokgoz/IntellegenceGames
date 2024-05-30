@@ -492,11 +492,8 @@ class PuzzleDetailFragment : Fragment() {
                 }
                 .create()
                 .show()
-
         }
-
     }
-
     private val isGameOver: Boolean
         private get() {
             for (piece in pieces!!) {

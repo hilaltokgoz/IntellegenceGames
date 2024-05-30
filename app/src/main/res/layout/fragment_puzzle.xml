@@ -7,51 +7,45 @@
     android:background="@drawable/table_background"
     tools:context=".view.PuzzleFragment">
 
-    <GridView
-        android:id="@+id/grid"
+    <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="8dp"
-        android:horizontalSpacing="10dp"
-        android:numColumns="3"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="10dp"
-        android:verticalSpacing="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/cameraButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:onClick="onImageCameraClicked"
-        android:src="@drawable/ic_camera"
-        app:backgroundTint="#FF0057"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/white" />
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/gallerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:onClick="onImageGallerClicked"
-        android:src="@drawable/ic_galler"
-        app:backgroundTint="#49A34D"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cameraButton"
-        app:tint="@color/white" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <GridView
+                android:id="@+id/grid"
+                android:layout_width="match_parent"
+                android:layout_height="700dp"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:horizontalSpacing="10dp"
+                android:numColumns="2"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="10dp"
+                android:verticalSpacing="10dp"
+                android:isScrollContainer="false"
+                android:scrollbars="none"/>
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -58,8 +58,8 @@ class PuzzleFragment : Fragment() {
             Toast.makeText(requireContext(), e.localizedMessage, Toast.LENGTH_SHORT).show()
         }
 
-        binding.cameraButton.setOnClickListener { onImageCameraClicked(it) }
-        binding.gallerButton.setOnClickListener { onImageGallerClicked(it) }
+       // binding.cameraButton.setOnClickListener { onImageCameraClicked(it) }
+       // binding.gallerButton.setOnClickListener { onImageGallerClicked(it) }
 
     }
 
