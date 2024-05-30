@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentPuzzleDetailBinding
@@ -482,11 +483,11 @@ class PuzzleDetailFragment : Fragment() {
                 .setIcon(R.drawable.ic_celebration)
                 .setMessage("Başarılı.... Yeniden Oynamak İster Misin?")
                 .setPositiveButton("Yeniden Oyna") { dialog, _ ->
-                    requireActivity().finish()
+                    findNavController().navigate(R.id.puzzleFragment)
                     dialog.dismiss()
                 }
                 .setNegativeButton("Çıkış") { dialog, _ ->
-                    requireActivity().finish()
+                    findNavController().navigate(R.id.homeFragment)
                     dialog.dismiss()
                 }
                 .create()

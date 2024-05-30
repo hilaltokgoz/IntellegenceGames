@@ -47,7 +47,7 @@ class TouchListener(private val fragment: PuzzleDetailFragment) : View.OnTouchLi
                     piece.xCoord - lParams.leftMargin
                 )
                 val yDiff = StrictMath.abs(
-                    piece.yCoord - lParams.leftMargin   //videoda leftMargin
+                    piece.yCoord - lParams.topMargin   //videoda leftMargin
                 )
                 if (xDiff <= tolerance && yDiff <=tolerance){
                     lParams.leftMargin = piece.xCoord
