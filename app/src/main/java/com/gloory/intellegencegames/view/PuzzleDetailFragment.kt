@@ -86,10 +86,12 @@ class PuzzleDetailFragment : Fragment() {
                         layout.width - piece.pieceWidth
                     )
                     lParams.topMargin = layout.height - piece.pieceHeight
+                    lParams.bottomMargin = dpToPx(24)
                     piece.layoutParams = lParams
                 }
             }
         }
+
     }
 
     private fun splitImage2(): ArrayList<PuzzlePiece> {
@@ -473,9 +475,14 @@ class PuzzleDetailFragment : Fragment() {
             }
             yCoord += pieceHeight
         }
+
         return pieces
     }
 
+    private fun dpToPx(dp: Int): Int {
+        val density = resources.displayMetrics.density
+        return (dp * density).toInt()
+    }
     fun checkGameOver() {
         if (isGameOver) {
             AlertDialog.Builder(requireContext())
