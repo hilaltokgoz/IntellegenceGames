@@ -91,7 +91,6 @@ class PuzzleDetailFragment : Fragment() {
                 }
             }
         }
-
     }
 
     private fun splitImage2(): ArrayList<PuzzlePiece> {

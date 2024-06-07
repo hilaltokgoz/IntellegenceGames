@@ -98,23 +98,22 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
         updateMeasurements(width)
         fillCells(canvas)
         drawLine(canvas)
         drawText(canvas)
-        this.canvas = canvas
+        // this.canvas = canvas
     }
 
     private fun updateMeasurements(width: Int) {
         cellSizePixels = (width / size).toFloat() //hücreler bölündü.
-        noteSizePixels = cellSizePixels / sqrtSize.toFloat()
-        noteTextPaint.textSize = cellSizePixels / sqrtSize.toFloat()
         textPaint.textSize = cellSizePixels / 1.5F
         startingCellTextPaint.textSize = cellSizePixels / 1.5F
 
     }
 
-    private fun fillCells(canvas: Canvas) {//tuval alınıp hücrelerin doldurulacağı alan
+    private fun fillCells(canvas: Canvas) {
         if (selectedRow == -1 || selectedCol == -1) return // hücre seçilmediyse bir şey yapma
 
         cells?.forEach {
@@ -190,42 +189,17 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         cells?.forEach { cell ->
             val value = cell.value
             val textBounds = Rect()
-
-            if (value == 0) {
-                //draw notes
-                cell.notes.forEach { note ->
-                    val rowInCell = (note - 1) / sqrtSize
-                    val colInCell = (note - 1) % sqrtSize
-                    val valueString = note.toString()
-                    noteTextPaint.getTextBounds(valueString, 0, valueString.length, textBounds)
-                    val textWidth = noteTextPaint.measureText(valueString)
-                    val textHeight = textBounds.height()
-
-                    canvas.drawText(
-                        valueString,
-                        (cell.col * cellSizePixels) + (colInCell * noteSizePixels) + noteSizePixels / 2 - textWidth / 2f,
-                        (cell.row * cellSizePixels) + (rowInCell * noteSizePixels) + noteSizePixels / 2 + textHeight / 2f,
-                        noteTextPaint
-                    )
-                }
-            } else {
+            if (value != 0) {
                 val row = cell.row
                 val col = cell.col
                 val valueString = cell.value.toString()
 
-                val paintToUse =
-                    if (cell.isStartingCell) startingCellTextPaint else textPaint//başlangıç mı değil mi kontrol edildi.
+                val paintToUse = if (cell.isStartingCell) startingCellTextPaint else textPaint
 
-                paintToUse.getTextBounds(
-                    valueString,
-                    0,
-                    valueString.length,
-                    textBounds
-                )//text boyamak için sınırları verilir
+                paintToUse.getTextBounds(valueString, 0, valueString.length, textBounds)
                 val textWidth = paintToUse.measureText(valueString)
                 val textHeight = textBounds.height()
 
-                //metni hücre ortasına ortalamak için
                 canvas.drawText(
                     valueString,
                     (col * cellSizePixels) + cellSizePixels / 2 - textWidth / 2,
@@ -237,12 +211,11 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean { // dokunma olayını tutar, boolean tutar
-        return when (event.action) {
-            MotionEvent.ACTION_DOWN -> {  //Kişi ekrana dokunursa
-                handleTouchEvent(event.x, event.y)
-                true
-            }
-            else -> false
+        return if (event.action == MotionEvent.ACTION_DOWN) {
+            handleTouchEvent(event.x, event.y)
+            true
+        } else {
+            false
         }
     }
 
@@ -272,10 +245,39 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     interface OnTouchListener {
         fun onCellTouched(row: Int, col: Int) {
         }
+
+        fun onGameCompleted()
+
     }
+
 
     fun checkConflictsAndDraw() {
         conflictedList.clear()
+        var hasConflicts = false
+        cells?.forEachIndexed { index1, cell ->
+            val selectedRow = cell.row
+            val selectedCol = cell.col
+            cells?.forEachIndexed { index2, cell2 ->
+                val c = cell2.col
+                val r = cell2.row
+                if (cell.value == cell2.value && cell.value != 0 && index1 != index2) {
+                    if (r == selectedRow || c == selectedCol ||
+                        (r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize)
+                    ) {
+                        hasConflicts = true
+                        conflictedList.add(cell)
+                    }
+                }
+            }
+        }
+        if (!hasConflicts) {
+            listener?.onGameCompleted()
+        }
+        invalidate()
+    }
+
+
+      /*  conflictedList.clear()
         canvas?.let { canvas ->
             cells?.forEachIndexed { index1, cell ->
                 val selectedRow = cell.row
@@ -302,5 +304,5 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             }
         }
         invalidate()
-    }
+    }*/
 }

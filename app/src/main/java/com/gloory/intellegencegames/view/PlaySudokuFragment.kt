@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentPlaySudokuBinding
 import com.gloory.intellegencegames.game.Cell
@@ -42,24 +43,13 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         super.onViewCreated(view, savedInstanceState)
         binding.sudokuBoardView.registerListener(this)
         showDifficultyDialog()
-
-
-        //fragmentta bi şey yaratıldığında  aktarılır
-        //Observer:Gözlemci,seçilen hücre canlı verilene ne olduğu gözlemlenir.
+        //fragmentta bi şey yaratıldığında  aktarılır Observer:Gözlemci,seçilen hücre canlı verilene ne olduğu gözlemlenir.
         viewModel.sudokuGame.selectedCellLiveData.observe(
             viewLifecycleOwner,
             Observer { updateSelectedCellUI(it) })
         viewModel.sudokuGame.cellsLiveData.observe(
             viewLifecycleOwner,
             Observer { updateCells(it) }) //hücre için observer tanımı
-        viewModel.sudokuGame.isTakingNotesLiveData.observe(viewLifecycleOwner,
-            Observer {
-                updateNoteTakingUI(it)
-            })
-        viewModel.sudokuGame.highlightedKeysLiveData.observe(viewLifecycleOwner,
-            Observer {
-                updateHighlightedKeys(it)
-            })
 
         binding.apply {
             buttonList = (listOf(
@@ -73,72 +63,66 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
                 eighthButton,
                 nineButton
             ))
-            buttonList!!.forEachIndexed { index, button ->
+            buttonList?.forEachIndexed { index, button ->
                 button.setOnClickListener {
                     viewModel.sudokuGame.handleInput(index + 1)
                 }
-            }
-            notesButton.setOnClickListener {
-                viewModel.sudokuGame.changeNoteTakingState()
             }
             deleteButton.setOnClickListener {
                 viewModel.sudokuGame.delete()
             }
             checkButton.setOnClickListener {
                 checkConflicts()
+
             }
+        }
+
+    }
+
+    // Sudoku tamamlandığında true döner, aksi takdirde false
+    // Tüm hücrelerin doğru şekilde doldurulduğunu kontrol eden kod
+    private fun isGameCompleted(): Boolean {
+        return viewModel.sudokuGame.isGameCompleted()
+    }
+    private fun showGameCompletedDialog() {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_game_completed, null)
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
+
+        val playAgainButton = dialogView.findViewById<Button>(R.id.btn_play_again)
+        val exitButton = dialogView.findViewById<Button>(R.id.btn_exit)
+
+        playAgainButton.setOnClickListener {
+            alertDialog.dismiss()
+            viewModel.sudokuGame.setDifficulty(SudokuDifficulty.EASY) // Veya kullanıcı tarafından seçilen zorluk seviyesine göre
+        }
+
+        exitButton.setOnClickListener {
+            alertDialog.dismiss()
+            findNavController().navigate(R.id.homeFragment)
+
         }
     }
 
     //zorluk derecesini belirlemek için alertDialog kullanıldı.
     private fun showDifficultyDialog() {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-        builder
-            .setTitle("Zorluk Seviyesini Seçiniz...")
+        val builder = AlertDialog.Builder(requireContext())
+        val difficulties = arrayOf("Kolay", "Orta", "Zor")
+        builder.setTitle("Zorluk Seviyesini Seçiniz...")
             .setCancelable(false)
-            .setSingleChoiceItems(
-                arrayOf("Kolay", "Orta", "Zor"), 0
-            ) { _, which ->
+            .setSingleChoiceItems(difficulties, 0) { _, which ->
                 selectedDifficulty = which
             }
-            .setPositiveButton("Tamam") { dialog, which ->
-                val difficulty = when (selectedDifficulty) {
-                    0 -> {
-                        SudokuDifficulty.EASY
-                    }
-                    1 -> {
-                        SudokuDifficulty.MEDIUM
-                    }
-                    2 -> {
-                        SudokuDifficulty.HARD
-                    }
-                    else -> SudokuDifficulty.EASY
-                }
+            .setPositiveButton("Tamam") { _, _ ->
+                val difficulty = SudokuDifficulty.values()[selectedDifficulty]
                 viewModel.sudokuGame.setDifficulty(difficulty)
             }
+        builder.create().show()
 
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
-
-    }
-
-    //let bloğu boş değilse günceller.
-    private fun updateNoteTakingUI(isNoteTaking: Boolean?) = isNoteTaking?.let {
-        val color =
-            if (it) ContextCompat.getColor(requireContext(), R.color.teal_200) else Color.LTGRAY
-        //not alınırsa rengi değişecek
-        binding.notesButton.background.setColorFilter(color, PorterDuff.Mode.MULTIPLY)
-    }
-
-    private fun updateHighlightedKeys(set: Set<Int>?) = set?.let {
-        buttonList?.forEachIndexed { index, button ->
-            //seçiliyse seçilmiş renklere, değilse gri olsun
-            val color = if (set.contains(index + 1)) ContextCompat.getColor(
-                requireContext(),
-                R.color.teal_200
-            ) else Color.LTGRAY
-            button.background.setColorFilter(color, PorterDuff.Mode.MULTIPLY)
-        }
     }
 
     //hücre listesine erişip hücreleri günceller
@@ -155,9 +139,27 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     //interface fonk için override edildi
     override fun onCellTouched(row: Int, col: Int) {
         viewModel.sudokuGame.updateSelectedCell(row, col)
+        checkConflicts()
+
+        if (viewModel.sudokuGame.isGameCompleted()) {
+            showGameCompletedDialog()
+        }
     }
 
     private fun checkConflicts() {
-      binding.sudokuBoardView.checkConflictsAndDraw()
+        binding.sudokuBoardView.checkConflictsAndDraw()
+        if (viewModel.sudokuGame.isGameCompleted()) {
+            showGameCompletedDialog()
+        }
+
+    }
+    override fun onGameCompleted() {
+        if (isGameCompleted()) {
+            showGameCompletedDialog()
+        }
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
