@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -110,19 +111,27 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
     //zorluk derecesini belirlemek için alertDialog kullanıldı.
     private fun showDifficultyDialog() {
-        val builder = AlertDialog.Builder(requireContext())
-        val difficulties = arrayOf("Kolay", "Orta", "Zor")
-        builder.setTitle("Zorluk Seviyesini Seçiniz...")
-            .setCancelable(false)
-            .setSingleChoiceItems(difficulties, 0) { _, which ->
-                selectedDifficulty = which
-            }
-            .setPositiveButton("Tamam") { _, _ ->
-                val difficulty = SudokuDifficulty.values()[selectedDifficulty]
-                viewModel.sudokuGame.setDifficulty(difficulty)
-            }
-        builder.create().show()
+        val dialogView = layoutInflater.inflate(R.layout.dialog_difficulty, null)
+        val radioGroup = dialogView.findViewById<RadioGroup>(R.id.radioGroup)
 
+        val builder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(true)
+
+        val alertDialog = builder.create()
+
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            val difficulty = when (checkedId) {
+                R.id.radio_easy -> SudokuDifficulty.EASY
+                R.id.radio_medium -> SudokuDifficulty.MEDIUM
+                R.id.radio_hard -> SudokuDifficulty.HARD
+                else -> SudokuDifficulty.EASY
+            }
+            viewModel.sudokuGame.setDifficulty(difficulty)
+            alertDialog.dismiss() // Seçim yapıldıktan sonra dialog'u kapat
+        }
+
+        alertDialog.show()
     }
 
     //hücre listesine erişip hücreleri günceller
