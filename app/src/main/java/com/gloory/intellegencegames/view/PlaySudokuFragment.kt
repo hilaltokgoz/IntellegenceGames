@@ -119,6 +119,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
             .setCancelable(true)
 
         val alertDialog = builder.create()
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         radioGroup.setOnCheckedChangeListener { _, checkedId ->
             val difficulty = when (checkedId) {

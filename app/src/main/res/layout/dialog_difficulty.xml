@@ -1,56 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/dialog_background"
     android:padding="16dp">
-
-    <TextView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/adamina"
-        android:textColor="@color/black"
-        android:gravity="center"
-        android:padding="5dp"
-        android:text="Zorluk Seviyesini Seçiniz..."
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <RadioButton
-            android:id="@+id/radio_easy"
-            android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        app:cardElevation="1dp"
+        app:cardBackgroundColor="@android:color/white">
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/adamina"
-            android:textStyle="bold"
-            android:drawableRight="@drawable/ic_easy_dialog"
-            android:text="Kolay" />
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Zorluk Seviyesini Seçiniz..."
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        <RadioButton
-            android:id="@+id/radio_medium"
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/adamina"
-            android:textStyle="bold"
-            android:drawableRight="@drawable/ic_normal"
-            android:text="Orta" />
+            android:layout_marginTop="40dp"
+            android:orientation="vertical">
 
-        <RadioButton
-            android:id="@+id/radio_hard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/adamina"
-            android:textStyle="bold"
-            android:drawableRight="@drawable/ic_difficult"
-            android:text="Zor" />
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/radio_easy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/adamina"
+                android:textStyle="bold"
+                android:drawableRight="@drawable/ic_easy_dialog"
+                android:text="Kolay" />
+
+            <RadioButton
+                android:id="@+id/radio_medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/adamina"
+                android:textStyle="bold"
+                android:drawableRight="@drawable/ic_normal"
+                android:text="Orta" />
+
+            <RadioButton
+                android:id="@+id/radio_hard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/adamina"
+                android:textStyle="bold"
+                android:drawableRight="@drawable/ic_difficult"
+                android:text="Zor" />
+        </RadioGroup>
+    </androidx.cardview.widget.CardView>
+
 </LinearLayout>
+
+

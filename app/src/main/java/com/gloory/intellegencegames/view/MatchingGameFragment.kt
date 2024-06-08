@@ -102,6 +102,22 @@ class MatchingGameFragment : Fragment() {
     }
 
     fun addImage(rowCount: Int, columnCount: Int) {
+        // Get the screen width
+        val displayMetrics = requireContext().resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+
+        // Calculate the new image size
+        val widthFactor = 1.2
+        val heightFactor = 1.2
+        val imageWidth = (screenWidth / columnCount * widthFactor).toInt()
+        val imageHeight = (screenWidth / rowCount * heightFactor).toInt()
+
+        // Ensure the images fit within the screen width
+        val maxImageWidth = screenWidth / columnCount
+        val maxImageHeight = screenWidth / rowCount
+        val finalImageWidth = minOf(imageWidth, maxImageWidth)
+        val finalImageHeight = minOf(imageHeight, maxImageHeight)
+
         for (i in 0 until rowCount) {
             for (j in 0 until columnCount) {
                 val imageView = ImageView(requireContext())
@@ -115,8 +131,9 @@ class MatchingGameFragment : Fragment() {
                 params.columnSpec = GridLayout.spec(j)
                 imageView.layoutParams = params
                 imageView.scaleType = ImageView.ScaleType.FIT_CENTER
-                imageView.layoutParams.width = binding.mainGrid.width / columnCount
-                imageView.layoutParams.height = binding.mainGrid.width / rowCount
+
+                imageView.layoutParams.width = finalImageWidth
+                imageView.layoutParams.height = finalImageHeight
 
                 imageView.setOnClickListener { onImageClicked(imageView) }
                 binding.mainGrid.addView(imageView)
