@@ -501,7 +501,6 @@ class PuzzleDetailFragment : Fragment() {
                 dialogBuilder.dismiss()
                 findNavController().navigate(R.id.puzzleFragment)
             }
-
             exitButton.setOnClickListener {
                 dialogBuilder.dismiss()
                 findNavController().navigate(R.id.homeFragment)
