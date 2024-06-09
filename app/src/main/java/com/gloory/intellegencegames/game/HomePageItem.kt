@@ -44,7 +44,7 @@ enum class HomePageItem(val imageId: Int, val text: String) {
 
     companion object{
         fun getAllList(): List<HomePageItem> {
-            return listOf(SUDOKU,ESLESTIRME,TICTACTOE,GUESSTHENUMBER,KELİMEAVI,PUZZLE,ANAGRAM)
+            return listOf(SUDOKU,PUZZLE,KELİMEAVI,ESLESTIRME,TICTACTOE,GUESSTHENUMBER)
         }
     }
 }

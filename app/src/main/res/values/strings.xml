@@ -13,7 +13,7 @@
     <string name="guess1">123</string>
     <string name="game_setting"> Sayıyı bulmak için tahmin ekleyiniz.
         Taminlerin yanındaki ipuçlarındaki her ""+"" işareti, doğru yerde bulunan bir rakama,
-        her ""-"" işareti ise yanlış yerde bulunan bir rakama karşılık gelmektedir.</string>
+        her ""-"" işareti ise yanlış yerde bulunan bir rakama karşılık gelmektedir. Oyun zorluğuna göre basamak sayısı değişmektedir.</string>
     <string name="hint1">--</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>

@@ -51,26 +51,30 @@ class GuessTheNumberGameFragment : Fragment() {
 
     fun showDialog() {
         val dialog = BottomSheetDialog(requireContext(), R.style.ThemeOverlay_App_BottomSheetDialog)
+
         val bindingDialog =
             DifficultyScreenDialogBinding.inflate(LayoutInflater.from(requireContext()))
         bindingDialog.apply {
-            easyImage.setOnClickListener {
+            easyLayout.setOnClickListener {
                 dialog.dismiss()
                 binding.guessNumberText.filters =
                     arrayOf(InputFilter.LengthFilter(3)) // 3 basamaklı sayı girildi.
+                binding.guessNumberText.hint = "3 basamaklı tahmin gir..."
                 digit3Process()
                 selectDigit = 3
             }
-            mediumImage.setOnClickListener {
+            mediumLayout.setOnClickListener {
                 dialog.dismiss()
                 binding.guessNumberText.filters = arrayOf(InputFilter.LengthFilter(4))
+                binding.guessNumberText.hint = "4 basamaklı tahmin gir..."
                 digit4Process()
                 selectDigit = 4
 
             }
-            hardImage.setOnClickListener {
+            hardLayout.setOnClickListener {
                 dialog.dismiss()
                 binding.guessNumberText.filters = arrayOf(InputFilter.LengthFilter(5))
+                binding.guessNumberText.hint = "5 basamaklı tahmin gir..."
                 digit5Process()
                 selectDigit = 5
 

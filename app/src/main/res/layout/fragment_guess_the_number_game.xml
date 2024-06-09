@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".view.GuessTheNumberGameFragment">
 
-    <TextView
+<!--    <TextView
         android:id="@+id/title_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -20,20 +20,23 @@
         android:textSize="@dimen/top_label_size"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/gameSettingCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
         app:backgroundTint="@android:color/transparent"
         app:cardBackgroundColor="@color/light_blue"
         app:cardCornerRadius="30dp"
         app:cardElevation="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_text">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/gameSettingTitleTextView"
@@ -69,7 +72,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="48dp"
-        android:fontFamily="@font/poppins_medium"
+        android:fontFamily="@font/adamina"
+
         android:text="4"
         android:textColor="@color/black"
         android:textSize="18sp"
@@ -82,8 +86,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="56dp"
-        android:fontFamily="@font/poppins_medium"
+       android:fontFamily="@font/adamina"
         android:text="HAK: "
+        android:textStyle="bold"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"

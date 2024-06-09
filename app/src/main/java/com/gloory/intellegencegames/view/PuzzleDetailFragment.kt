@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
@@ -484,20 +485,27 @@ class PuzzleDetailFragment : Fragment() {
     }
     fun checkGameOver() {
         if (isGameOver) {
-            AlertDialog.Builder(requireContext())
-                .setTitle("KAZANDIN.. !!")
-                .setIcon(R.drawable.ic_celebration)
-                .setMessage("Başarılı.... Yeniden Oynamak İster Misin?")
-                .setPositiveButton("Yeniden Oyna") { dialog, _ ->
-                    findNavController().navigate(R.id.puzzleFragment)
-                    dialog.dismiss()
-                }
-                .setNegativeButton("Çıkış") { dialog, _ ->
-                    findNavController().navigate(R.id.homeFragment)
-                    dialog.dismiss()
-                }
+            val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_game_completed, null)
+            val dialogBuilder = AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setCancelable(false)
                 .create()
-                .show()
+
+            dialogBuilder.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            dialogBuilder.show()
+
+            val playAgainButton = dialogView.findViewById<Button>(R.id.btn_play_again)
+            val exitButton = dialogView.findViewById<Button>(R.id.btn_exit)
+
+            playAgainButton.setOnClickListener {
+                dialogBuilder.dismiss()
+                findNavController().navigate(R.id.puzzleFragment)
+            }
+
+            exitButton.setOnClickListener {
+                dialogBuilder.dismiss()
+                findNavController().navigate(R.id.homeFragment)
+            }
         }
     }
     private val isGameOver: Boolean
