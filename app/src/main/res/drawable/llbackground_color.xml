@@ -6,6 +6,7 @@
             <stroke
                 android:color="#3C415E"
                 android:width="5dp"/>
+            <corners android:radius="8dp"/> <!-- Köşe yarıçapı eklendi -->
         </shape>
     </item>
 </selector>

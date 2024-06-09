@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -112,6 +113,7 @@ class KelimeAviFragment : Fragment() {
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
                     topMargin = resources.getDimensionPixelSize(R.dimen.textview_margin)
+                    gravity = Gravity.CENTER
                 }
             }
             linearLayout.addView(textView)
@@ -139,6 +141,7 @@ class KelimeAviFragment : Fragment() {
                     text = grid[i][j]
                     gravity = Gravity.CENTER
                     setTextColor(Color.BLACK)
+                    textSize = 18f
                     layoutParams = GridLayout.LayoutParams().apply {
                         width = 0
                         height = GridLayout.LayoutParams.WRAP_CONTENT
@@ -243,20 +246,16 @@ class KelimeAviFragment : Fragment() {
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         v.performClick()
-                        if (!selectedCells.contains(v)) {
+                        if (!selectedCells.contains(v) && !isCellGreen(v as TextView)) {
                             originalBackgroundColor = v.background
-                            selectedCells.add(v as TextView)
+                            selectedCells.add(v)
                             v.setBackgroundColor(Color.parseColor("#800000FF"))
                         }
                         true
                     }
                     MotionEvent.ACTION_MOVE -> {
-                        val childView =
-                            getViewAtPosition(gridLayout, event.rawX.toInt(), event.rawY.toInt())
-                        if (childView != null && childView is TextView && !selectedCells.contains(
-                                childView
-                            )
-                        ) {
+                        val childView = getViewAtPosition(gridLayout, event.rawX.toInt(), event.rawY.toInt())
+                        if (childView != null && childView is TextView && !selectedCells.contains(childView) && !isCellGreen(childView)) {
                             selectedCells.add(childView)
                             childView.setBackgroundColor(Color.parseColor("#800000FF"))
                         }
@@ -276,9 +275,6 @@ class KelimeAviFragment : Fragment() {
                     }
                     else -> false
                 }
-            }
-            textView.setOnClickListener {
-
             }
         }
     }
@@ -333,21 +329,25 @@ class KelimeAviFragment : Fragment() {
     private fun showGameFinishedDialog(timerTextView: TextView) {
         val builder = AlertDialog.Builder(requireContext())
         val inflater = requireActivity().layoutInflater
-        val dialogView = inflater.inflate(R.layout.custom_dialog_kelimeavi, null)
-        val textViewTimer = dialogView.findViewById<TextView>(R.id.textViewTimer)
-        val positiveButton = dialogView.findViewById<Button>(R.id.positiveButton)
-        val negativeButton = dialogView.findViewById<Button>(R.id.negativeButton)
+        val dialogView = inflater.inflate(R.layout.dialog_game_completed, null)
+        val tvTimerResult = dialogView.findViewById<TextView>(R.id.tv_timer_result)
+        val playAgainButton = dialogView.findViewById<Button>(R.id.btn_play_again)
+        val exitButton = dialogView.findViewById<Button>(R.id.btn_exit)
 
         builder.setView(dialogView)
         val dialog = builder.create()
-        textViewTimer.text = "Süre: ${timerTextView.text}"
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+        val elapsedTime = timerTextView.text.toString() // Hesaplanan süreyi al
+        tvTimerResult.text = "Süre: $elapsedTime" // Hesaplanan süreyi TextView'e ayarla
+        tvTimerResult.visibility = View.VISIBLE // TextView'i görünür yap
 
-        positiveButton.setOnClickListener {
+        playAgainButton.setOnClickListener {
             resetGame()
             dialog.dismiss()
         }
 
-        negativeButton.setOnClickListener {
+        exitButton.setOnClickListener {
             findNavController().navigate(R.id.action_kelimeAviFragment_to_homeFragment)
             dialog.dismiss()
         }
@@ -372,6 +372,14 @@ class KelimeAviFragment : Fragment() {
         startTimer()
 
     }
+    private fun isCellGreen(textView: TextView): Boolean {
+        val colorDrawable = textView.background as? ColorDrawable
+        return colorDrawable?.color == Color.parseColor("#8000FF00")
+    }
+
+
+
+
 }
 
 enum class Direction {
