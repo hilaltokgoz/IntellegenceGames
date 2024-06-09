@@ -243,13 +243,10 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     //verileri kaçmadığından emin olmak için
     interface OnTouchListener {
-        fun onCellTouched(row: Int, col: Int) {
-        }
-
-        fun onGameCompleted()
+        fun onCellTouched(row: Int, col: Int)
+        fun onGameCompleted(isCompleted: Boolean)
 
     }
-
 
     fun checkConflictsAndDraw() {
         conflictedList.clear()
@@ -270,12 +267,23 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                 }
             }
         }
-        if (!hasConflicts) {
-            listener?.onGameCompleted()
+        if (!hasConflicts && isGameCompleted()) {
+            listener?.onGameCompleted(true)
+        } else {
+            listener?.onGameCompleted(false)
         }
         invalidate()
     }
-
+    fun isGameCompleted(): Boolean {
+        var  isCompleted = cells != null
+        cells?.forEach { cell ->
+            if (cell.value == 0) {
+                isCompleted = false
+                return@forEach
+            }
+        }
+        return isCompleted
+    }
 
       /*  conflictedList.clear()
         canvas?.let { canvas ->

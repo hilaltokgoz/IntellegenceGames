@@ -79,7 +79,6 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
             }
             checkButton.setOnClickListener {
                 checkConflicts()
-
             }
         }
 
@@ -101,6 +100,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
         val playAgainButton = dialogView.findViewById<Button>(R.id.btn_play_again)
         val exitButton = dialogView.findViewById<Button>(R.id.btn_exit)
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         playAgainButton.setOnClickListener {
             alertDialog.dismiss()
@@ -109,7 +109,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
         exitButton.setOnClickListener {
             alertDialog.dismiss()
-            findNavController().navigate(R.id.homeFragment)
+            findNavController().navigateUp()
 
         }
     }
@@ -155,27 +155,29 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     //interface fonk için override edildi
     override fun onCellTouched(row: Int, col: Int) {
         viewModel.sudokuGame.updateSelectedCell(row, col)
-        checkConflicts()
+      checkConflicts()
 
         if (viewModel.sudokuGame.isGameCompleted()) {
-            showGameCompletedDialog()
+          //  showGameCompletedDialog()
         }
     }
 
     private fun checkConflicts() {
         binding.sudokuBoardView.checkConflictsAndDraw()
         if (viewModel.sudokuGame.isGameCompleted()) {
-            showGameCompletedDialog()
+         //   showGameCompletedDialog()
+        }
+    }
+    override fun onGameCompleted(isCompleted: Boolean) {
+        if (isCompleted) {
+           showGameCompletedDialog()
         }
 
-    }
-    override fun onGameCompleted() {
-        if (isGameCompleted()) {
-            showGameCompletedDialog()
-        }
     }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+
 }

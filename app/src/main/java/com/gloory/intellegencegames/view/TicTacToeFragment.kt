@@ -14,15 +14,19 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
 import android.widget.GridLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.DifficultyScreenDialogBinding
 import com.gloory.intellegencegames.databinding.FragmentTicTacToeBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
+//Alpha-Beta Pruning: ağaç aramasını daha verimli hale getirir. Bu algoritma da bilgisayarın daha
+// iyi hamleler yapmasına olanak tanır.
 class TicTacToeFragment : Fragment() {
     private var _binding: FragmentTicTacToeBinding? = null
     private val binding get() = _binding!!
@@ -51,19 +55,19 @@ class TicTacToeFragment : Fragment() {
         val bindingDialog =
             DifficultyScreenDialogBinding.inflate(LayoutInflater.from(requireContext()))
         bindingDialog.apply {
-            easyImage.setOnClickListener {
+            easyLayout.setOnClickListener {
                 gridSize = 3
                 createGameboard(gridSize)
                 dialog.dismiss()
                 decideStartingPlayer()
             }
-            mediumImage.setOnClickListener {
+            mediumLayout.setOnClickListener {
                 gridSize = 4
                 createGameboard(gridSize)
                 dialog.dismiss()
                 decideStartingPlayer()
             }
-            hardImage.setOnClickListener {
+            hardLayout.setOnClickListener {
                 gridSize = 5
                 createGameboard(gridSize)
                 dialog.dismiss()
@@ -163,22 +167,147 @@ class TicTacToeFragment : Fragment() {
                 }
             }
         }
+
+        // 1. Kazanma stratejisi
+        val winningMove = findWinningMove(emptyCells)
+        if (winningMove != null) {
+            makeMove(winningMove)
+            return
+        }
+
+        // 2. Kazanma engelleme stratejisi
+        val blockingMove = findBlockingMove(emptyCells)
+        if (blockingMove != null) {
+            makeMove(blockingMove)
+            return
+        }
+
+        // 3. Orta nokta stratejisi
+        if (gridSize % 2 != 0 && gameBoard[gridSize / 2][gridSize / 2] == 0) {
+            makeMove(Pair(gridSize / 2, gridSize / 2))
+            return
+        }
+
+        // 4. Köşe stratejisi
+        val cornerMove = findCornerMove(emptyCells)
+        if (cornerMove != null) {
+            makeMove(cornerMove)
+            return
+        }
+
+        // 5. Rastgele hamle stratejisi
         if (emptyCells.isNotEmpty()) {
             val randomIndex = (0 until emptyCells.size).random()
             val (row, col) = emptyCells[randomIndex]
-
-            val view = buttons["$row$col"]
-            if (view != null && view is Button) {
-                val button = view
-                gameBoard[row][col] = currentPlayer
-                button.text = if (currentPlayer == 1) "X" else "O"
-                checkWin(row, col)
-                currentPlayer = if (currentPlayer == 1) 2 else 1
-            } else {
-                handleException("Button not found for row: $row, col: $col")
-            }
-            enableAllButtons()
+            makeMove(Pair(row, col))
         }
+    }
+
+    // Kazanma stratejisi
+    private fun findWinningMove(emptyCells: List<Pair<Int, Int>>): Pair<Int, Int>? {
+        for ((row, col) in emptyCells) {
+            gameBoard[row][col] = currentPlayer
+            if (isWinningMove(row, col)) {
+                gameBoard[row][col] = 0
+                return Pair(row, col)
+            }
+            gameBoard[row][col] = 0
+        }
+        return null
+    }
+
+    // Kazanma engelleme stratejisi
+    private fun findBlockingMove(emptyCells: List<Pair<Int, Int>>): Pair<Int, Int>? {
+        val opponent = if (currentPlayer == 1) 2 else 1
+        for ((row, col) in emptyCells) {
+            gameBoard[row][col] = opponent
+            if (isWinningMove(row, col)) {
+                gameBoard[row][col] = 0
+                return Pair(row, col)
+            }
+            gameBoard[row][col] = 0
+        }
+        return null
+    }
+
+    // Orta nokta stratejisi
+    private fun findCornerMove(emptyCells: List<Pair<Int, Int>>): Pair<Int, Int>? {
+        val corners = listOf(Pair(0, 0), Pair(0, gridSize - 1), Pair(gridSize - 1, 0), Pair(gridSize - 1, gridSize - 1))
+        for (corner in corners) {
+            if (emptyCells.contains(corner)) {
+                return corner
+            }
+        }
+        return null
+    }
+
+    private fun makeMove(move: Pair<Int, Int>) {
+        val (row, col) = move
+        val view = buttons["$row$col"]
+        if (view != null && view is Button) {
+            val button = view
+            gameBoard[row][col] = currentPlayer
+            button.text = if (currentPlayer == 1) "X" else "O"
+            checkWin(row, col)
+            currentPlayer = if (currentPlayer == 1) 2 else 1
+        } else {
+            handleException("Button not found for row: $row, col: $col")
+        }
+        enableAllButtons()
+    }
+
+    private fun isWinningMove(row: Int, col: Int): Boolean {
+        val currentPlayerValue = gameBoard[row][col]
+
+        // Yatay kontrol
+        var count = 0
+        for (i in 0 until gridSize) {
+            if (gameBoard[row][i] == currentPlayerValue) {
+                count++
+            }
+        }
+        if (count == gridSize) {
+            return true
+        }
+
+        // Dikey kontrol
+        count = 0
+        for (i in 0 until gridSize) {
+            if (gameBoard[i][col] == currentPlayerValue) {
+                count++
+            }
+        }
+        if (count == gridSize) {
+            return true
+        }
+
+        // Çapraz kontrol (sol üstten sağ alta)
+        if (row == col) {
+            count = 0
+            for (i in 0 until gridSize) {
+                if (gameBoard[i][i] == currentPlayerValue) {
+                    count++
+                }
+            }
+            if (count == gridSize) {
+                return true
+            }
+        }
+
+        // Çapraz kontrol (sağ üstten sol alta)
+        if (row + col == gridSize - 1) {
+            count = 0
+            for (i in 0 until gridSize) {
+                if (gameBoard[i][gridSize - 1 - i] == currentPlayerValue) {
+                    count++
+                }
+            }
+            if (count == gridSize) {
+                return true
+            }
+        }
+
+        return false
     }
 
     private fun handleException(message: String) {
@@ -263,33 +392,34 @@ class TicTacToeFragment : Fragment() {
     private fun announceDraw() {
         val drawText = "Oyun berabere kaldı"
 
-        val textColor = ContextCompat.getColor(requireContext(), R.color.light_blue)
-        val textColor2 = ContextCompat.getColor(requireContext(), R.color.light_blue)
-        val buttonBackgroundColor2 = ContextCompat.getColor(requireContext(), R.color.result_red)
-        val titleTextColor = ContextCompat.getColor(requireContext(), R.color.blue)
-        val buttonBackgroundColor = ContextCompat.getColor(requireContext(), R.color.pickled_bluewood)
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_game_completed, null)
 
-        val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.alertdiaolog_background)
         val alertDialog = AlertDialog.Builder(requireContext())
-            .setMessage(drawText)
-            .setPositiveButton("Tamam") { dialog, _ ->
-                dialog.dismiss()
-                showDialog()
-            }
-            .setNegativeButton("Yeniden Oyna") { dialog, _ ->
-                dialog.dismiss()
-                resetGame()
-            }
+            .setView(dialogView)
             .create()
-        alertDialog.window?.setBackgroundDrawable(backgroundDrawable)
+
+        alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
-        val messageView = alertDialog.findViewById<TextView>(android.R.id.message)
-        messageView?.apply {
-            setTextColor(titleTextColor)
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+
+        val messageView = dialogView.findViewById<TextView>(R.id.tv_congratulations)
+        messageView.text = drawText
+
+        val positiveButton = dialogView.findViewById<Button>(R.id.btn_exit)
+        val negativeButton = dialogView.findViewById<Button>(R.id.btn_play_again)
+
+        val imageView = dialogView.findViewById<ImageView>(R.id.iv_congratulations)
+        imageView.visibility = View.GONE // ImageView'ı gizle
+
+        positiveButton.setOnClickListener {
+            alertDialog.dismiss()
+            findNavController().navigate(R.id.homeFragment)
         }
-        val positiveButton = alertDialog.getButton(Dialog.BUTTON_POSITIVE)
-        val negativeButton = alertDialog.getButton(Dialog.BUTTON_NEGATIVE)
+
+        negativeButton.setOnClickListener {
+            alertDialog.dismiss()
+            showDialog()
+        }
 
         val params = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -299,15 +429,6 @@ class TicTacToeFragment : Fragment() {
         positiveButton.layoutParams = params
         negativeButton.layoutParams = params
 
-        positiveButton.setTextColor(textColor)
-        positiveButton.setBackgroundColor(buttonBackgroundColor)
-        negativeButton.setTextColor(textColor2)
-        negativeButton.setBackgroundColor(buttonBackgroundColor2)
-
-    }
-
-    private fun resetGame() {
-        createGameboard(gridSize)
     }
 
     //kazanan
@@ -315,50 +436,45 @@ class TicTacToeFragment : Fragment() {
         val winner = if (player == 1) "Sen" else "PC"
         val winnerText = "Kazanan:  $winner"
 
-        val textColor = ContextCompat.getColor(requireContext(), R.color.light_blue)
-        val textColor2 = ContextCompat.getColor(requireContext(), R.color.light_blue)
-        val buttonBackgroundColor2 = ContextCompat.getColor(requireContext(), R.color.result_red)
-        val titleTextColor = ContextCompat.getColor(requireContext(), R.color.blue)
-        val buttonBackgroundColor = ContextCompat.getColor(requireContext(), R.color.pickled_bluewood)
-
-        val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.alertdiaolog_background)
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_game_completed, null)
 
         val alertDialog = AlertDialog.Builder(requireContext())
-            .setMessage(winnerText)
-            .setPositiveButton("Tamam") { dialog, _ ->
-                dialog.dismiss()
-                showDialog()
-            }
-            .setNegativeButton("Yeniden Oyna") { dialog, _ ->
-                dialog.dismiss()
-                resetGame()
-            }
+            .setView(dialogView)
             .create()
-        alertDialog.window?.setBackgroundDrawable(backgroundDrawable)
+        alertDialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
         alertDialog.show()
 
-        val messageView = alertDialog.findViewById<TextView>(android.R.id.message)
-        messageView?.apply {
-            setTextColor(titleTextColor)
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+        val messageView = dialogView.findViewById<TextView>(R.id.tv_congratulations)
+        messageView.text = if (player == 1) "Kazandınız" else "Kaybettiniz"
+
+        val imageView = dialogView.findViewById<ImageView>(R.id.iv_congratulations)
+        if (player == 1) {
+            imageView.setImageResource(R.drawable.ic_celebration)
+        } else {
+            imageView.setImageResource(R.drawable.sad)
         }
-        val positiveButton = alertDialog.getButton(Dialog.BUTTON_POSITIVE)
-        val negativeButton = alertDialog.getButton(Dialog.BUTTON_NEGATIVE)
+
+        val exitButton = dialogView.findViewById<Button>(R.id.btn_exit)
+        val newGameButton = dialogView.findViewById<Button>(R.id.btn_play_again)
+        exitButton.setOnClickListener {
+            alertDialog.dismiss()
+            findNavController().navigate(R.id.homeFragment)
+        }
+        newGameButton.setOnClickListener {
+            alertDialog.dismiss()
+            showDialog()
+        }
 
         val params = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
         params.setMargins(0, 0, 5.dpToPx(), 0) // Sağ kenarda 5dp margin ekliyoruz
-        positiveButton.layoutParams = params
-        negativeButton.layoutParams = params
-
-        positiveButton.setTextColor(textColor)
-        positiveButton.setBackgroundColor(buttonBackgroundColor)
-        negativeButton.setTextColor(textColor2)
-        negativeButton.setBackgroundColor(buttonBackgroundColor2)
-
+        exitButton.layoutParams = params
+        newGameButton.layoutParams = params
     }
+
     private fun Int.dpToPx(): Int {
         val scale = resources.displayMetrics.density
         return (this * scale + 0.5f).toInt()
@@ -368,5 +484,4 @@ class TicTacToeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

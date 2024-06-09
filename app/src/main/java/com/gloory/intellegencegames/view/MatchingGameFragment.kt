@@ -259,14 +259,14 @@ class MatchingGameFragment : Fragment() {
         binding.tvTimer.text = "00:00" // Süreyi sıfırla
 
     }
-    override fun onDestroyView() {
+/*    override fun onDestroyView() {
         super.onDestroyView()
         _binding?.let {
             it.root.removeCallbacks(timer) // Timer'ı kaldır
             timer = null // Timer'ı null olarak işaretle
             _binding = null
         }
-    }
+    }*/
 }
 
 

@@ -108,7 +108,7 @@ open class SudokuGame {
 
     fun setDifficulty(difficulty: SudokuDifficulty) {
         val cellsToRemove = when (difficulty) {
-            SudokuDifficulty.EASY -> 43
+            SudokuDifficulty.EASY -> 2
             SudokuDifficulty.MEDIUM -> 50
             SudokuDifficulty.HARD -> 53
         }

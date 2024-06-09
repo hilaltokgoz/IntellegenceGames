@@ -499,7 +499,7 @@ class PuzzleDetailFragment : Fragment() {
 
             playAgainButton.setOnClickListener {
                 dialogBuilder.dismiss()
-                findNavController().navigate(R.id.puzzleFragment)
+                findNavController().navigateUp()
             }
             exitButton.setOnClickListener {
                 dialogBuilder.dismiss()
