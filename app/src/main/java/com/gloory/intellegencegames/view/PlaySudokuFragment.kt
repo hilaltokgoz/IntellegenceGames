@@ -113,33 +113,6 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
         }
     }
-
-    //zorluk derecesini belirlemek için alertDialog kullanıldı.
-    private fun showDifficultyDialog2() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_difficulty, null)
-        val radioGroup = dialogView.findViewById<RadioGroup>(R.id.radioGroup)
-
-        val builder = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .setCancelable(true)
-
-        val alertDialog = builder.create()
-        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        radioGroup.setOnCheckedChangeListener { _, checkedId ->
-            val difficulty = when (checkedId) {
-                R.id.radio_easy -> SudokuDifficulty.EASY
-                R.id.radio_medium -> SudokuDifficulty.MEDIUM
-                R.id.radio_hard -> SudokuDifficulty.HARD
-                else -> SudokuDifficulty.EASY
-            }
-            viewModel.sudokuGame.setDifficulty(difficulty)
-            alertDialog.dismiss() // Seçim yapıldıktan sonra dialog'u kapat
-        }
-
-        alertDialog.show()
-    }
-
     private fun showDifficultyDialog() {
         val dialogView = layoutInflater.inflate(R.layout.difficulty_screen_dialog, null)
 
