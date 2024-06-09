@@ -4,18 +4,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:cardCornerRadius="30dp"
         app:cardElevation="3dp"
         app:cardBackgroundColor="@color/light_blue"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:backgroundTint= "@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:backgroundTint="@android:color/transparent">
 
         <TextView
             android:id="@+id/textView"
@@ -32,7 +33,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
             android:layout_marginBottom="30dp"
             android:gravity="center_horizontal"
@@ -41,6 +42,7 @@
 
             <!-- Easy -->
             <LinearLayout
+                android:id="@+id/easyLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -62,12 +64,13 @@
                     android:textStyle="bold"
                     android:textColor="@color/laci"
                     android:fontFamily="@font/poppins_medium"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
             <!-- Medium -->
             <LinearLayout
+                android:id="@+id/mediumLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -89,12 +92,13 @@
                     android:textStyle="bold"
                     android:textColor="@color/laci"
                     android:fontFamily="@font/poppins_medium"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
             <!-- Hard -->
             <LinearLayout
+                android:id="@+id/hardLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -115,7 +119,7 @@
                     android:textStyle="bold"
                     android:textColor="@color/laci"
                     android:fontFamily="@font/poppins_medium"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
             </LinearLayout>
 

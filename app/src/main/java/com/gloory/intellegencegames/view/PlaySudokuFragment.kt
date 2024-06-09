@@ -7,7 +7,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -15,11 +18,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.gloory.intellegencegames.R
+import com.gloory.intellegencegames.databinding.DifficultyScreenDialogBinding
 import com.gloory.intellegencegames.databinding.FragmentPlaySudokuBinding
 import com.gloory.intellegencegames.game.Cell
 import com.gloory.intellegencegames.game.SudokuDifficulty
 import com.gloory.intellegencegames.view.custom.SudokuBoardView
 import com.gloory.intellegencegames.viewmodel.PlaySudokuViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 
 class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
@@ -110,7 +115,7 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
     }
 
     //zorluk derecesini belirlemek için alertDialog kullanıldı.
-    private fun showDifficultyDialog() {
+    private fun showDifficultyDialog2() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_difficulty, null)
         val radioGroup = dialogView.findViewById<RadioGroup>(R.id.radioGroup)
 
@@ -133,6 +138,34 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         }
 
         alertDialog.show()
+    }
+
+    private fun showDifficultyDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.difficulty_screen_dialog, null)
+
+        val easyLayout = dialogView.findViewById<LinearLayout>(R.id.easyLayout)
+        val mediumLayout = dialogView.findViewById<LinearLayout>(R.id.mediumLayout)
+        val hardLayout = dialogView.findViewById<LinearLayout>(R.id.hardLayout)
+
+        val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.ThemeOverlay_App_BottomSheetDialog)
+        bottomSheetDialog.setContentView(dialogView)
+        bottomSheetDialog.setCancelable(true)
+        bottomSheetDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // Set the height to wrap_content
+        dialogView.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+
+        val onClickListener = { difficulty: SudokuDifficulty ->
+            viewModel.sudokuGame.setDifficulty(difficulty)
+            bottomSheetDialog.dismiss() // Close the dialog after selection
+        }
+
+        easyLayout.setOnClickListener { onClickListener(SudokuDifficulty.EASY) }
+        mediumLayout.setOnClickListener { onClickListener(SudokuDifficulty.MEDIUM) }
+        hardLayout.setOnClickListener { onClickListener(SudokuDifficulty.HARD) }
+
+        bottomSheetDialog.setCancelable(false)
+        bottomSheetDialog.show()
     }
 
     //hücre listesine erişip hücreleri günceller
