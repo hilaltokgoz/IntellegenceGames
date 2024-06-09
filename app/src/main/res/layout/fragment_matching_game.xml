@@ -32,4 +32,18 @@
         app:layout_constraintTop_toTopOf="parent">
 
     </GridLayout>
+
+    <TextView
+        android:id="@+id/tvTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="56dp"
+        android:text="Süre: "
+        android:textColor="@color/blue"
+        android:textStyle="bold"
+        android:fontFamily="@font/adamina"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

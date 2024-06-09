@@ -2,15 +2,20 @@ package com.gloory.intellegencegames.view
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.GridLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentMatchingGameBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 
 class MatchingGameFragment : Fragment() {
@@ -22,6 +27,9 @@ class MatchingGameFragment : Fragment() {
 
     private var flippedPositions = mutableSetOf<Int>()
     private var matchedPairs = 0
+
+    private var elapsedTimeMillis: Long = 0
+    private var timer: Runnable? = null
 
     val images = listOf(
         R.drawable.sports_handball,
@@ -47,58 +55,78 @@ class MatchingGameFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMatchingGameBinding.inflate(inflater, container, false)
-        showAlertDialog()
+        binding.tvTimer.visibility = View.GONE
+        showDifficultyBottomSheetDialog()
         return binding.root
     }
 
-    private fun showAlertDialog() {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-        builder
-            .setTitle("Zorluk Seviyesini Seçiniz...")
-            .setCancelable(false)
-            .setSingleChoiceItems(
-                arrayOf("Kolay", "Orta", "Zor"), 0
-            ) { _, which ->
-                selectedDifficulty = which
-            }
-            .setPositiveButton("Tamam") { dialog, which ->
-                when (selectedDifficulty) {
-                    0 -> {
-                        val imageCount = (3 * 4) / 2
-                        val selectedImages = images.shuffled().filterIndexed { index, i ->
-                            index < imageCount
-                        }
-                        currentShuffledImages = (selectedImages + selectedImages).shuffled()
-                        addImage(3, 4)
-                    }
-                    1 -> {
-                        val imageCount = (4 * 5) / 2
-                        val selectedImages = images.shuffled().filterIndexed { index, i ->
-                            index < imageCount
-                        }
-                        currentShuffledImages = (selectedImages + selectedImages).shuffled()
-                        addImage(4, 5)
-                    }
-                    2 -> {
-                        val imageCount = (5 * 6) / 2
-                        val selectedImages = images.shuffled().filterIndexed { index, i ->
-                            index < imageCount
-                        }
-                        currentShuffledImages = (selectedImages + selectedImages).shuffled()
-                        addImage(5, 6)
-                    }
-                    else -> {
-                        val imageCount = (3 * 4) / 2
-                        val selectedImages = images.shuffled().filterIndexed { index, i ->
-                            index < imageCount
-                        }
-                        currentShuffledImages = (selectedImages + selectedImages).shuffled()
-                        addImage(3, 4)
-                    }
+
+    private fun showDifficultyBottomSheetDialog() {
+        val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.ThemeOverlay_App_BottomSheetDialog)
+        val dialogView = layoutInflater.inflate(R.layout.difficulty_screen_dialog, null)
+        bottomSheetDialog.setContentView(dialogView)
+
+        val easyLayout = dialogView.findViewById<LinearLayout>(R.id.easyLayout)
+        val mediumLayout = dialogView.findViewById<LinearLayout>(R.id.mediumLayout)
+        val hardLayout = dialogView.findViewById<LinearLayout>(R.id.hardLayout)
+
+        val onClickListener = { difficulty: Int ->
+            when (difficulty) {
+                0 -> {
+                    val imageCount = (3 * 4) / 2
+                    val selectedImages = images.shuffled().filterIndexed { index, _ -> index < imageCount }
+                    currentShuffledImages = (selectedImages + selectedImages).shuffled()
+                    addImage(3, 4)
+                }
+                1 -> {
+                    val imageCount = (4 * 5) / 2
+                    val selectedImages = images.shuffled().filterIndexed { index, _ -> index < imageCount }
+                    currentShuffledImages = (selectedImages + selectedImages).shuffled()
+                    addImage(4, 5)
+                }
+                2 -> {
+                    val imageCount = (5 * 6) / 2
+                    val selectedImages = images.shuffled().filterIndexed { index, _ -> index < imageCount }
+                    currentShuffledImages = (selectedImages + selectedImages).shuffled()
+                    addImage(5, 6)
+
                 }
             }
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
+            bottomSheetDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            startGameTimer()
+            bottomSheetDialog.dismiss()
+        }
+        easyLayout.setOnClickListener {
+            onClickListener(0)
+        }
+        mediumLayout.setOnClickListener {
+            onClickListener(1)
+        }
+        hardLayout.setOnClickListener {
+            onClickListener(2)
+        }
+
+        bottomSheetDialog.setCancelable(false)
+        bottomSheetDialog.show()
+    }
+
+    private fun startGameTimer() {
+        binding.tvTimer.visibility = View.VISIBLE
+        timer = object : Runnable {
+            override fun run() {
+                elapsedTimeMillis += 1000
+                updateElapsedTime()
+                binding.root.postDelayed(this, 1000)
+            }
+        }
+        binding.root.postDelayed(timer!!, 1000)
+    }
+
+    private fun updateElapsedTime() {
+        val minutes = (elapsedTimeMillis / 1000) / 60
+        val seconds = (elapsedTimeMillis / 1000) % 60
+        val timeElapsedFormatted = String.format("Süre: %02d:%02d", minutes, seconds)
+        binding.tvTimer.text = timeElapsedFormatted
     }
 
     fun addImage(rowCount: Int, columnCount: Int) {
@@ -167,7 +195,8 @@ class MatchingGameFragment : Fragment() {
             println("Expected pairs: ${columnCount * rowCount / 2}") //8
             if (matchedPairs == (columnCount * rowCount) / 2) {
                 // Oyun tamamlandı
-                resultScreenDialog()
+                showResultScreenDialog()
+                timer?.let { binding.root.removeCallbacks(it) }
             }
         } else {
             // Eşleşmeme durumu
@@ -181,30 +210,58 @@ class MatchingGameFragment : Fragment() {
         }
     }
 
+    private fun showResultScreenDialog() {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_game_completed, null)
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val playAgainButton = dialogView.findViewById<Button>(R.id.btn_play_again)
+        val exitButton = dialogView.findViewById<Button>(R.id.btn_exit)
+        val timerTextView = dialogView.findViewById<TextView>(R.id.tv_timer_result)
+
+        val minutes = (elapsedTimeMillis / 1000) / 60
+        val seconds = (elapsedTimeMillis / 1000) % 60
+        val timeElapsedFormatted = String.format("%02d:%02d", minutes, seconds)
+        timerTextView.text =  "Süre: $timeElapsedFormatted"
+        timerTextView.visibility = View.VISIBLE
+
+        playAgainButton.setOnClickListener {
+            alertDialog.dismiss()
+            resetGame()
+            binding.tvTimer.visibility = View.GONE
+            showDifficultyBottomSheetDialog()    //Zorluk seçme dialoğu göster
+        }
+
+        exitButton.setOnClickListener {
+            alertDialog.dismiss()
+            findNavController().navigate(R.id.homeFragment)
+            timer?.let {
+                binding.root.removeCallbacks(it) // Timer'ı kaldır
+                timer = null // Timer'ı null olarak işaretle
+            }
+        }
+    }
+    private fun resetGame() {
+        binding.mainGrid.removeAllViews() //image'ler kaldırıldı.
+        flippedPositions.clear()
+        matchedPairs = 0
+        elapsedTimeMillis = 0 // Süreyi sıfırla
+        binding.tvTimer.visibility = View.VISIBLE
+        binding.tvTimer.text = "00:00" // Süreyi sıfırla
+
+    }
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
-    }
-
-    private fun resultScreenDialog() {
-        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(context)
-        alertDialog
-            .setTitle("TEBRİKLER OYUNU TAMAMLADINIZ")
-            .setNegativeButton("Çıkış") { dialog, which ->
-                // HomeFragment'a dön
-                matchedPairs=0
-                flippedPositions.clear()
-                findNavController().navigate(R.id.action_matchingGameFragment_to_homeFragment)
-            }
-            .setPositiveButton("Yeniden Oyna") { dialog, which ->
-                binding.mainGrid.removeAllViews() //image'ler kaldırıldı.
-                flippedPositions.clear()
-                matchedPairs=0
-                showAlertDialog()    //Zorluk seçme dialoğu göster
-            }
-        val dialog: AlertDialog = alertDialog.create()
-        dialog.show()
-
+        _binding?.let {
+            it.root.removeCallbacks(timer) // Timer'ı kaldır
+            timer = null // Timer'ı null olarak işaretle
+            _binding = null
+        }
     }
 }
 
