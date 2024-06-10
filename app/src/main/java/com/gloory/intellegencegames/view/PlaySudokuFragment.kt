@@ -104,7 +104,9 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
 
         playAgainButton.setOnClickListener {
             alertDialog.dismiss()
-            viewModel.sudokuGame.setDifficulty(SudokuDifficulty.EASY) // Veya kullanıcı tarafından seçilen zorluk seviyesine göre
+            viewModel.sudokuGame.clearBoard()
+            showDifficultyDialog()
+           // viewModel.sudokuGame.setDifficulty(SudokuDifficulty.EASY) // Veya kullanıcı tarafından seçilen zorluk seviyesine göre
         }
 
         exitButton.setOnClickListener {
@@ -157,16 +159,16 @@ class PlaySudokuFragment : Fragment(), SudokuBoardView.OnTouchListener {
         viewModel.sudokuGame.updateSelectedCell(row, col)
       checkConflicts()
 
-        if (viewModel.sudokuGame.isGameCompleted()) {
-          //  showGameCompletedDialog()
-        }
+        /* if (viewModel.sudokuGame.isGameCompleted()) {
+             showGameCompletedDialog()
+         }*/
     }
 
     private fun checkConflicts() {
         binding.sudokuBoardView.checkConflictsAndDraw()
-        if (viewModel.sudokuGame.isGameCompleted()) {
+        /*if (viewModel.sudokuGame.isGameCompleted()) {
          //   showGameCompletedDialog()
-        }
+        }*/
     }
     override fun onGameCompleted(isCompleted: Boolean) {
         if (isCompleted) {

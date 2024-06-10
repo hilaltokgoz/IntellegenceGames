@@ -108,7 +108,7 @@ open class SudokuGame {
 
     fun setDifficulty(difficulty: SudokuDifficulty) {
         val cellsToRemove = when (difficulty) {
-            SudokuDifficulty.EASY -> 2
+            SudokuDifficulty.EASY -> 43
             SudokuDifficulty.MEDIUM -> 50
             SudokuDifficulty.HARD -> 53
         }
@@ -151,6 +151,17 @@ open class SudokuGame {
             fullBoard[row][col].value = 0
         }
         return fullBoard
+    }
+    fun clearBoard() {
+        board.grid.flatten().forEach { cell ->
+            if (!cell.isStartingCell) {
+                cell.value = 0
+            }
+        }
+        selectedRow = -1
+        selectedCol = -1
+        _selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
+        _cellsLiveData.postValue(board.getCells())
     }
 }
 
