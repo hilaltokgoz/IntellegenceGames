@@ -22,6 +22,8 @@
     <color name="light_puple">#7B61FF</color>
     <color name="gray">#B0B0B2</color>
     <color name="blue">#3C4EBC</color>
+    <color name="blue_light">#838FDD</color>
+    <color name="blue_dark">#112187</color>
     <color name="blue_tone">#32809F</color>
     <color name="light_blue">#F4F5FB</color>
     <color name="laci">#3C415E</color>
@@ -32,6 +34,9 @@
     <color name="pickled_bluewood">#354a5f</color>
     <color name="pickled_bluewood_dark">#2b3d4f</color>
     <color name="radiobutton_color">#e75748</color>
+    <color name="yellow_light">#FFDD88</color>
+    <color name="yellow">#FFD15D</color>
+    <color name="yellow_dark">#FFD15D</color>
 
 
 

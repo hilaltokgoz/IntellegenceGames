@@ -17,6 +17,7 @@ import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.DifficultyScreenDialogBinding
 import com.gloory.intellegencegames.databinding.FragmentGuessTheNumberGameBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 
 
 class GuessTheNumberGameFragment : Fragment() {
@@ -120,6 +121,8 @@ class GuessTheNumberGameFragment : Fragment() {
                     hintList.add(hint)
                     hint1.text = "${hint1.text}$hint\n"
 
+                    hideKeyboard(binding.guessNumberText)
+
                     if (right == 0 || hintList.last() == "+++") {
                         showMessageBox()
                     }
@@ -162,7 +165,7 @@ class GuessTheNumberGameFragment : Fragment() {
                     //Sonuçlar basılacak
                     hintList.add(hint)
                     hint1.text = "${hint1.text}$hint\n"
-
+                    hideKeyboard(binding.guessNumberText)
                     if (right == 0 || hintList.last() == "++++") {
                         showMessageBox()
                     }
@@ -204,6 +207,7 @@ class GuessTheNumberGameFragment : Fragment() {
                     //Sonuçlar basılacak
                     hintList.add(hint)
                     hint1.text = "${hint1.text}$hint\n"
+                    hideKeyboard(binding.guessNumberText)
                     if (right == 0 || hintList.last() == "+++++") {
                         showMessageBox()
                     }
