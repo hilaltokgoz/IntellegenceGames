@@ -155,7 +155,6 @@ class KelimeAviFragment : Fragment() {
         }
 
     }
-
     private fun placeWordInGrid(grid: Array<Array<String>>, word: String) {
         val gridSize = grid.size
         val directions = listOf(
@@ -239,36 +238,47 @@ class KelimeAviFragment : Fragment() {
     private fun addTouchListenerToGridLayout() {
         val gridLayout = binding.gridLayout
         val selectedCells = mutableListOf<TextView>()
-        var originalBackgroundColor: Drawable? = null
+        var originalBackgroundColors = mutableMapOf<TextView, Drawable?>()
 
         gridLayout.forEach { textView ->
             textView.setOnTouchListener { v, event ->
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         v.performClick()
-                        if (!selectedCells.contains(v) && !isCellGreen(v as TextView)) {
-                            originalBackgroundColor = v.background
+                        if (!selectedCells.contains(v)) {
+                            originalBackgroundColors[v as TextView] = v.background
                             selectedCells.add(v)
-                            v.setBackgroundColor(Color.parseColor("#800000FF"))
+                            if (!isCellGreen(v)) {
+                                v.setBackgroundColor(Color.parseColor("#800000FF"))
+                            }
                         }
                         true
                     }
                     MotionEvent.ACTION_MOVE -> {
                         val childView = getViewAtPosition(gridLayout, event.rawX.toInt(), event.rawY.toInt())
-                        if (childView != null && childView is TextView && !selectedCells.contains(childView) && !isCellGreen(childView)) {
+                        if (childView != null && childView is TextView && !selectedCells.contains(childView)) {
                             selectedCells.add(childView)
-                            childView.setBackgroundColor(Color.parseColor("#800000FF"))
+                            if (!isCellGreen(childView)) {
+                                originalBackgroundColors[childView] = childView.background
+                                childView.setBackgroundColor(Color.parseColor("#800000FF"))
+                            }
                         }
                         true
                     }
                     MotionEvent.ACTION_UP -> {
                         val selectedWord = selectedCells.joinToString("") { it.text.toString() }
-                        if (checkWord(selectedWord)) {
-                            selectedCells.forEach { it.setBackgroundColor(Color.parseColor("#8000FF00")) } // 80 is the alpha value (50% transparency)
+                        if (checkWord(selectedWord) && selectedCells.all { !isCellGreen(it) }) {
+                            selectedCells.forEach { it.setBackgroundColor(Color.parseColor("#8000FF00")) }
                             strikeThroughWordInLinearLayout(selectedWord)
                             checkGameFinished()
                         } else {
-                            selectedCells.forEach { it.background = originalBackgroundColor }
+                            selectedCells.forEach { cell ->
+                                if (isCellGreen(cell)) {
+                                    cell.setBackgroundColor(Color.parseColor("#8000FF00"))
+                                } else {
+                                    cell.background = originalBackgroundColors[cell]
+                                }
+                            }
                         }
                         selectedCells.clear()
                         true
@@ -277,6 +287,10 @@ class KelimeAviFragment : Fragment() {
                 }
             }
         }
+    }
+    private fun isCellGreen(textView: TextView): Boolean {
+        val colorDrawable = textView.background as? ColorDrawable
+        return colorDrawable?.color == Color.parseColor("#8000FF00")
     }
 
     private fun getViewAtPosition(parent: ViewGroup, x: Int, y: Int): View? {
@@ -372,13 +386,6 @@ class KelimeAviFragment : Fragment() {
         startTimer()
 
     }
-    private fun isCellGreen(textView: TextView): Boolean {
-        val colorDrawable = textView.background as? ColorDrawable
-        return colorDrawable?.color == Color.parseColor("#8000FF00")
-    }
-
-
-
 
 }
 
