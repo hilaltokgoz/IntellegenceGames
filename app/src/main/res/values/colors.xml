@@ -37,6 +37,8 @@
     <color name="yellow_light">#FFDD88</color>
     <color name="yellow">#FFD15D</color>
     <color name="yellow_dark">#FFD15D</color>
+    <color name="blue_background">#838FDD</color>
+    <color name="light_blue_background">#DDE1FB</color>
 
 
 
