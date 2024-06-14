@@ -17,7 +17,7 @@
         android:fontFamily="@font/adamina"
         android:textStyle="bold"
         android:text="00:00"
-        android:textColor="@android:color/black"
+        android:textColor="@color/timer_text_color"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
