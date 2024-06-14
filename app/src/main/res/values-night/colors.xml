@@ -42,4 +42,21 @@
 
     <color name="textColorPrimary">@color/black</color>
 
+    <color name="board_background">#000000</color>
+    <color name="cell_background_light">#6ead3a</color>
+    <color name="cell_background_dark">#4d4d4d</color>
+    <color name="text_light">#000000</color>
+    <color name="text_dark">#FFFFFF</color>
+    <color name="starting_cell_background_light">#acacac</color>
+    <color name="starting_cell_background_dark">#666666</color>
+    <color name="conflicting_cell_background_light">#efedef</color>
+    <color name="conflicting_cell_background_dark">#3d3d3d</color>
+    <color name="thick_line_light">#000000</color>
+    <color name="thick_line_dark">#FFFFFF</color>
+    <color name="thin_line_light">#000000</color>
+    <color name="thin_line_dark">#CCCCCC</color>
+
+
+
+
 </resources>

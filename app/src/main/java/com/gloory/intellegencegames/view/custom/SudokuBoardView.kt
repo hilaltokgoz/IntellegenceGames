@@ -1,11 +1,14 @@
 package com.gloory.intellegencegames.view.custom
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.game.Cell
 import kotlin.math.min
 
@@ -89,6 +92,32 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         style = Paint.Style.FILL_AND_STROKE
         color = Color.parseColor("#FF3325")
     }
+
+
+    init {
+        updateThemeColors(context)
+    }
+
+    private fun updateThemeColors(context: Context) {
+        val isDarkTheme = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+
+        val cellBackground = if (isDarkTheme) R.color.cell_background_dark else R.color.cell_background_light
+        val textColor = if (isDarkTheme) R.color.text_dark else R.color.text_light
+        val startingCellBackground = if (isDarkTheme) R.color.starting_cell_background_dark else R.color.starting_cell_background_light
+        val conflictingCellBackground = if (isDarkTheme) R.color.conflicting_cell_background_dark else R.color.conflicting_cell_background_light
+        val thickLineColor = if (isDarkTheme) R.color.thick_line_dark else R.color.thick_line_light
+        val thinLineColor = if (isDarkTheme) R.color.thin_line_dark else R.color.thin_line_light
+
+        selectedCellPaint.color = ContextCompat.getColor(context, cellBackground)
+        textPaint.color = ContextCompat.getColor(context, textColor)
+        startingCellTextPaint.color = ContextCompat.getColor(context, textColor)
+        startingCellPaint.color = ContextCompat.getColor(context, startingCellBackground)
+        conflictingCellPaint.color = ContextCompat.getColor(context, conflictingCellBackground)
+        thickLinePaint.color = ContextCompat.getColor(context, thickLineColor)
+        thinLinePaint.color = ContextCompat.getColor(context, thinLineColor)
+       // redPaint.color = ContextCompat.getColor(context, R.color.red)
+    }
+
 
     //Görünüm ne kadar büyük olacak. Kare tahtayı korumak için
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -284,33 +313,4 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         }
         return isCompleted
     }
-
-      /*  conflictedList.clear()
-        canvas?.let { canvas ->
-            cells?.forEachIndexed { index1, cell ->
-                val selectedRow = cell.row
-                val selectedCol = cell.col
-                cells?.forEachIndexed { index2, cell2 ->
-                    val c = cell2.col
-                    val r = cell2.row
-                    if (cell.value == cell2.value && cell.value != 0 && index1 != index2) {
-                        if (r == selectedRow || c == selectedCol) {
-                            Log.i(
-                                "hilal",
-                                "Confilicted cell col:${cell.col} - row:${cell.row} - value:${cell.value} (ROW-COL)"
-                            )
-                            conflictedList.add(cell)
-                        } else if (r / sqrtSize == selectedRow / sqrtSize && c / sqrtSize == selectedCol / sqrtSize) {
-                            Log.i(
-                                "hilal",
-                                "Confilicted cell col:${cell.col} - row:${cell.row} - value:${cell.value} (SQRT)"
-                            )
-                            conflictedList.add(cell)
-                        }
-                    }
-                }
-            }
-        }
-        invalidate()
-    }*/
 }
