@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FFBB86FC</color>
+    <color name="purple_700">#6ead3a</color>
+    <color name="teal_200">#793aad</color>
+    <color name="teal_700">#236416</color>
+    <color name="black">#FFFFFFFF</color> <!-- Changed from black to white for night mode -->
+    <color name="white">#FF000000</color> <!-- Changed from white to black for night mode -->
+    <color name="light_gray">#262626</color> <!-- Darker gray for night mode -->
+    <color name="soft_gray">#1E1E1E</color> <!-- Darker soft gray for night mode -->
+    <color name="colorPrimary">#1b2a49</color> <!-- Darker primary color for night mode -->
+    <color name="colorPrimaryDark">#0d141e</color> <!-- Darker primary dark color for night mode -->
+    <color name="colorAccent">#007680</color> <!-- Slightly darkened accent color for night mode -->
+
+    <color name="mainColor">#6B17D4</color> <!-- Darkened main color for night mode -->
+    <color name="background_color">#121212</color> <!-- Dark background color for night mode -->
+    <color name="primary_color">#FFFFFF</color> <!-- Changed from black to white for night mode -->
+    <color name="light_black_color">#1E1E1E</color> <!-- Lighter black color for night mode -->
+    <color name="secondary_color">#000000</color> <!-- Changed from white to black for night mode -->
+    <color name="black_opac">#80000000</color> <!-- Adjusted opacity for night mode -->
+    <color name="light_puple">#5E47E7</color> <!-- Darkened light purple for night mode -->
+    <color name="gray">#4B4B4B</color> <!-- Darker gray for night mode -->
+    <color name="blue">#2A3790</color> <!-- Darkened blue for night mode -->
+    <color name="blue_light">#5A67A5</color> <!-- Darkened blue light for night mode -->
+    <color name="blue_dark">#0D144C</color> <!-- Darkened blue dark for night mode -->
+    <color name="blue_tone">#225E73</color> <!-- Darkened blue tone for night mode -->
+    <color name="light_blue">#1A1A2E</color> <!-- Darkened light blue for night mode -->
+    <color name="laci">#2B2C3E</color> <!-- Darkened laci for night mode -->
+
+    <color name="green">#4B754B</color> <!-- Darkened green for night mode -->
+    <color name="result_green">#1E8E45</color> <!-- Darkened result green for night mode -->
+    <color name="result_red">#A13728</color> <!-- Darkened result red for night mode -->
+    <color name="pickled_bluewood">#2b3d4f</color> <!-- Darkened pickled bluewood for night mode -->
+    <color name="pickled_bluewood_dark">#1f2a36</color> <!-- Darkened pickled bluewood dark for night mode -->
+    <color name="radiobutton_color">#a13728</color> <!-- Darkened radiobutton color for night mode -->
+    <color name="yellow_light">#B89456</color> <!-- Darkened yellow light for night mode -->
+    <color name="yellow">#B89456</color> <!-- Darkened yellow for night mode -->
+    <color name="yellow_dark">#B89456</color> <!-- Darkened yellow dark for night mode -->
+    <color name="blue_background">#5A67A5</color> <!-- Darkened blue background for night mode -->
+    <color name="light_blue_background">#20202A</color> <!-- Darkened light blue background for night mode -->
+
+    <color name="textColorPrimary">@color/black</color>
+
+</resources>

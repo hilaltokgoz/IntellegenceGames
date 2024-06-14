@@ -93,7 +93,6 @@ class MatchingGameFragment : Fragment() {
                     val selectedImages = images.shuffled().filterIndexed { index, _ -> index < imageCount }
                     currentShuffledImages = (selectedImages + selectedImages).shuffled()
                     addImage(5, 6)
-
                 }
             }
             bottomSheetDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -113,6 +112,7 @@ class MatchingGameFragment : Fragment() {
         bottomSheetDialog.setCancelable(false)
         bottomSheetDialog.show()
     }
+
 
     private fun startGameTimer() {
         binding.tvTimer.visibility = View.VISIBLE
