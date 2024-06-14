@@ -2,5 +2,7 @@
 <resources>
     <declare-styleable name="CustomTextView">
         <attr name="textColorPrimary" format="reference|color" />
+        <attr name="buttonTextColorPrimary" format="reference|color" />
+
     </declare-styleable>
 </resources>

@@ -8,19 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".view.GuessTheNumberGameFragment">
 
-<!--    <TextView
-        android:id="@+id/title_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/poppins_medium"
-        android:text="Sayı Tahmin Oyunu"
-        android:textAlignment="center"
-        android:textColor="@color/blue"
-        android:textSize="@dimen/top_label_size"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/gameSettingCardView"
@@ -118,6 +105,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="84dp"
         android:text="EKLE"
+        android:textColor="?android:textColorPrimary"
         android:backgroundTint="@color/laci"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/guessNumberText"
@@ -167,7 +155,7 @@
                 android:layout_weight="4"
                 android:gravity="center_horizontal"
                 android:padding="10sp"
-                android:textColor="@color/white"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="18sp"
                 tools:text="@string/guess1"></TextView>
 
@@ -178,7 +166,7 @@
                 android:layout_weight="4"
                 android:gravity="center_horizontal"
                 android:padding="10sp"
-                android:textColor="@color/white"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="18sp"
                 tools:text="@string/hint1"></TextView>
         </TableRow>
