@@ -45,14 +45,14 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private val thickLinePaint = Paint().apply {
         style = Paint.Style.STROKE
         color = Color.BLACK
-        strokeWidth = 4F
+        strokeWidth = 6F
     }
 
     //İncew çizgiler diğer tüm çizgilerdir
     private val thinLinePaint = Paint().apply {
         style = Paint.Style.STROKE
         color = Color.BLACK
-        strokeWidth = 2F
+        strokeWidth = 3F
     }
 
     //Hücreleri boyamak için kullanılacak
