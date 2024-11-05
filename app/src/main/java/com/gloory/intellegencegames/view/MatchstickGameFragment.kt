@@ -122,8 +122,6 @@ class MatchstickGameFragment : Fragment() {
         bottomSheetDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         bottomSheetDialog.show()
     }
-
-
     // Basit bir strateji: Bilgisayar kalan kibrit sayısına göre hareket eder
     private fun computerMove() {
         val matchsticksTaken: Int = when {
