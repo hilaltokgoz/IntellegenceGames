@@ -47,6 +47,9 @@ class HomeFragment : Fragment() {
                 HomePageItem.PUZZLE->{
                     findNavController().navigate(R.id.action_homeFragment_to_puzzleFragment)
                 }
+                HomePageItem.MATCHSTICK->{
+                    findNavController().navigate(R.id.action_homeFragment_to_matchstickGameFragment)
+                }
 
             }
         }

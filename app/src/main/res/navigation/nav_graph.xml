@@ -45,6 +45,9 @@
         <action
             android:id="@+id/action_homeFragment_to_puzzleFragment"
             app:destination="@id/puzzleFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_matchstickGameFragment"
+            app:destination="@id/matchstickGameFragment" />
     </fragment>
     <fragment
         android:id="@+id/ticTacToeFragment"
@@ -88,6 +91,11 @@
             android:name="puzzlePath"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/matchstickGameFragment"
+        android:name="com.gloory.intellegencegames.view.MatchstickGameFragment"
+        android:label="fragment_matchstick_game"
+        tools:layout="@layout/fragment_matchstick_game" />
 
 
 </navigation>

@@ -21,7 +21,7 @@ enum class HomePageItem(val imageId: Int, val text: String) {
     ),
     TICTACTOE(
         R.drawable.tictactoe_icon,
-        "TicTacToe"
+        "XOX"
     ),
     GUESSTHENUMBER(
      R.drawable.charade,
@@ -38,13 +38,18 @@ enum class HomePageItem(val imageId: Int, val text: String) {
     ANAGRAM(
     R.drawable.anagram,
     "Anagram"
+    ),
+    MATCHSTICK(
+     R.drawable.matchbox,
+        "Kibrit Çöpü"
     );
+
 
 
 
     companion object{
         fun getAllList(): List<HomePageItem> {
-            return listOf(SUDOKU,PUZZLE,KELİMEAVI,ESLESTIRME,TICTACTOE,GUESSTHENUMBER)
+            return listOf(SUDOKU,PUZZLE,KELİMEAVI,ESLESTIRME,TICTACTOE,GUESSTHENUMBER,MATCHSTICK)
         }
     }
 }

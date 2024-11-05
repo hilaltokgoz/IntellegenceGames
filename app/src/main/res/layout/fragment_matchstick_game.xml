@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".view.MatchstickGameFragment">
+
+    <TextView
+        android:id="@+id/tv_game_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Oyun Durumu"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="16dp" />
+
+    <GridLayout
+        android:id="@+id/gl_matchsticks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="7"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp" />
+
+    <Button
+        android:id="@+id/btn_user_move"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hamleyi Onayla"
+        android:layout_marginTop="40dp" />
+
+</LinearLayout>
