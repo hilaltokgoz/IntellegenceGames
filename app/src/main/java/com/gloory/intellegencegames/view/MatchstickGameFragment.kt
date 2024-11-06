@@ -11,6 +11,7 @@ import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentMatchingGameBinding
@@ -62,16 +63,20 @@ class MatchstickGameFragment : Fragment() {
     private fun showGameRulesDialog() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Oyun Kuralları")
-        builder.setMessage("\n1. Oyuncular sırayla 1, 2 veya 3 kibrit alır.\n" +
-                "2. Son kibriti alan oyuncu kaybeder.\n" +
-                "3. Bilgisayar her seviyede farklı stratejiye sahip.\n\nİyi eğlenceler!")
+        builder.setMessage("\n1. Oyun, bilgisayara karşı oynanır.\n" +
+                "2. Sırası gelen oyuncu 1,2 veya 3 adet kibrit alabilir.\n" +
+                "3. Son kibriti alan oyuncu kaybeder.\n\nİyi eğlenceler!")
 
         builder.setPositiveButton("Tamam") { dialog, _ ->
             dialog.dismiss()
         }
 
         val dialog = builder.create()
+        dialog.setCancelable(false)
         dialog.show()
+        // PositiveButton'a erişim ve renk değiştirme
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+            ContextCompat.getColor(requireContext(), R.color.blue_dark))
     }
 
 
