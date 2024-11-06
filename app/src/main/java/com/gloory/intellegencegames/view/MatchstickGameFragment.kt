@@ -53,6 +53,25 @@ class MatchstickGameFragment : Fragment() {
                 binding.tvGameStatus.text = "Lütfen önce kibrit seçin."
             }
         }
+
+        binding.ivSettings.setOnClickListener {
+            showGameRulesDialog()
+        }
+    }
+
+    private fun showGameRulesDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Oyun Kuralları")
+        builder.setMessage("\n1. Oyuncular sırayla 1, 2 veya 3 kibrit alır.\n" +
+                "2. Son kibriti alan oyuncu kaybeder.\n" +
+                "3. Bilgisayar her seviyede farklı stratejiye sahip.\n\nİyi eğlenceler!")
+
+        builder.setPositiveButton("Tamam") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
 

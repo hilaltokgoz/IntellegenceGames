@@ -6,15 +6,26 @@
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".view.MatchstickGameFragment">
+    <ImageView
+        android:id="@+id/iv_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
 
+        android:layout_gravity="end"
+        android:src="@drawable/ic_settings"
+        android:contentDescription="Ayarlar" />
     <TextView
         android:id="@+id/tv_game_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Oyun Durumu"
+        android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
         android:paddingBottom="16dp" />
 
@@ -32,6 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Hamleyi Onayla"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/blue"
         android:layout_marginTop="40dp" />
 
 </LinearLayout>
