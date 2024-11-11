@@ -17,6 +17,7 @@ import com.gloory.intellegencegames.R
 import com.gloory.intellegencegames.databinding.FragmentMatchingGameBinding
 import com.gloory.intellegencegames.databinding.FragmentMatchstickGameBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlin.random.Random
 
 class MatchstickGameFragment : Fragment() {
 
@@ -187,10 +188,7 @@ class MatchstickGameFragment : Fragment() {
         val matchsticksTaken: Int = when {
             totalMatchsticks == 2 -> 1
             totalMatchsticks == 3 -> 2
-            totalMatchsticks <= 3 -> totalMatchsticks
-            totalMatchsticks % 4 == 1 -> 1
-            totalMatchsticks % 4 == 2 -> 2
-            totalMatchsticks % 4 == 3 -> 3
+            totalMatchsticks > 3 -> Random.nextInt(1, 4)
             else -> 1
         }
 
