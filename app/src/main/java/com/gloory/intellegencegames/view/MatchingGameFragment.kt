@@ -23,6 +23,7 @@ class MatchingGameFragment : Fragment() {
     private val binding get() = _binding!!
     var selectedDifficulty = 0
 
+    val openedImages = mutableListOf<Int>()
     private lateinit var currentShuffledImages: List<Int>
 
     private var flippedPositions = mutableSetOf<Int>()
@@ -175,12 +176,14 @@ class MatchingGameFragment : Fragment() {
 
     private fun onImageClicked(imageView: ImageView) {
         val currentPosition = imageView.tag as Int
+        if (openedImages.contains(currentPosition).not()){
+            if (flippedPositions.size < 2 && currentPosition !in flippedPositions) {
+                flippedPositions.add(currentPosition)
 
-        if (flippedPositions.size < 2 && currentPosition !in flippedPositions) {
-            flippedPositions.add(currentPosition)
-            imageView.setImageResource(currentShuffledImages[currentPosition])
-            if (flippedPositions.size == 2) {
-                checkMatch(binding.mainGrid.columnCount, binding.mainGrid.rowCount)
+                imageView.setImageResource(currentShuffledImages[currentPosition])
+                if (flippedPositions.size == 2) {
+                    checkMatch(binding.mainGrid.columnCount, binding.mainGrid.rowCount)
+                }
             }
         }
     }
@@ -193,6 +196,8 @@ class MatchingGameFragment : Fragment() {
 
         if (image1 == image2) {
             // Eşleşme durumu
+            openedImages.add(indices[0])
+            openedImages.add(indices[1])
             flippedPositions.clear()
             matchedPairs++
             println("matchedPairs: $matchedPairs")
@@ -255,6 +260,7 @@ class MatchingGameFragment : Fragment() {
         flippedPositions.clear()
         matchedPairs = 0
         elapsedTimeMillis = 0 // Süreyi sıfırla
+        openedImages.clear()
         binding.tvTimer.visibility = View.VISIBLE
         binding.tvTimer.text = "00:00" // Süreyi sıfırla
 
