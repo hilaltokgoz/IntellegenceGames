@@ -27,7 +27,7 @@ class MatchstickGameFragment : Fragment() {
     private var userSelectedCount = 0
     private val maxSelectable = 3
     private lateinit var matchstickViews: MutableList<ImageView>
-    private var difficultyLevel: String = "normal" // Varsayılan zorluk seviyesi
+   // private var remainingMatchsticks = totalMatchsticks
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,14 +41,18 @@ class MatchstickGameFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showDifficultyBottomSheetDialog()
 
+        // Kullanıcı hamlesi
         binding.btnUserMove.setOnClickListener {
             if (userSelectedCount > 0) {
-                totalMatchsticks -= userSelectedCount
+                //totalMatchsticks -= userSelectedCount//1
                 userSelectedCount = 0
-                checkGameStatus("Kullanıcı")
-
+                // Kibrit sayısını kontrol et
                 if (totalMatchsticks > 0) {
+                    // Oyun bitmeden önce bilgisayarın hamlesi
                     computerMove()
+                } else {
+                    // Oyun bitmişse sonucu kontrol et
+                    checkGameStatus("Kullanıcı")  // Kullanıcının hareketinden sonra oyun bitişini kontrol et
                 }
             } else {
                 binding.tvGameStatus.text = "Lütfen önce kibrit seçin."
@@ -85,37 +89,66 @@ class MatchstickGameFragment : Fragment() {
         binding.glMatchsticks.removeAllViews()
         matchstickViews = mutableListOf()
 
+        // Kibrit sayısını doğru ayarladığınızdan emin olun
+        totalMatchsticks = count
+      //  remainingMatchsticks = count
+
         // GridLayout ayarları
         val columns = 7 // Her satırda kaç resim olacağını belirtir
         binding.glMatchsticks.columnCount = columns
 
         for (i in 1..count) {
             val matchstick = ImageView(context).apply {
-                layoutParams = GridLayout.LayoutParams().apply{
+                layoutParams = GridLayout.LayoutParams().apply {
                     width = 60
                     height = 200
                     setMargins(8, 8, 8, 8) // Kenar boşlukları
-                    rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f) // Her satırda bir eşit alan
+                    rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f) // Her satırda eşit alan
                     columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
                 }
                 setImageResource(R.drawable.macthh)
                 setPadding(4, 4, 4, 4)
                 visibility = View.VISIBLE
-                isClickable = true
-
-                //kullanıcı hamlesi
-                setOnClickListener {
-                    if (visibility == View.VISIBLE && userSelectedCount < maxSelectable) {
-                        visibility = View.INVISIBLE
-                        userSelectedCount++
-                    }
-                }
+                isClickable = false // Başlangıçta tıklanamaz olarak ayarla
             }
             matchstickViews.add(matchstick)
             binding.glMatchsticks.addView(matchstick)
         }
 
-        totalMatchsticks = count
+        //totalMatchsticks = count
+        updateMatchstickClickability()
+    }
+
+    private fun updateMatchstickClickability() {
+
+        if (totalMatchsticks <= 0) return
+
+        // Tüm kibritlerin tıklanabilirliğini kapat
+        matchstickViews.forEach { it.isClickable = false }
+
+        // Kalan son görünen 3 kibrit tıklanabilir olsun
+        var visibleCount = 0
+        for (i in matchstickViews.size - 1 downTo 0) {
+            if (matchstickViews[i].visibility == View.VISIBLE) {
+                matchstickViews[i].isClickable = true
+                matchstickViews[i].setOnClickListener {
+                    if (userSelectedCount < maxSelectable) {
+                        matchstickViews[i].visibility = View.INVISIBLE
+                        userSelectedCount++
+                        totalMatchsticks--  // Decrease remaining matchsticks
+
+                        // Kibrit sayısını güncelleyip oyunun bitip bitmediğini kontrol et
+                        if (totalMatchsticks > 0) {
+                            updateMatchstickClickability()
+                        } else {
+                            checkGameStatus("Kullanıcı")
+                        }
+                    }
+                }
+                visibleCount++
+                if (visibleCount == 3) break // Son 3 kibrite ulaşıldığında dur
+            }
+        }
     }
 
     private fun showDifficultyBottomSheetDialog() {
@@ -133,12 +166,12 @@ class MatchstickGameFragment : Fragment() {
             bottomSheetDialog.dismiss()
         }
         mediumLayout.setOnClickListener {
-            difficultyLevel = "normal"
+           // difficultyLevel = "normal"
             createMatchsticks(35)
             bottomSheetDialog.dismiss()
         }
         hardLayout.setOnClickListener {
-            difficultyLevel = "hard"
+            //difficultyLevel = "hard"
             createMatchsticks(42)
             bottomSheetDialog.dismiss()
         }
@@ -147,29 +180,46 @@ class MatchstickGameFragment : Fragment() {
         bottomSheetDialog.show()
     }
     // Basit bir strateji: Bilgisayar kalan kibrit sayısına göre hareket eder
+    // Bilgisayarın hamlesi
     private fun computerMove() {
-        val matchsticksTaken: Int = when {
-            totalMatchsticks <= 1 -> totalMatchsticks // 0 veya 1 kalırsa, hepsini al
-            totalMatchsticks == 2 -> 1 // 2 kalırsa, 1 al
-            totalMatchsticks == 3 -> 2 // 3 kalırsa, 2 al
-            totalMatchsticks % 4 == 1 -> 1 // Kullanıcının kazanmasını engellemek için 1 al
-            totalMatchsticks % 4 == 2 -> 2 // Kullanıcının kazanmasını engellemek için 2 al
-            totalMatchsticks % 4 == 3 -> 3 // Kullanıcı en fazla 3 alabilir
+        if (totalMatchsticks <= 0) return
 
-            else -> (1..3).random() // Rastgele 1, 2 veya 3 al
+        val matchsticksTaken: Int = when {
+            totalMatchsticks == 2 -> 1
+            totalMatchsticks == 3 -> 2
+            totalMatchsticks <= 3 -> totalMatchsticks
+            totalMatchsticks % 4 == 1 -> 1
+            totalMatchsticks % 4 == 2 -> 2
+            totalMatchsticks % 4 == 3 -> 3
+            else -> 1
         }
-         //kibriti gizle
-        for (i in 0 until matchsticksTaken) {
-            if (totalMatchsticks > 0) {
-                matchstickViews[totalMatchsticks - 1].visibility = View.INVISIBLE
-                totalMatchsticks--
+
+        // Kibritleri al
+        var taken = 0
+        for (i in matchstickViews.size - 1 downTo 0) {
+            if (matchstickViews[i].visibility == View.VISIBLE) {
+                matchstickViews[i].visibility = View.INVISIBLE
+                totalMatchsticks--  // Decrease remaining matchsticks
+                taken++
+                if (taken == matchsticksTaken) break
             }
         }
+
         binding.tvGameStatus.text = "Bilgisayar $matchsticksTaken kibrit aldı."
-        checkGameStatus("Bilgisayar")
+       // userSelectedCount = 0
+
+        // Oyun bitip bitmediğini kontrol et
+        if (totalMatchsticks > 0) {
+            updateMatchstickClickability()
+        } else {
+            checkGameStatus("Bilgisayar")
+        }
     }
 
+
+    // Oyun durumunu kontrol et
     private fun checkGameStatus(player: String) {
+        // Eğer tüm kibritler bitti ise
         if (totalMatchsticks <= 0) {
             if (player == "Kullanıcı") {
                 binding.tvGameStatus.text = "Kullanıcı oyunu kaybetti!"
@@ -182,6 +232,7 @@ class MatchstickGameFragment : Fragment() {
             }
         }
     }
+
     private fun showResultScreenDialog(player: String) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_game_completed, null)
         val dialogBuilder = AlertDialog.Builder(requireContext())
@@ -201,10 +252,11 @@ class MatchstickGameFragment : Fragment() {
             tvCongratulations.text = "Kaybettiniz!"
             ivCongratulations.setImageResource(R.drawable.sad)
         } else {
-            // Kullanıcı kazandı
+            // Bilgisayar kaybetti
             tvCongratulations.text = "Tebrikler!"
             ivCongratulations.setImageResource(R.drawable.ic_celebration)
         }
+
         playAgainButton.setOnClickListener {
             alertDialog.dismiss()
             resetGame()
@@ -214,7 +266,6 @@ class MatchstickGameFragment : Fragment() {
         exitButton.setOnClickListener {
             alertDialog.dismiss()
             findNavController().navigate(R.id.homeFragment)
-
         }
     }
     private fun resetGame() {
@@ -223,9 +274,11 @@ class MatchstickGameFragment : Fragment() {
         binding.tvGameStatus.text = ""
         binding.btnUserMove.isEnabled = true // Tekrar oynamak için butonu aktif hale getir
     }
-
+/*
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+ */
 }
